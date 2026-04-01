@@ -1,1 +1,1 @@
-web: gunicorn my_app_store.wsgi
+web: gunicorn app_builder.wsgi
