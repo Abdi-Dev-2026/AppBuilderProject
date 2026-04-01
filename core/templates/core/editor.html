@@ -37,6 +37,19 @@
             <iframe id="preview"></iframe>
         </div>
     </div>
+    <div class="card-body">
+    <h5 class="card-title">{{ app.name }}</h5>
+    <p class="card-text text-muted">La dhisay: {{ app.created_at|date }}</p>
+    
+    <div class="d-flex gap-2">
+        <a href="{% url 'edit_code' app.id %}" class="btn btn-primary btn-sm">Edit Code</a>
+        <a href="{% url 'app_detail' app.slug %}" class="btn btn-info btn-sm text-white">View Live</a>
+        
+        <a href="{% url 'download_app' app.slug %}" class="btn btn-success btn-sm">
+            <i class="fas fa-download"></i> Download ZIP
+        </a>
+    </div>
+</div>
 
     <script>
         function updatePreview() {
