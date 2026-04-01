@@ -5,7 +5,6 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# Waxaan u isticmaalaynaa Environment Variable haddii la heli karo, haddii kale kan default-ka ah
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-50gdo#&(-p__bnc_o0fpf$25l!@wmds$sj=vsca8fvq*scaqyb')
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -26,7 +25,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # Static files handler
+    'whitenoise.middleware.WhiteNoiseMiddleware', # Safkan waa muhiim u ah Static Files!
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -78,7 +77,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript)
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = BASE_DIR / 'staticfiles' # Waxaan u habeeyey qaabka Railway u baahan yahay
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files
@@ -89,5 +88,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
 LOGIN_URL = 'login'
+
+# CSRF Trusted Origins (Si aysan error 403 kuugu soo tuurin Railway)
+CSRF_TRUSTED_ORIGINS = ['https://maxamed.up.railway.app']
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
