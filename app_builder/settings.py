@@ -25,7 +25,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # Safkan waa muhiim u ah Static Files!
+    'whitenoise.middleware.WhiteNoiseMiddleware', # Safkan waa inuu halkan joogaa si CSS-ku u shaqeeyo
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -77,7 +77,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript)
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles' # Waxaan u habeeyey qaabka Railway u baahan yahay
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+# WhiteNoise storage configuration
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files
@@ -89,7 +90,10 @@ LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
 LOGIN_URL = 'login'
 
-# CSRF Trusted Origins (Si aysan error 403 kuugu soo tuurin Railway)
-CSRF_TRUSTED_ORIGINS = ['https://maxamed.up.railway.app']
+# CSRF Trusted Origins - SI LOO XALLIYO ERROR 403
+CSRF_TRUSTED_ORIGINS = [
+    'https://maxamed.up.railway.app',
+    'https://*.railway.app'
+]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
