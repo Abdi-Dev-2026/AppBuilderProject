@@ -5,13 +5,13 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-50gdo#&(-p__bnc_o0fpf$25l!@wmds$sj=vsca8fvq*scaqyb'
+# Waxaan u isticmaalaynaa Environment Variable haddii la heli karo, haddii kale kan default-ka ah
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-50gdo#&(-p__bnc_o0fpf$25l!@wmds$sj=vsca8fvq*scaqyb')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# Markaad Render geyso, waxaan u beddeli doonaa False
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['*'] 
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
@@ -26,7 +26,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # 1. Tan ayaa static-ga Live ka dhigaysa
+    'whitenoise.middleware.WhiteNoiseMiddleware', # Static files handler
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -40,7 +40,7 @@ ROOT_URLCONF = 'app_builder.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')], # Hubi in kani ku jiro
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -54,7 +54,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'app_builder.wsgi.application'
 
-# Database
+# Database (SQLite ayaa hadda loo isticmaalayaa)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -79,10 +79,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript)
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-# 2. Tan waxay caawinaysaa in file-lada la cadaadiyo si ay dhakhso u furmaan
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Media files (Sawirrada Apps-ka)
+# Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
