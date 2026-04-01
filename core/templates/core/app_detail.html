@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="so">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ app.name }}</title>
+    
+    <style>
+        /* Waxaan ku darnay 'safe' si Django u oggolaado koodhka CSS-ka */
+        {{ app.css_code|safe }}
+    </style>
+</head>
+<body>
+
+    <div id="user-app-content">
+        {{ app.html_code|safe }}
+    </div>
+
+    <script>
+        /* Waxaan halkan ku daraynaa 'safe' si JS-ka u shaqeeyo */
+        {{ app.js_code|safe }}
+    </script>
+
+</body>
+</html>

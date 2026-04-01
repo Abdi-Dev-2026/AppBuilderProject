@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="so">
+<head>
+    <meta charset="UTF-8">
+    <title>Dhiso App Cusub</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f4f7f6; padding: 40px; }
+        .form-container { background: white; padding: 30px; border-radius: 10px; max-width: 500px; margin: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h2 { color: #333; text-align: center; }
+        form p { margin-bottom: 15px; }
+        input, select, textarea { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        .btn-submit { width: 100%; background: #28a745; color: white; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        .btn-submit:hover { background: #218838; }
+        .back-link { display: block; text-align: center; margin-top: 20px; text-decoration: none; color: #666; }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h2>Dhiso App Cusub 🚀</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn-submit">Dhis App-ka</button>
+        </form>
+        <a href="{% url 'dashboard' %}" class="back-link">← Ku laabo Dashboard-ka</a>
+    </div>
+
+</body>
+</html>

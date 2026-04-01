@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="so">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - My App Store</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 15px 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        
+        .app-container { display: flex; flex-wrap: wrap; gap: 25px; margin-top: 30px; justify-content: center; }
+        .app-card { background: #fff; border-radius: 15px; padding: 20px; width: 260px; text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.05); transition: 0.3s; }
+        .app-card:hover { transform: translateY(-10px); }
+        
+        /* Sawirka Icon-ka */
+        .app-card img { width: 80px; height: 80px; border-radius: 15px; object-fit: cover; margin-bottom: 15px; border: 2px solid #eee; }
+        .app-card h3 { margin: 10px 0; color: #333; font-size: 1.2rem; text-transform: capitalize; }
+        
+        /* Batoonada Card-ka dhexdiisa */
+        .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        
+        .btn-live { background: #6f42c1; color: white; padding: 10px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.85rem; transition: 0.3s; }
+        .btn-live:hover { background: #5a32a3; }
+
+        .btn-edit { background: #007bff; color: white; padding: 10px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.85rem; transition: 0.3s; }
+        .btn-edit:hover { background: #0056b3; }
+
+        .btn-download { background: #28a745; color: white; padding: 10px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.85rem; transition: 0.3s; }
+        .btn-download:hover { background: #218838; }
+        
+        /* Batoonka weyn ee Create App */
+        .btn-create { background: #6f42c1; color: white; padding: 12px 25px; border-radius: 8px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: inline-block; margin-top: 10px; }
+        .btn-create:hover { background: #5a32a3; }
+        
+        .logout-btn { color: #d9534f; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div>
+            <h2>Ku soo dhawaaw, {{ request.user.username }} 👋</h2>
+            <a href="{% url 'create_app' %}" class="btn-create">+ Dhiso App Cusub</a>
+        </div>
+        <a href="{% url 'logout' %}" class="logout-btn">Ka bax (Logout)</a>
+    </div>
+
+    <div class="app-container">
+        {% for app in apps %}
+            <div class="app-card">
+                {% if app.image_url %}
+                    <img src="{{ app.image_url }}" alt="{{ app.name }}">
+                {% elif app.icon %}
+                    <img src="{{ app.icon.url }}" alt="{{ app.name }}">
+                {% else %}
+                    <img src="https://via.placeholder.com/80" alt="No Icon">
+                {% endif %}
+                
+                <h3>{{ app.name }}</h3>
+
+                <div class="btn-group">
+                    <a href="{% url 'app_detail' app.slug %}" class="btn-live" target="_blank">
+                        View Live App 🌍
+                    </a>
+
+                    <a href="{% url 'edit_code' app.id %}" class="btn-edit">
+                        Edit Code / Preview 📱
+                    </a>
+
+                    {% if app.download_link %}
+                        <a href="{{ app.download_link }}" class="btn-download" target="_blank">
+                            Download App ⬇️
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <div style="text-align: center; margin-top: 50px; width: 100%;">
+                <p>Weli ma jiraan Apps aad dhisatay. Bilow hadda!</p>
+                <a href="{% url 'create_app' %}" style="color: #6f42c1; font-weight: bold;">Riix halkan si aad u dhisatid app-kaagii ugu horreeyay.</a>
+            </div>
+        {% endfor %}
+    </div>
+
+</body>
+</html>
