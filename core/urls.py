@@ -24,4 +24,8 @@ urlpatterns = [
     # 7. BOGGA LIVE-KA AH (Public App Link)
     # Kani wuxuu kuu oggolaanayaa link u eg: /app/magaca-app-ka/
     path('app/<slug:slug>/', views.app_detail, name='app_detail'),
+
+    # 8. QAYBTA CUSUB: SOO DEJINTA APP-KA (Download ZIP)
+    # Kani waa badhanka dhalinaya faylka ZIP-ka ah
+    path('download/<slug:slug>/', views.download_app, name='download_app'),
 ]

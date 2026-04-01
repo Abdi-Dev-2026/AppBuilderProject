@@ -1,8 +1,11 @@
+import zipfile
+from io import BytesIO
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from .forms import UserRegisterForm, AppForm
 from .models import App
 
@@ -41,7 +44,7 @@ def register(request):
         form = UserRegisterForm()
     return render(request, 'core/register.html', {'form': form})
 
-# 3. Qaybta Dashboard-ka (Wuxuu tusayaa kaliya Apps-ka uu User-kaas dhistay)
+# 3. Qaybta Dashboard-ka
 @login_required
 def dashboard(request):
     apps = App.objects.filter(owner=request.user).order_by('-created_at')
@@ -77,9 +80,37 @@ def edit_code(request, app_id):
 
     return render(request, 'core/editor.html', {'app': app})
 
-# 6. BOGGA LIVE-KA AH (Public Link) - Kani waa qaybta cusub
+# 6. BOGGA LIVE-KA AH (Public Link)
 def app_detail(request, slug):
-    # Waxaan soo qabanaynaa App-ka isagoo loo marayo Slug-ga link-ga ku jira.
-    # Qaybtani uma baahna @login_required si dadka kale ay u arkaan.
     app = get_object_or_404(App, slug=slug)
     return render(request, 'core/app_detail.html', {'app': app})
+
+# 7. QAYBTA CUSUB: DOWNLOAD APP (ZIP EXPORT)
+def download_app(request, slug):
+    # Waxaan soo qabanaynaa app-ka uu user-ku rabo
+    app = get_object_or_404(App, slug=slug)
+
+    # Waxaan abuuraynaa meel kumeel-gaar ah oo ZIP-ka lagu keydiyo (RAM)
+    buffer = BytesIO()
+
+    with zipfile.ZipFile(buffer, 'w') as zip_file:
+        # 1. Waxaan dhex dhigaynaa HTML-ka
+        zip_file.writestr("index.html", app.html_code)
+        
+        # 2. Waxaan ku daraynaa CSS iyo JS maadaama aad 'edit_code' ku dhex leedahay
+        if app.css_code:
+            zip_file.writestr("style.css", app.css_code)
+        if app.js_code:
+            zip_file.writestr("script.js", app.js_code)
+
+        # 3. README yar oo sharraxaya app-ka
+        readme_content = f"Magaca App-ka: {app.name}\nLagu dhisay: App Builder Somali\nLink-ga Live-ka ah: https://maxamed.up.railway.app/app/{app.slug}/"
+        zip_file.writestr("README.txt", readme_content)
+
+    buffer.seek(0)
+
+    # Waxaan u soo celinaynaa user-ka sidii fayl la soo dejisan karo
+    response = HttpResponse(buffer, content_type='application/zip')
+    response['Content-Disposition'] = f'attachment; filename={app.slug}_app.zip'
+
+    return response
