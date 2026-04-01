@@ -3,40 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - My App Store</title>
+    <title>Diiwaangeli - Register</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { background: linear-gradient(135deg, #6f42c1 0%, #4834d4 100%); height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Segoe UI', sans-serif; }
-        .auth-card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); width: 100%; max-width: 450px; }
-        .auth-card h2 { font-weight: 800; color: #333; text-align: center; margin-bottom: 25px; }
-        .btn-auth { background: #6f42c1; color: white; border: none; width: 100%; padding: 12px; border-radius: 10px; font-weight: bold; transition: 0.3s; }
-        .btn-auth:hover { background: #5a32a3; transform: translateY(-2px); }
-        .error-msg { color: #d9534f; background: #f8d7da; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; }
+        body { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Segoe UI', sans-serif; color: white; padding: 20px; }
+        .auth-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); padding: 40px; border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.2); width: 100%; max-width: 500px; }
+        .auth-card h2 { font-weight: 800; text-align: center; margin-bottom: 25px; color: #fff; }
+        .auth-card p { color: #ccc; }
+        form p { margin-bottom: 15px; }
+        form label { display: block; margin-bottom: 5px; color: #a29bfe; font-weight: bold; font-size: 0.9rem; }
+        form input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.05); color: white; outline: none; }
+        form input:focus { border-color: #6c5ce7; background: rgba(255, 255, 255, 0.1); }
+        .helptext, .helptext ul { font-size: 0.8rem; color: #bbb; padding-left: 0; list-style: none; margin-top: 5px; }
+        /* Beddelka Qoraalka Password-ka ee Django (Soomaali) */
+        .helptext li { margin-bottom: 3px; }
+        .btn-register { background: #6c5ce7; color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-weight: bold; margin-top: 20px; transition: 0.3s; }
+        .btn-register:hover { background: #a29bfe; transform: scale(1.02); }
+        .errorlist { color: #ff6b6b; font-weight: bold; list-style: none; padding: 0; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
 <div class="auth-card shadow-lg">
-    <h2>Diiwaangeli (Register)</h2>
+    <h2>Abuur Koonto Cusub 🚀</h2>
     
     <form method="post">
         {% csrf_token %}
         
         {% if form.errors %}
-            <div class="error-msg">
+            <div class="errorlist">
                 {{ form.errors }}
             </div>
         {% endif %}
 
-        <div class="mb-3">
+        <div class="form-fields">
             {{ form.as_p }}
         </div>
 
-        <button type="submit" class="btn-auth">Register</button>
+        <button type="submit" class="btn-register">Register (Diiwaangeli)</button>
     </form>
 
-    <p class="text-center mt-4 text-muted">Already have an account? <a href="{% url 'login' %}" class="fw-bold text-decoration-none" style="color: #6f42c1;">Login</a></p>
+    <div class="text-center mt-4">
+        <p>Horey ma u leeyahay koonto? <a href="{% url 'login' %}" class="text-info fw-bold text-decoration-none">Login (Soo gal)</a></p>
+    </div>
 </div>
+
+<script>
+    // Script yar oo qoraalka Ingiriisiga ah ee Password-ka u beddelaya Soomaali
+    document.querySelectorAll('.helptext').forEach(el => {
+        el.innerHTML = el.innerHTML
+            .replace(/Your password can't be too similar/g, "Gura-galkaagu (Password) yuuna u ekaan macluumaadkaaga")
+            .replace(/Your password must contain at least 8 characters/g, "Waa inuu ka koobnaadaa ugu yaraan 8 xaraf")
+            .replace(/Your password can't be a commonly used password/g, "Ma noqon karo mid dadka oo dhami isticmaalaan")
+            .replace(/Your password can't be entirely numeric/g, "Ma noqon karo tiro kaliya");
+    });
+</script>
 
 </body>
 </html>
