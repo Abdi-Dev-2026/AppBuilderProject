@@ -3,107 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - My App Store</title>
+    <title>Soo Gal - My App Store</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
         body {
-            background: linear-gradient(135deg, #4834d4 0%, #6f42c1 100%);
+            background: linear-gradient(45deg, #24243e, #302b63, #0f0c29);
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Ubuntu', sans-serif;
             margin: 0;
+            color: #fff;
         }
-        .login-card {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        .login-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            padding: 45px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
+        }
+        .login-container h2 {
+            font-weight: 700;
             text-align: center;
-        }
-        .login-card h2 {
-            font-weight: 800;
-            color: #333;
             margin-bottom: 10px;
+            color: #fff;
         }
-        .login-card p.subtitle {
-            color: #777;
-            margin-bottom: 30px;
+        .login-container p.subtitle {
+            text-align: center;
             font-size: 0.9rem;
+            color: #ccc;
+            margin-bottom: 35px;
         }
         /* Qurxinta Form-ka Django */
         form p {
-            text-align: left;
             margin-bottom: 20px;
+            text-align: left;
         }
         form label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #555;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            color: #a29bfe;
+            font-weight: bold;
+            text-transform: uppercase;
         }
         form input {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            color: #fff;
             outline: none;
-            transition: 0.3s;
+            transition: 0.3s all ease;
         }
         form input:focus {
-            border-color: #6f42c1;
-            box-shadow: 0 0 8px rgba(111, 66, 193, 0.2);
+            background: rgba(255, 255, 255, 0.12);
+            border-color: #6c5ce7;
+            box-shadow: 0 0 20px rgba(108, 92, 231, 0.3);
         }
         .btn-login {
-            background: #6f42c1;
+            background: linear-gradient(90deg, #6c5ce7, #a29bfe);
             color: white;
             border: none;
             width: 100%;
-            padding: 12px;
-            border-radius: 10px;
+            padding: 15px;
+            border-radius: 15px;
             font-weight: bold;
             font-size: 1.1rem;
-            transition: 0.3s;
+            cursor: pointer;
+            transition: 0.4s ease;
             margin-top: 10px;
         }
         .btn-login:hover {
-            background: #4834d4;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(108, 92, 231, 0.4);
+            filter: brightness(1.1);
         }
-        .register-link {
-            margin-top: 25px;
-            color: #666;
-            font-size: 0.95rem;
+        .footer-text {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: #eee;
         }
-        .register-link a {
-            color: #6f42c1;
+        .footer-text a {
+            color: #a29bfe;
             text-decoration: none;
             font-weight: bold;
+            border-bottom: 1px solid transparent;
+            transition: 0.3s;
         }
-        .register-link a:hover {
-            text-decoration: underline;
+        .footer-text a:hover {
+            border-bottom: 1px solid #a29bfe;
         }
     </style>
 </head>
 <body>
 
-<div class="login-card">
-    <h2>Ku soo dhowaad! 👋</h2>
-    <p class="subtitle">Fadlan geli macluumaadkaaga si aad u sii waddo dhismaha apps-ka.</p>
+<div class="login-container">
+    <h2>Soo Gal 👋</h2>
+    <p class="subtitle">Ku soo dhowaad! Geli macluumaadkaaga si aad u sii waddo dhismaha apps-ka.</p>
     
     <form method="post">
         {% csrf_token %}
-        <div class="form-fields">
+        
+        <div class="form-wrapper">
             {{ form.as_p }}
         </div>
-        <button type="submit" class="btn-login">Soo gal (Login)</button>
+
+        <button type="submit" class="btn-login">Gali Koontada</button>
     </form>
 
-    <div class="register-link">
-        <p>Weli koonto ma lahan? <a href="{% url 'register' %}">Isdiiwaangeli halkan</a></p>
+    <div class="footer-text">
+        <p>Weli koonto ma lahan? <a href="{% url 'register' %}">Is-diiwaangeli halkan</a></p>
     </div>
 </div>
 
