@@ -1,14 +1,111 @@
-<h2>Register</h2>
-<form method="post">
-    {% csrf_token %}
-    
-    {% if form.errors %}
-        <div style="color: red;">
-            {{ form.errors }}
-        </div>
-    {% endif %}
+<!DOCTYPE html>
+<html lang="so">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - My App Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #6f42c1 0%, #4834d4 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+        }
+        .register-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 450px;
+        }
+        .register-card h2 {
+            font-weight: 800;
+            color: #333;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        /* Qurxinta Form-ka Django */
+        form p {
+            margin-bottom: 15px;
+        }
+        form input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            outline: none;
+            transition: 0.3s;
+        }
+        form input:focus {
+            border-color: #6f42c1;
+            box-shadow: 0 0 8px rgba(111, 66, 193, 0.2);
+        }
+        .btn-register {
+            background: #6f42c1;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+        .btn-register:hover {
+            background: #5a32a3;
+            transform: translateY(-2px);
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+        .login-link a {
+            color: #6f42c1;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .errorlist {
+            color: #d9534f;
+            list-style: none;
+            padding: 0;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
 
-    {{ form.as_p }}
-    <button type="submit">Register</button>
-</form>
-<p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+<div class="register-card">
+    <h2>Abuur Koonto Cusub 🚀</h2>
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        {% if form.errors %}
+            <div class="alert alert-danger p-2 shadow-sm" style="font-size: 0.85rem;">
+                {{ form.errors }}
+            </div>
+        {% endif %}
+
+        <div class="form-fields">
+            {{ form.as_p }}
+        </div>
+
+        <button type="submit" class="btn-register">Diiwaangeli (Register)</button>
+    </form>
+
+    <div class="login-link">
+        <p>Horey ma u lahayd koonto? <a href="{% url 'login' %}">Soo gal (Login)</a></p>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
