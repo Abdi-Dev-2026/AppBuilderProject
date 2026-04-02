@@ -95,16 +95,15 @@
 
         .phone-case {
             position: relative;
-            width: 380px; /* Waxaan u ekeysiinay Infinix Note 40 width-giisa */
+            width: 380px; 
             height: 780px;
             background: var(--phone-border);
-            border-radius: 45px; /* Curve geesaha ah */
+            border-radius: 45px; 
             padding: 12px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), inset 0 0 2px 2px #444;
             border: 4px solid #222;
         }
 
-        /* Camera Notch (Punch hole) */
         .phone-case::before {
             content: "";
             position: absolute;
@@ -150,6 +149,22 @@
 
         .save-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4); }
 
+        /* --- BADHANKA CUSUB EE SHARE --- */
+        .share-btn {
+            background: linear-gradient(135deg, #a855f7, #7e22ce);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            flex: 1;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+        }
+
+        .share-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4); }
+
         .download-link {
             background: linear-gradient(135deg, #3b82f6, #2563eb);
             color: white;
@@ -189,7 +204,12 @@
             <textarea name="js_code" id="js" placeholder="Ku qor JavaScript-ka halkan...">{{ app.js_code }}</textarea>
             
             <div class="controls">
-                <button type="submit" class="save-btn"><i class="fas fa-cloud-upload-alt"></i> Kaydi & Daabac App-ka</button>
+                <button type="submit" class="save-btn"><i class="fas fa-cloud-upload-alt"></i> Kaydi & Daabac</button>
+                
+                <button type="button" onclick="copyLink()" class="share-btn">
+                    <i class="fas fa-share-alt"></i> Share Link
+                </button>
+
                 <a href="{% url 'download_app' app.slug %}" class="download-link">
                     <i class="fas fa-file-archive"></i> Download ZIP
                 </a>
@@ -213,6 +233,16 @@
             let js = "<script>" + document.getElementById("js").value + "<\/script>";
             let iframe = document.getElementById("preview");
             iframe.srcdoc = html + css + js;
+        }
+
+        // Shaqada koobiyeynta link-ga
+        function copyLink() {
+            let link = "https://maxamed.up.railway.app/app/{{ app.slug }}/";
+            navigator.clipboard.writeText(link).then(() => {
+                alert("Link-ga App-kaaga waa la koobiyey: " + link);
+            }).catch(err => {
+                console.error('Qalad baa dhacay: ', err);
+            });
         }
 
         document.querySelectorAll('textarea').forEach(el => {
