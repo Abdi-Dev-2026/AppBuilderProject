@@ -2,16 +2,15 @@
 <html lang="so">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matoorka Editor-ka - {{ app.name }}</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/common/all.min.css">
+    <title>Editor - {{ app.name }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.txt">
     <style>
         :root {
             --primary-bg: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.7);
+            --editor-bg: #1e293b;
             --accent-color: #38bdf8;
-            --success-color: #22c55e;
-            --text-main: #f1f5f9;
+            --save-green: #22c55e;
+            --phone-border: #111827;
         }
 
         body { 
@@ -20,55 +19,51 @@
             flex-direction: column; 
             height: 100vh; 
             margin: 0; 
-            background: radial-gradient(circle at top right, #1e293b, #0f172a); 
-            color: var(--text-main);
+            background: var(--primary-bg); 
+            color: white; 
             overflow: hidden;
         }
 
-        /* Qaybta sare (Header) */
-        header {
-            padding: 15px 30px;
-            background: rgba(15, 23, 42, 0.8);
+        /* Header Styles */
+        .header {
+            padding: 15px 25px;
+            background: rgba(30, 41, 59, 0.7);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid #334155;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
+        .header h2 { margin: 0; font-size: 1.2rem; color: var(--accent-color); }
+
         .container { 
             display: flex; 
             flex: 1; 
             padding: 20px; 
-            gap: 25px; 
+            gap: 30px; 
             overflow: hidden;
         }
 
-        /* Qaybta Qoraalka (Editors) */
-        .editors-container { 
+        /* Editor Section */
+        .editors { 
             flex: 1; 
             display: flex; 
             flex-direction: column; 
             gap: 15px; 
-            background: var(--card-bg);
+            background: var(--editor-bg);
             padding: 20px;
             border-radius: 15px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.05);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
 
-        .editor-group {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
+        .editor-group { flex: 1; display: flex; flex-direction: column; }
+        
         label { 
             font-size: 0.85rem; 
-            font-weight: 600; 
+            font-weight: bold; 
             margin-bottom: 5px; 
-            color: var(--accent-color);
+            color: #94a3b8; 
             display: flex;
             align-items: center;
             gap: 8px;
@@ -78,155 +73,158 @@
             width: 100%; 
             flex: 1; 
             background: #020617; 
-            color: #94a3b8; 
+            color: #e2e8f0; 
             border: 1px solid #334155; 
             padding: 12px; 
             font-family: 'Fira Code', monospace; 
             border-radius: 8px; 
             resize: none;
             outline: none;
-            transition: border 0.3s ease;
+            transition: border 0.3s;
         }
 
-        textarea:focus {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
-        }
+        textarea:focus { border-color: var(--accent-color); }
 
-        /* Qaybta Preview-ga (Mobile 3D) */
+        /* Infinix Note 40 3D Phone Styles */
         .preview-section { 
-            width: 400px; 
+            width: 420px; 
             display: flex; 
-            flex-direction: column;
-            align-items: center;
+            flex-direction: column; 
+            align-items: center; 
             justify-content: center;
         }
 
-        .phone-mockup {
+        .phone-case {
             position: relative;
-            width: 300px;
-            height: 600px;
-            background: #111;
-            border-radius: 40px;
-            border: 8px solid #334155;
-            box-shadow: 20px 20px 60px rgba(0,0,0,0.5), -5px -5px 20px rgba(255,255,255,0.02);
-            padding: 10px;
-            transform: perspective(1000px) rotateY(-5deg);
-            transition: transform 0.5s ease;
+            width: 380px; /* Qiyaasta Infinix Note 40 Width */
+            height: 780px;
+            background: var(--phone-border);
+            border-radius: 45px;
+            padding: 12px;
+            box-shadow: 
+                20px 20px 60px rgba(0,0,0,0.7),
+                -5px -5px 20px rgba(255,255,255,0.05),
+                inset 0 0 10px rgba(255,255,255,0.2);
+            border: 2px solid #334155;
+            transform: perspective(1000px) rotateY(-5deg); /* 3D Look */
+            transition: transform 0.5s;
         }
+        
+        .phone-case:hover { transform: perspective(1000px) rotateY(0deg); }
 
-        .phone-mockup:hover {
-            transform: perspective(1000px) rotateY(0deg);
-        }
-
-        .phone-speaker {
-            width: 60px;
-            height: 5px;
-            background: #334155;
+        /* Punch-hole Camera */
+        .phone-case::before {
+            content: "";
             position: absolute;
-            top: 20px;
+            top: 25px;
             left: 50%;
             transform: translateX(-50%);
-            border-radius: 10px;
+            width: 12px;
+            height: 12px;
+            background: #111;
+            border-radius: 50%;
+            z-index: 10;
+            border: 2px solid #222;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 35px;
+            overflow: hidden;
+            border: 1px solid #000;
         }
 
         iframe { 
             width: 100%; 
             height: 100%; 
-            background: white; 
             border: none; 
-            border-radius: 25px; 
         }
 
-        /* Badhannada (Buttons) */
+        /* Buttons Section */
         .action-area {
             display: flex;
             gap: 15px;
             margin-top: 20px;
         }
 
-        .btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 700;
-            cursor: pointer;
+        .save-btn { 
+            background: var(--save-green); 
+            color: white; 
+            padding: 12px 25px; 
+            border: none; 
+            cursor: pointer; 
+            font-size: 1rem; 
+            font-weight: bold;
+            border-radius: 8px; 
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 10px;
-            transition: all 0.3s ease;
+            transition: transform 0.2s, background 0.3s;
+        }
+
+        .save-btn:hover { background: #16a34a; transform: scale(1.02); }
+
+        .download-btn {
+            background: #3b82f6;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
             text-decoration: none;
-            font-size: 0.95rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
         }
 
-        .save-btn { 
-            background: linear-gradient(135deg, #22c55e, #16a34a); 
-            color: white; 
-            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
-        }
-
-        .save-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4); }
-
-        .download-btn { 
-            background: linear-gradient(135deg, #38bdf8, #0284c7); 
-            color: white; 
-            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
-        }
-        
-        .download-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4); }
+        .download-btn:hover { background: #2563eb; }
 
     </style>
 </head>
 <body>
 
-    <header>
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <i class="fas fa-code-branch" style="color: var(--accent-color); font-size: 1.5rem;"></i>
-            <h2 style="margin: 0; font-size: 1.2rem;">Habaynta App-ka: <span style="color: var(--accent-color);">{{ app.name }}</span></h2>
-        </div>
-        <div style="font-size: 0.8rem; opacity: 0.7;">
-            <i class="fas fa-circle" style="color: var(--success-color); font-size: 0.6rem;"></i> Matoorku waa diyaar
-        </div>
-    </header>
+    <div class="header">
+        <h2><i class="fas fa-code"></i> Matoorka Editor-ka: {{ app.name }}</h2>
+        <div style="font-size: 0.8rem; color: #94a3b8;">Habaynta Shaashadda: <b>Infinix Note 40 Style</b></div>
+    </div>
 
     <div class="container">
-        <form method="post" class="editors-container">
+        <form method="post" class="editors" id="mainForm">
             {% csrf_token %}
-            
             <div class="editor-group">
-                <label><i class="fab fa-html5"></i> QAAB DHISMEEDKA (HTML)</label>
-                <textarea name="html_code" id="html" placeholder="Halkan ku qor HTML-ka...">{{ app.html_code }}</textarea>
+                <label><i class="fab fa-html5" style="color: #e34c26;"></i> HTML Koodhka</label>
+                <textarea name="html_code" id="html" placeholder="Ku qor HTML halkan...">{{ app.html_code }}</textarea>
             </div>
             
             <div class="editor-group">
-                <label><i class="fab fa-css3-alt"></i> QURXINTA (CSS)</label>
-                <textarea name="css_code" id="css" placeholder="Halkan ku qor CSS-ka...">{{ app.css_code }}</textarea>
+                <label><i class="fab fa-css3-alt" style="color: #264de4;"></i> CSS Qurxinta</label>
+                <textarea name="css_code" id="css" placeholder="Ku qor CSS halkan...">{{ app.css_code }}</textarea>
             </div>
             
             <div class="editor-group">
-                <label><i class="fab fa-js-square"></i> MATOORKA (JS)</label>
-                <textarea name="js_code" id="js" placeholder="Halkan ku qor JavaScript-ka...">{{ app.js_code }}</textarea>
+                <label><i class="fab fa-js" style="color: #f7df1e;"></i> JS Dhaqdhaqaaqa</label>
+                <textarea name="js_code" id="js" placeholder="Ku qor JavaScript halkan...">{{ app.js_code }}</textarea>
             </div>
-
+            
             <div class="action-area">
-                <button type="submit" class="btn save-btn">
-                    <i class="fas fa-cloud-upload-alt"></i> KAYDI & PUBLISH
+                <button type="submit" class="save-btn">
+                    <i class="fas fa-cloud-upload-alt"></i> Kaydi & Daabac App-ka
                 </button>
-                <a href="{% url 'download_app' app.slug %}" class="btn download-btn">
-                    <i class="fas fa-file-archive"></i> SOO DEJI (ZIP)
+                <a href="{% url 'download_app' app.slug %}" class="download-btn">
+                    <i class="fas fa-file-archive"></i> Download ZIP
                 </a>
             </div>
         </form>
 
         <div class="preview-section">
-            <h3 style="margin-bottom: 15px; font-size: 1rem; opacity: 0.8;">MUUQAALKA TALEEFANKA 📱</h3>
-            <div class="phone-mockup">
-                <div class="phone-speaker"></div>
-                <iframe id="preview"></iframe>
+            <h3 style="margin-bottom: 15px; font-size: 1rem; color: #94a3b8;">Muuqaalka Taleefanka dhabta ah</h3>
+            <div class="phone-case">
+                <div class="screen">
+                    <iframe id="preview"></iframe>
+                </div>
             </div>
-            <p style="margin-top: 15px; font-size: 0.8rem; color: #64748b;">Isbeddelku wuxuu ka muuqanayaa halkan si toos ah</p>
         </div>
     </div>
 
@@ -235,20 +233,18 @@
             let html = document.getElementById("html").value;
             let css = "<style>" + document.getElementById("css").value + "</style>";
             let js = "<script>" + document.getElementById("js").value + "<\/script>";
+            
+            // In koodhka gudaha ku jira uu noqdo mid responsive ah
+            let meta = '<meta name="viewport" content="width=device-width, initial-scale=1.0">';
+            
             let iframe = document.getElementById("preview");
-            
-            // Hubi in koodhku jiro, haddii kale sii default
-            let content = (html || css || js) ? html + css + js : "<body style='display:flex;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;color:#ccc;'>Sugaya koodhkaaga...</body>";
-            
-            iframe.srcdoc = content;
+            iframe.srcdoc = meta + html + css + js;
         }
 
-        // Si toos ah u cusboonaysii marka wax la qoro
         document.querySelectorAll('textarea').forEach(el => {
             el.addEventListener('input', updatePreview);
         });
 
-        // Bilow preview-ga markuu boggu furmo
         window.onload = updatePreview;
     </script>
 </body>
