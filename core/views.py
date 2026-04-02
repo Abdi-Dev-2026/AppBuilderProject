@@ -7,9 +7,9 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from .forms import UserRegisterForm, AppForm
-from .models import App
+from .models import App, UserActivity  # Waxaan ku darnay UserActivity
 
-# 1. Qaybta Login-ka (Nambar & Password)
+# 1. Qaybta Login-ka
 def login_view(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
@@ -19,6 +19,12 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 auth_login(request, user)
+                # Dhaqdhaqaaqa Login-ka
+                UserActivity.objects.create(
+                    user=user, 
+                    action="Wuxuu soo galay nidaamka (Login)",
+                    ip_address=request.META.get('REMOTE_ADDR')
+                )
                 messages.info(request, f"Ku soo dhawaaw, waxaad hadda u gashay nambarka: {username}.")
                 return redirect('dashboard')
             else:
@@ -31,12 +37,18 @@ def login_view(request):
         
     return render(request, 'core/login.html', {'form': form})
 
-# 2. Qaybta Diiwaangelinta (Register)
+# 2. Qaybta Diiwaangelinta
 def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save()
+            # Dhaqdhaqaaqa Register-ka
+            UserActivity.objects.create(
+                user=user, 
+                action="Wuxuu sameystay Account cusub",
+                ip_address=request.META.get('REMOTE_ADDR')
+            )
             username = form.cleaned_data.get('username')
             messages.success(request, f'Account-ka nambarkiisu yahay {username} si guul ah ayaa loo sameeyay!')
             return redirect('login')
@@ -44,13 +56,13 @@ def register(request):
         form = UserRegisterForm()
     return render(request, 'core/register.html', {'form': form})
 
-# 3. Qaybta Dashboard-ka
+# 3. Dashboard-ka
 @login_required
 def dashboard(request):
     apps = App.objects.filter(owner=request.user).order_by('-created_at')
     return render(request, 'core/dashboard.html', {'apps': apps})
 
-# 4. Qaybta App-ka Cusub lagu dhisayo
+# 4. Qaybta App-ka Cusub
 @login_required
 def create_app(request):
     if request.method == 'POST':
@@ -59,13 +71,20 @@ def create_app(request):
             app = form.save(commit=False)
             app.owner = request.user
             app.save()
+            # LA SOCODKA DHAGDHAQAAQA
+            UserActivity.objects.create(
+                user=request.user,
+                action="Wuxuu dhisay App cusub",
+                app_name=app.name,
+                ip_address=request.META.get('REMOTE_ADDR')
+            )
             messages.success(request, "App-kaaga si guul ah ayaa loo dhisay!")
             return redirect('dashboard')
     else:
         form = AppForm()
     return render(request, 'core/create_app.html', {'form': form})
 
-# 5. Qaybta EDIT CODE (Matoorka Editor-ka)
+# 5. Qaybta EDIT CODE
 @login_required
 def edit_code(request, app_id):
     app = get_object_or_404(App, id=app_id, owner=request.user)
@@ -75,41 +94,49 @@ def edit_code(request, app_id):
         app.css_code = request.POST.get('css_code')
         app.js_code = request.POST.get('js_code')
         app.save()
+        # LA SOCODKA DHAGDHAQAAQA
+        UserActivity.objects.create(
+            user=request.user,
+            action="Wuxuu beddelay koodhka App-ka",
+            app_name=app.name,
+            ip_address=request.META.get('REMOTE_ADDR')
+        )
         messages.success(request, "Isbeddelka koodhka si guul ah ayaa loo kaydiyay!")
         return redirect('dashboard')
 
     return render(request, 'core/editor.html', {'app': app})
 
-# 6. BOGGA LIVE-KA AH (Public Link)
+# 6. Bogga Live-ka ah
 def app_detail(request, slug):
     app = get_object_or_404(App, slug=slug)
     return render(request, 'core/app_detail.html', {'app': app})
 
-# 7. QAYBTA CUSUB: DOWNLOAD APP (ZIP EXPORT)
+# 7. DOWNLOAD APP (ZIP EXPORT + TRACKING)
+@login_required
 def download_app(request, slug):
-    # Waxaan soo qabanaynaa app-ka uu user-ku rabo
     app = get_object_or_404(App, slug=slug)
 
-    # Waxaan abuuraynaa meel kumeel-gaar ah oo ZIP-ka lagu keydiyo (RAM)
-    buffer = BytesIO()
+    # --- LA SOCODKA DHAGDHAQAAQA ---
+    UserActivity.objects.create(
+        user=request.user,
+        action="Soo dejiyay ZIP App",
+        app_name=app.name,
+        ip_address=request.META.get('REMOTE_ADDR')
+    )
+    # -------------------------------
 
+    buffer = BytesIO()
     with zipfile.ZipFile(buffer, 'w') as zip_file:
-        # 1. Waxaan dhex dhigaynaa HTML-ka
         zip_file.writestr("index.html", app.html_code)
-        
-        # 2. Waxaan ku daraynaa CSS iyo JS maadaama aad 'edit_code' ku dhex leedahay
         if app.css_code:
             zip_file.writestr("style.css", app.css_code)
         if app.js_code:
             zip_file.writestr("script.js", app.js_code)
 
-        # 3. README yar oo sharraxaya app-ka
-        readme_content = f"Magaca App-ka: {app.name}\nLagu dhisay: App Builder Somali\nLink-ga Live-ka ah: https://maxamed.up.railway.app/app/{app.slug}/"
+        readme_content = f"Magaca App-ka: {app.name}\nLagu dhisay: App Builder Somali\nLink: https://maxamed.up.railway.app/app/{app.slug}/"
         zip_file.writestr("README.txt", readme_content)
 
     buffer.seek(0)
-
-    # Waxaan u soo celinaynaa user-ka sidii fayl la soo dejisan karo
     response = HttpResponse(buffer, content_type='application/zip')
     response['Content-Disposition'] = f'attachment; filename={app.slug}_app.zip'
 
