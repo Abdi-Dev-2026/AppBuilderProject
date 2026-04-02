@@ -2,11 +2,37 @@
 <html lang="so">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{{ app.name }}</title>
     
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0f172a">
+
     <style>
-        /* Waxaan ku darnay 'safe' si Django u oggolaado koodhka CSS-ka */
+        /* --- NADIIFINTA BOGGA (RESET) --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #ffffff; /* Midabka asalka ah ee app-ka */
+        }
+
+        /* --- QAYBTA APP-KA USER-KA --- */
+        #user-app-content {
+            min-height: 100vh;
+            width: 100%;
+            position: relative;
+        }
+
+        /* --- DHEX-GELINTA CSS-KA USER-KA (Laga ma taaban) --- */
         {{ app.css_code|safe }}
     </style>
 </head>
@@ -17,8 +43,13 @@
     </div>
 
     <script>
-        /* Waxaan halkan ku daraynaa 'safe' si JS-ka u shaqeeyo */
         {{ app.js_code|safe }}
+    </script>
+
+    <script>
+        window.addEventListener('load', function() {
+            window.scrollTo(0, 1);
+        });
     </script>
 
 </body>
