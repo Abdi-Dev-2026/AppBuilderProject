@@ -62,10 +62,15 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static Files - Nidaamka ugu fudud ee Railway
+# --- STATIC FILES CONFIGURATION ---
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-# Waxaan u beddelnay sidii hore ee fududayd si uusan Error 500 u keenin
+
+# Kani waa qaybtii ka maqnayd ee aad codsatay:
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
+
 STATICFILES_STORAGE = 'whitenoise.storage.StaticFilesStorage'
 
 MEDIA_URL = '/media/'

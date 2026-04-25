@@ -7,9 +7,9 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from .forms import UserRegisterForm, AppForm
-from .models import App, UserActivity, SiteSetting  # SiteSetting waa lagu daray
+from .models import App, UserActivity, SiteSetting
 
-# 1. Maintenance View (CUSUB)
+# 1. Maintenance View
 def maintenance(request):
     setting = SiteSetting.objects.first()
     return render(request, 'core/maintenance.html', {'setting': setting})
@@ -86,19 +86,58 @@ def app_detail(request, slug):
     app = get_object_or_404(App, slug=slug)
     return render(request, 'core/app_detail.html', {'app': app})
 
-# 8. Download App (ZIP + Tracking)
+# 8. Download App (Offline Package - Version-kii u dambeeyay)
 def download_app(request, slug):
     app = get_object_or_404(App, slug=slug)
-    
+
+    # Track Activity (Haddii user-ku soo galay)
     if request.user.is_authenticated:
-        UserActivity.objects.create(user=request.user, action="Soo dejiyay ZIP", app_name=app.name, ip_address=request.META.get('REMOTE_ADDR'))
+        UserActivity.objects.create(
+            user=request.user, 
+            action="Soo dejiyay Offline Package (ZIP)", 
+            app_name=app.name, 
+            ip_address=request.META.get('REMOTE_ADDR')
+        )
 
     buffer = BytesIO()
     with zipfile.ZipFile(buffer, 'w') as zip_file:
-        zip_file.writestr("index.html", app.html_code)
-        if app.css_code: zip_file.writestr("style.css", app.css_code)
-        if app.js_code: zip_file.writestr("script.js", app.js_code)
-    
+
+        # 1. HTML (Waxaan isku xirnay CSS iyo JS si uu offline u shaqeeyo)
+        html_content = f"""
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>{app.name}</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+{app.html_code}
+<script src="script.js"></script>
+</body>
+</html>
+"""
+        zip_file.writestr("index.html", html_content)
+
+        # 2. CSS 
+        zip_file.writestr("style.css", app.css_code or "")
+
+        # 3. JS
+        zip_file.writestr("script.js", app.js_code or "")
+
+        # 4. README (Guide-ka isticmaalaha)
+        readme = f"""
+{app.name}
+
+Sida loo isticmaalo:
+1. Fur (Unzip) folder-ka.
+2. Double click ku samee faylka 'index.html'.
+3. App-ka wuxuu ku shaqeynayaa browser-kaaga isagoo offline ah.
+
+Waxaa dhisay: {app.owner.username}
+"""
+        zip_file.writestr("README.txt", readme)
+
     buffer.seek(0)
     response = HttpResponse(buffer, content_type='application/zip')
     response['Content-Disposition'] = f'attachment; filename={app.slug}.zip'

@@ -16,6 +16,8 @@
         .btn-login { background: #6c5ce7; color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-weight: bold; margin-top: 10px; transition: 0.3s; }
         .btn-login:hover { background: #a29bfe; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3); }
     </style>
+    <link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#0f172a">
 </head>
 <body>
 
@@ -35,6 +37,13 @@
         <p>Weli koonto ma lahan? <a href="{% url 'register' %}" class="text-info fw-bold text-decoration-none">Is-diiwaangeli halkan</a></p>
     </div>
 </div>
+
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/static/sw.js")
+    .then(() => console.log("Service Worker Registered"));
+}
+</script>
 
 </body>
 </html>
