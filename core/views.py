@@ -7,9 +7,14 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from .forms import UserRegisterForm, AppForm
-from .models import App, UserActivity  # Hubi in labaduba halkan ku jiraan
+from .models import App, UserActivity, SiteSetting  # SiteSetting waa lagu daray
 
-# 1. Login View
+# 1. Maintenance View (CUSUB)
+def maintenance(request):
+    setting = SiteSetting.objects.first()
+    return render(request, 'core/maintenance.html', {'setting': setting})
+
+# 2. Login View
 def login_view(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
@@ -29,7 +34,7 @@ def login_view(request):
         form.fields['username'].label = "Telefoonka"
     return render(request, 'core/login.html', {'form': form})
 
-# 2. Register View
+# 3. Register View
 def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
@@ -42,13 +47,13 @@ def register(request):
         form = UserRegisterForm()
     return render(request, 'core/register.html', {'form': form})
 
-# 3. Dashboard
+# 4. Dashboard
 @login_required
 def dashboard(request):
     apps = App.objects.filter(owner=request.user).order_by('-created_at')
     return render(request, 'core/dashboard.html', {'apps': apps})
 
-# 4. Create App
+# 5. Create App
 @login_required
 def create_app(request):
     if request.method == 'POST':
@@ -63,7 +68,7 @@ def create_app(request):
         form = AppForm()
     return render(request, 'core/create_app.html', {'form': form})
 
-# 5. Edit Code
+# 6. Edit Code
 @login_required
 def edit_code(request, app_id):
     app = get_object_or_404(App, id=app_id, owner=request.user)
@@ -76,16 +81,15 @@ def edit_code(request, app_id):
         return redirect('dashboard')
     return render(request, 'core/editor.html', {'app': app})
 
-# 6. App Detail
+# 7. App Detail
 def app_detail(request, slug):
     app = get_object_or_404(App, slug=slug)
     return render(request, 'core/app_detail.html', {'app': app})
 
-# 7. Download App (ZIP + Tracking)
+# 8. Download App (ZIP + Tracking)
 def download_app(request, slug):
     app = get_object_or_404(App, slug=slug)
     
-    # Track Activity
     if request.user.is_authenticated:
         UserActivity.objects.create(user=request.user, action="Soo dejiyay ZIP", app_name=app.name, ip_address=request.META.get('REMOTE_ADDR'))
 

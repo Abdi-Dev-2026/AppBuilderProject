@@ -26,7 +26,7 @@ class App(models.Model):
     def __str__(self):
         return f"{self.name} - {self.owner.username}"
 
-# 2. MODEL-KA USER ACTIVITY (CUSUB)
+# 2. MODEL-KA USER ACTIVITY
 class UserActivity(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     action = models.CharField(max_length=255) 
@@ -39,3 +39,12 @@ class UserActivity(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.action} - {self.timestamp}"
+
+# 3. MODEL-KA SITE SETTINGS (Maintenance Mode)
+class SiteSetting(models.Model):
+    maintenance_mode = models.BooleanField(default=False)
+    message = models.TextField(default="Website-ka waxaa ku socda horumarin, fadlan dib u soo laabo.")
+    video_url = models.URLField(blank=True, null=True)
+
+    def __str__(self):
+        return "Site Settings"

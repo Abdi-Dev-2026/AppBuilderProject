@@ -3,6 +3,9 @@ from . import views
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
+    # 0. Maintenance Mode (CUSUB)
+    path('maintenance/', views.maintenance, name='maintenance'),
+
     # 1. Diiwaangelinta (Register)
     path('register/', views.register, name='register'),
     
@@ -22,10 +25,8 @@ urlpatterns = [
     path('edit-code/<int:app_id>/', views.edit_code, name='edit_code'),
 
     # 7. BOGGA LIVE-KA AH (Public App Link)
-    # Kani wuxuu kuu oggolaanayaa link u eg: /app/magaca-app-ka/
     path('app/<slug:slug>/', views.app_detail, name='app_detail'),
 
-    # 8. QAYBTA CUSUB: SOO DEJINTA APP-KA (Download ZIP)
-    # Kani waa badhanka dhalinaya faylka ZIP-ka ah
+    # 8. SOO DEJINTA APP-KA (Download ZIP)
     path('download/<slug:slug>/', views.download_app, name='download_app'),
 ]
