@@ -23,8 +23,13 @@ def login_view(request):
             password = form.cleaned_data.get('password')
             user = authenticate(username=username, password=password)
             if user is not None:
+                # Halkan waxaa lagu daray auth_login si user-ku u galo
                 auth_login(request, user)
-                UserActivity.objects.create(user=user, action="Wuxuu soo galay (Login)", ip_address=request.META.get('REMOTE_ADDR'))
+                UserActivity.objects.create(
+                    user=user, 
+                    action="Wuxuu soo galay (Login)", 
+                    ip_address=request.META.get('REMOTE_ADDR')
+                )
                 messages.info(request, f"Ku soo dhawaaw: {username}.")
                 return redirect('dashboard')
             else:
@@ -40,7 +45,11 @@ def register(request):
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-            UserActivity.objects.create(user=user, action="Wuxuu sameystay Account", ip_address=request.META.get('REMOTE_ADDR'))
+            UserActivity.objects.create(
+                user=user, 
+                action="Wuxuu sameystay Account", 
+                ip_address=request.META.get('REMOTE_ADDR')
+            )
             messages.success(request, 'Si guul ah ayaa lagu diiwaangeliyey!')
             return redirect('login')
     else:
@@ -62,7 +71,12 @@ def create_app(request):
             app = form.save(commit=False)
             app.owner = request.user
             app.save()
-            UserActivity.objects.create(user=request.user, action="Wuxuu dhisay App", app_name=app.name, ip_address=request.META.get('REMOTE_ADDR'))
+            UserActivity.objects.create(
+                user=request.user, 
+                action="Wuxuu dhisay App", 
+                app_name=app.name, 
+                ip_address=request.META.get('REMOTE_ADDR')
+            )
             return redirect('dashboard')
     else:
         form = AppForm()
@@ -77,7 +91,12 @@ def edit_code(request, app_id):
         app.css_code = request.POST.get('css_code')
         app.js_code = request.POST.get('js_code')
         app.save()
-        UserActivity.objects.create(user=request.user, action="Wuxuu beddelay koodhka", app_name=app.name, ip_address=request.META.get('REMOTE_ADDR'))
+        UserActivity.objects.create(
+            user=request.user, 
+            action="Wuxuu beddelay koodhka", 
+            app_name=app.name, 
+            ip_address=request.META.get('REMOTE_ADDR')
+        )
         return redirect('dashboard')
     return render(request, 'core/editor.html', {'app': app})
 
@@ -86,11 +105,10 @@ def app_detail(request, slug):
     app = get_object_or_404(App, slug=slug)
     return render(request, 'core/app_detail.html', {'app': app})
 
-# 8. Download App (Offline Package - Version-kii u dambeeyay)
+# 8. Download App (Offline Package)
 def download_app(request, slug):
     app = get_object_or_404(App, slug=slug)
 
-    # Track Activity (Haddii user-ku soo galay)
     if request.user.is_authenticated:
         UserActivity.objects.create(
             user=request.user, 
@@ -101,8 +119,7 @@ def download_app(request, slug):
 
     buffer = BytesIO()
     with zipfile.ZipFile(buffer, 'w') as zip_file:
-
-        # 1. HTML (Waxaan isku xirnay CSS iyo JS si uu offline u shaqeeyo)
+        # 1. HTML
         html_content = f"""
 <!DOCTYPE html>
 <html>
@@ -125,7 +142,7 @@ def download_app(request, slug):
         # 3. JS
         zip_file.writestr("script.js", app.js_code or "")
 
-        # 4. README (Guide-ka isticmaalaha)
+        # 4. README
         readme = f"""
 {app.name}
 

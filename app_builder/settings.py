@@ -66,7 +66,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Kani waa qaybtii ka maqnayd ee aad codsatay:
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
@@ -76,9 +75,14 @@ STATICFILES_STORAGE = 'whitenoise.storage.StaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# --- AUTHENTICATION & SESSIONS ---
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
 LOGIN_URL = 'login'
+
+# Koodhka cusub ee Session-ka:
+SESSION_COOKIE_AGE = 1209600  # 2 toddobaad (User-ka ma bixi doono)
+SESSION_SAVE_EVERY_REQUEST = True 
 
 # CSRF Trusted Origins
 CSRF_TRUSTED_ORIGINS = [
