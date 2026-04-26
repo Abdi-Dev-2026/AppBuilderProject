@@ -72,6 +72,43 @@
             {% endfor %}
         </div>
     </div>
+<div id="install-container" style="display: none; text-align: center; margin: 20px;">
+    <button id="install-button" style="background-color: #2563eb; color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
+        📲 Soo Degso App-ka (Install)
+    </button>
+</div>
+<script>
+let deferredPrompt;
+const installContainer = document.getElementById('install-container');
+const installButton = document.getElementById('install-button');
 
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Ka hortag browser-ka inuu iska soo saaro banner-ka caadiga ah
+  e.preventDefault();
+  // Kaydi dhacdada (event) si aan dib ugu isticmaalno
+  deferredPrompt = e;
+  // Muuji badhanka casriga ah ee aan dhisnay
+  installContainer.style.display = 'block';
+});
+
+installButton.addEventListener('click', async () => {
+  if (deferredPrompt) {
+    // Muuji daaqadda Install-ka
+    deferredPrompt.prompt();
+    // Sug jawaabta user-ka
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`User response: ${outcome}`);
+    // Iska qari badhanka maadaama la isticmaalay
+    deferredPrompt = null;
+    installContainer.style.display = 'none';
+  }
+});
+
+// Haddii App-ka horay loo install gareeyey, qari badhanka
+window.addEventListener('appinstalled', () => {
+  console.log('App-ka waa la install gareeyey! Mahadsanid.');
+  installContainer.style.display = 'none';
+});
+</script>
 </body>
 </html>
