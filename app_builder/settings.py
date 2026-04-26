@@ -21,7 +21,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'core.middleware.MaintenanceMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # Waa inuu halkan joogaa
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -80,8 +80,9 @@ LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
 LOGIN_URL = 'login'
 
-# Koodhka cusub ee Session-ka:
-SESSION_COOKIE_AGE = 1209600  # 2 toddobaad (User-ka ma bixi doono)
+# Koodhka cusub ee Session-ka (Muddo 1 sano ah):
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 365  # 1 Year
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_SAVE_EVERY_REQUEST = True 
 
 # CSRF Trusted Origins

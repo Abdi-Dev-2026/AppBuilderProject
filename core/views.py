@@ -14,29 +14,51 @@ def maintenance(request):
     setting = SiteSetting.objects.first()
     return render(request, 'core/maintenance.html', {'setting': setting})
 
-# 2. Login View
+# 2. Login View (Nidaamka Remember Me iyo Activity Tracking)
 def login_view(request):
     if request.method == 'POST':
+        # Waxaan isticmaaleynaa AuthenticationForm si amniga loo sugo
         form = AuthenticationForm(request, data=request.POST)
+        
+        # Haddii aad isticmaaleyso HTML form caadi ah (ma ahan {{ form }})
+        # waxaan ka aqrinaynaa 'remember_me' checkbox-ga
+        remember_me = request.POST.get('remember_me')
+
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
+            
+            # Hubinta user-ka
+            user = authenticate(request, username=username, password=password)
+            
             if user is not None:
-                # Halkan waxaa lagu daray auth_login si user-ku u galo
                 auth_login(request, user)
+                
+                # Nidaamka Remember Me:
+                # Haddii uusan calaamadeyn, session-ka wuxuu dhacayaa marka browser-ka la xiro (0)
+                # Haddii uu calaamadeeyo, wuxuu raacayaa SESSION_COOKIE_AGE-ga settings.py (1 sano)
+                if not remember_me:
+                    request.session.set_expiry(0)
+                else:
+                    request.session.set_expiry(60 * 60 * 24 * 365) # 1 Year
+
+                # Diiwaangelinta dhaqdhaqaaqa
                 UserActivity.objects.create(
                     user=user, 
                     action="Wuxuu soo galay (Login)", 
                     ip_address=request.META.get('REMOTE_ADDR')
                 )
+                
                 messages.info(request, f"Ku soo dhawaaw: {username}.")
                 return redirect('dashboard')
             else:
-                messages.error(request, "Nambarka ama Password-ka ma saxna.")
+                messages.error(request, "Username ama password waa khalad")
+        else:
+            messages.error(request, "Nambarka ama Password-ka ma saxna.")
     else:
         form = AuthenticationForm()
-        form.fields['username'].label = "Telefoonka"
+        form.fields['username'].label = "Telefoonka / Username"
+        
     return render(request, 'core/login.html', {'form': form})
 
 # 3. Register View
@@ -119,7 +141,6 @@ def download_app(request, slug):
 
     buffer = BytesIO()
     with zipfile.ZipFile(buffer, 'w') as zip_file:
-        # 1. HTML
         html_content = f"""
 <!DOCTYPE html>
 <html>
@@ -135,22 +156,14 @@ def download_app(request, slug):
 </html>
 """
         zip_file.writestr("index.html", html_content)
-
-        # 2. CSS 
         zip_file.writestr("style.css", app.css_code or "")
-
-        # 3. JS
         zip_file.writestr("script.js", app.js_code or "")
-
-        # 4. README
+        
         readme = f"""
 {app.name}
-
 Sida loo isticmaalo:
 1. Fur (Unzip) folder-ka.
 2. Double click ku samee faylka 'index.html'.
-3. App-ka wuxuu ku shaqeynayaa browser-kaaga isagoo offline ah.
-
 Waxaa dhisay: {app.owner.username}
 """
         zip_file.writestr("README.txt", readme)
