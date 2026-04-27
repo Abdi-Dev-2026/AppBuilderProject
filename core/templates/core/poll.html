@@ -30,22 +30,32 @@ body{
 .container{
   max-width:600px;
   margin:50px auto;
+  padding:10px;
+}
+
+/* POLL CARD */
+.poll-card {
   background:#0f172a;
   padding:25px;
   border-radius:15px;
+  margin-bottom: 20px;
+  border: 1px solid #1e293b;
 }
 
 /* BUTTONS */
 .poll-btn{
   width:100%;
   padding:12px;
-  margin:10px 0;
+  margin:10px 0 5px 0;
   background:#16a34a;
   border:none;
   border-radius:10px;
   color:white;
   font-weight:bold;
   cursor:pointer;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
 }
 
 .poll-btn:hover{
@@ -57,12 +67,19 @@ body{
   height:8px;
   background:#334155;
   border-radius:5px;
-  margin-bottom:10px;
+  margin-bottom:15px;
+  overflow: hidden;
 }
 
 .fill{
   height:100%;
   background:#22c55e;
+  transition: width 0.5s ease-in-out;
+}
+
+.stats {
+    font-size: 0.8rem;
+    color: #94a3b8;
 }
 </style>
 </head>
@@ -72,35 +89,45 @@ body{
 <div class="nav">
   <a href="/">Home</a>
   <a href="/quiz/">Quiz</a>
+  <a href="/poll/">Poll</a>
+  <a href="/content/">Content</a>
 </div>
 
 <div class="container">
-  <h2>📊 Poll</h2>
+  <h2 style="text-align: center;">📊 Cod-bixinnada (Polls)</h2>
 
-  {% if poll %}
-  <form method="POST" action="{% url 'vote_poll' poll.id %}">
-    {% csrf_token %}
+  {% for poll in polls %}
+  <div class="poll-card">
+    <form method="POST" action="{% url 'vote_poll' poll.id %}">
+      {% csrf_token %}
 
-    <p><b>{{ poll.question }}</b></p>
+      <p><b>{{ poll.question }}</b></p>
 
-    <button class="poll-btn" name="choice" value="1">
-      {{ poll.option1 }} ({{ poll.votes1 }})
-    </button>
-    <div class="bar">
-      <div class="fill" style="width:{{ poll.votes1 }}%"></div>
+      <button class="poll-btn" name="choice" value="1">
+        <span>A) {{ poll.option1 }}</span>
+        <span>{{ poll.votes1 }} cod</span>
+      </button>
+      <div class="bar">
+        <div class="fill" style="width: {{ poll.votes1 }}%;"></div>
+      </div>
+
+      <button class="poll-btn" name="choice" value="2">
+        <span>B) {{ poll.option2 }}</span>
+        <span>{{ poll.votes2 }} cod</span>
+      </button>
+      <div class="bar">
+        <div class="fill" style="width: {{ poll.votes2 }}%;"></div>
+      </div>
+
+      <p class="stats">Wadarta guud ee codadka: {{ poll.total_votes }}</p>
+
+    </form>
+  </div>
+  {% empty %}
+    <div style="text-align: center; padding: 50px;">
+        <p>Hadda wax cod-bixin ah ma jiraan. Admin-ka ka soo geli!</p>
     </div>
-
-    <button class="poll-btn" name="choice" value="2">
-      {{ poll.option2 }} ({{ poll.votes2 }})
-    </button>
-    <div class="bar">
-      <div class="fill" style="width:{{ poll.votes2 }}%"></div>
-    </div>
-
-  </form>
-  {% else %}
-    <p>Ma jiro poll hadda.</p>
-  {% endif %}
+  {% endfor %}
 
 </div>
 

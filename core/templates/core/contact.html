@@ -33,17 +33,24 @@ body{
   background:#0f172a;
   padding:30px;
   border-radius:15px;
+  border: 1px solid #1e293b;
 }
 
 /* FORM */
 input, textarea{
-  width:100%;
+  width: 100%;
+  box-sizing: border-box; /* Si padding-ku uusan bannaanka ugu saarin */
   padding:12px;
   margin:10px 0;
   border-radius:8px;
-  border:none;
+  border:1px solid #334155;
   background:#1e293b;
   color:white;
+  outline: none;
+}
+
+input:focus, textarea:focus {
+  border-color: #2563eb;
 }
 
 button{
@@ -55,23 +62,45 @@ button{
   color:white;
   font-weight:bold;
   cursor:pointer;
+  transition: 0.3s;
+}
+
+button:hover{
+  background: #1d4ed8;
 }
 
 /* SOCIAL */
 .social{
-  margin-top:20px;
+  margin-top:30px;
   text-align:center;
+  border-top: 1px solid #334155;
+  padding-top: 20px;
 }
 
 .social a{
   display:inline-block;
-  margin:10px;
+  margin:5px;
   color:white;
   text-decoration:none;
   background:#1e293b;
-  padding:10px 15px;
+  padding:10px 20px;
   border-radius:8px;
+  font-size: 0.9rem;
+  transition: 0.3s;
 }
+
+.social a:hover {
+  background: #334155;
+}
+
+/* ALERT MESSAGES */
+.alert {
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+.alert-success { background: #10b981; color: white; }
 </style>
 </head>
 
@@ -86,22 +115,27 @@ button{
 
 <div class="container">
   <h2>📞 Contact Us</h2>
-
   <p style="color:#94a3b8;">Haddii aad qabto su’aal ama aad rabto caawimaad, nala soo xiriir:</p>
 
-  <!-- FORM -->
-  <form>
-    <input type="text" placeholder="Magacaaga">
-    <input type="email" placeholder="Email">
-    <textarea rows="5" placeholder="Fariintaada..."></textarea>
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-success">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <form method="POST">
+    {% csrf_token %}
+    <input type="text" name="name" placeholder="Magacaaga" required>
+    <input type="email" name="email" placeholder="Email-kaaga" required>
+    <textarea name="message" rows="5" placeholder="Fariintaada qor..." required></textarea>
     <button type="submit">Dir Fariinta</button>
   </form>
 
-  <!-- SOCIAL -->
   <div class="social">
     <h3>📲 Nala Soco</h3>
-
-    <a href="https://wa.me/252616898182">WhatsApp</a>
+    <a href="https://wa.me/252616898182" target="_blank">WhatsApp</a>
     <a href="#">Instagram</a>
     <a href="#">TikTok</a>
     <a href="#">Facebook</a>

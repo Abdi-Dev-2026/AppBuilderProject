@@ -8,132 +8,177 @@
 <meta name="keywords" content="samee app, app builder somalia">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-:root{
-  --bg:#020617;
-  --nav:#0f172a;
-  --card:#1e293b;
-  --primary:#2563eb;
-  --text:#f8fafc;
-  --muted:#94a3b8;
+<style> /* MASTER MUCJISO CSS 
+   Dhisay: Gemini AI for Maxamed Samee App
+*/
+
+:root {
+    --bg: #020617;
+    --nav: rgba(15, 23, 42, 0.8); /* Glassmorphism */
+    --card: #1e293b;
+    --primary: #2563eb;
+    --secondary: #7c3aed;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --glow: rgba(37, 99, 235, 0.4);
 }
 
-body{
-  margin:0;
-  font-family:system-ui;
-  background:var(--bg);
-  color:var(--text);
+body {
+    margin: 0;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
 }
 
-/* NAV */
-.nav{
-  background:var(--nav);
-  padding:15px;
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  flex-wrap:wrap;
-  position:sticky;
-  top:0;
+/* --- ANIMATION: BACKGOUND NOOL --- */
+@keyframes mesh-gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
-.nav a{
-  color:white;
-  text-decoration:none;
-  padding:8px 15px;
-  border-radius:6px;
+/* --- NAV (Glassmorphism Effect) --- */
+.nav {
+    background: var(--nav);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.nav a:hover{
-  background:#1e293b;
-  color:var(--primary);
+.nav a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* HERO */
-.hero{
-  text-align:center;
-  padding:120px 20px;
-  background:linear-gradient(rgba(2,6,23,.85), rgba(2,6,23,.85)),
-  url('https://images.unsplash.com/photo-1550745165-9bc0b252726f');
-  background-size:cover;
+.nav a:hover {
+    background: var(--primary);
+    box-shadow: 0 0 15px var(--glow);
+    transform: translateY(-3px);
 }
 
-.hero h1{
-  font-size:50px;
+/* --- HERO (3D Effect & Floating) --- */
+.hero {
+    text-align: center;
+    padding: 150px 20px;
+    background: radial-gradient(circle at top right, rgba(124, 58, 237, 0.2), transparent),
+                radial-gradient(circle at bottom left, rgba(37, 99, 235, 0.2), transparent);
+    position: relative;
 }
 
-.hero p{
-  color:var(--muted);
-  max-width:600px;
-  margin:auto;
+.hero h1 {
+    font-size: clamp(40px, 8vw, 70px);
+    margin-bottom: 15px;
+    background: linear-gradient(to right, #fff, var(--muted));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: floating 3s ease-in-out infinite;
 }
 
-.btn{
-  display:inline-block;
-  margin-top:25px;
-  padding:14px 30px;
-  background:var(--primary);
-  color:white;
-  border-radius:10px;
-  text-decoration:none;
+@keyframes floating {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
 }
 
-/* FEATURES */
-.section{
-  max-width:1000px;
-  margin:50px auto;
-  padding:20px;
-  text-align:center;
+.btn {
+    display: inline-block;
+    margin-top: 25px;
+    padding: 16px 35px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    border-radius: 14px;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+    transition: 0.4s;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:20px;
+.btn:hover {
+    transform: scale(1.05) translateY(-5px);
+    box-shadow: 0 15px 35px var(--glow);
 }
 
-.card{
-  background:var(--card);
-  padding:25px;
-  border-radius:15px;
-  transition:.3s;
+/* --- CARDS (3D Hover & Glow) --- */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    padding: 20px;
 }
 
-.card:hover{
-  transform:translateY(-5px);
+.card {
+    background: var(--card);
+    padding: 35px;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-.card a{
-  display:inline-block;
-  margin-top:15px;
-  color:white;
-  text-decoration:none;
-  background:var(--primary);
-  padding:10px 20px;
-  border-radius:8px;
+/* Qaybta "Mucjisada" ee Card-ka markuu mouse-ku saaran yahay */
+.card:hover {
+    transform: perspective(1000px) rotateX(5deg) rotateY(5deg) translateY(-10px);
+    border-color: var(--primary);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
-/* FOOTER */
-.footer{
-  text-align:center;
-  padding:30px;
-  color:var(--muted);
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+    transition: 0.5s;
 }
-</style>
+
+.card:hover::before {
+    left: 100%;
+}
+
+.card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+/* --- FOOTER --- */
+.footer {
+    text-align: center;
+    padding: 50px;
+    color: var(--muted);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(0,0,0,0.2);
+}</style>
 </head>
 
 <body>
 
-<!-- NAV -->
 <div class="nav">
-  <a href="#">Home</a>
+  <a href="/">Home</a>
   <a href="/quiz/">Quiz</a>
   <a href="/poll/">Poll</a>
   <a href="/about/">About</a>
   <a href="/contact/">Contact</a>
 
   {% if user.is_authenticated %}
-    <a href="/dashboard/">Dashboard</a>
+    <a href="/dashboard/" style="background: var(--primary);">Dashboard</a>
     <a href="/logout/">Logout</a>
   {% else %}
     <a href="/login/">Login</a>
@@ -141,48 +186,79 @@ body{
   {% endif %}
 </div>
 
-<!-- HERO -->
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li class="{{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
 <div class="hero">
   <h1>Maxamed Samee App 🚀</h1>
   <p>Samee app & website adigoon kood qorayn. Bilow mashruucaaga maanta.</p>
-  <a href="/register/" class="btn">Bilow Hadda</a>
+  {% if not user.is_authenticated %}
+    <a href="/register/" class="btn">Bilow Hadda (Free)</a>
+  {% else %}
+    <a href="/dashboard/" class="btn">Gali Dashboard-kaaga</a>
+  {% endif %}
 </div>
 
-<!-- FEATURES -->
 <div class="section">
   <h2>🚀 Adeegyada Platform-ka</h2>
 
   <div class="grid">
 
     <div class="card">
-      <h3>🧠 Quiz System</h3>
-      <p>Ciyaar su'aalo oo test garee aqoontaada.</p>
-      <a href="/quiz/">Tag Quiz</a>
+      <h3>🧠 Latest Quiz</h3>
+      {% if quiz %}
+        <p>{{ quiz.question }}</p>
+        <form action="/submit-quiz/" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="correct" value="{{ quiz.correct_answer }}">
+            <select name="answer" style="width:100%; padding:8px; border-radius:5px; margin-bottom:10px;">
+                <option value="1">{{ quiz.option1 }}</option>
+                <option value="2">{{ quiz.option2 }}</option>
+            </select>
+            <button type="submit" class="btn" style="margin-top:0; width:100%;">Submit</button>
+        </form>
+      {% else %}
+        <p>Hadda ma jiro Quiz firfircoon.</p>
+        <a href="/quiz/">View All</a>
+      {% endif %}
     </div>
 
     <div class="card">
-      <h3>📊 Poll System</h3>
-      <p>Ka qayb qaado codbixin oo arag fikradaha dadka.</p>
-      <a href="/poll/">Tag Poll</a>
+      <h3>📊 Latest Poll</h3>
+      {% if poll %}
+        <p>{{ poll.question }}</p>
+        <div style="text-align: left; font-size: 0.8rem; color: var(--muted);">
+            A: {{ poll.votes1 }} cod | B: {{ poll.votes2 }} cod
+        </div>
+        <a href="/poll/">Ka Qayb Qaado</a>
+      {% else %}
+        <p>Hadda ma jirto codbixin firfircoon.</p>
+        <a href="/poll/">Tag Poll</a>
+      {% endif %}
     </div>
 
     <div class="card">
       <h3>🔥 Content</h3>
       <p>Daawo videos & sawiro admin-ka soo geliyo.</p>
-      <a href="/content/">Daawo</a>
+      <a href="/content/">Daawo Content-ka</a>
     </div>
 
     <div class="card">
-      <h3>📞 Contact</h3>
-      <p>Nala soo xiriir si toos ah.</p>
-      <a href="/contact/">Contact</a>
+      <h3>📞 Support</h3>
+      <p>Nala soo xiriir si toos ah haddii aad caawimaad u baahato.</p>
+      <a href="/contact/">Nala Xiriir</a>
     </div>
 
   </div>
 </div>
 
 <div class="footer">
-  © 2026 Maxamed Samee App
+  © 2026 Maxamed Samee App | Version 2.0
 </div>
 
 </body>

@@ -57,6 +57,7 @@ img, iframe{
   width:100%;
   border-radius:10px;
   margin-bottom:10px;
+  border: none;
 }
 
 /* TITLE */
@@ -69,11 +70,14 @@ img, iframe{
 .desc{
   color:#94a3b8;
   font-size:0.9rem;
+  margin-bottom: 10px;
 }
 
 /* BUTTONS */
 .actions{
   margin-top:10px;
+  display: flex;
+  gap: 10px;
 }
 
 .btn{
@@ -81,7 +85,9 @@ img, iframe{
   border:none;
   border-radius:8px;
   cursor:pointer;
-  margin-right:5px;
+  text-decoration: none;
+  font-size: 0.8rem;
+  display: inline-block;
 }
 
 .like{background:#ef4444;color:white;}
@@ -104,15 +110,15 @@ img, iframe{
 
   <div class="grid">
 
-    {% for item in contents %}
+    {% for item in all_contents %}
     <div class="card">
 
       {% if item.image %}
-        <img src="{{ item.image.url }}">
+        <img src="{{ item.image.url }}" alt="{{ item.title }}">
       {% endif %}
 
       {% if item.video_url %}
-        <iframe src="{{ item.video_url }}"></iframe>
+        <iframe width="100%" height="200" src="{{ item.video_url }}" allowfullscreen></iframe>
       {% endif %}
 
       <div class="title">{{ item.title }}</div>
@@ -121,15 +127,21 @@ img, iframe{
         <div class="desc">{{ item.description }}</div>
       {% endif %}
 
-      <!-- ACTIONS (future backend) -->
       <div class="actions">
-        <button class="btn like">❤️ Like</button>
-        <button class="btn comment">💬 Comment</button>
+        <a href="{% url 'like_content' item.id %}" class="btn like">
+            ❤️ Like ({{ item.total_likes }})
+        </a>
+        
+        <button class="btn comment" onclick="alert('Comment section coming soon!')">
+            💬 Comment ({{ item.comments.count }})
+        </button>
       </div>
 
     </div>
     {% empty %}
-      <p>Wali wax content ah lama soo gelin.</p>
+      <div style="grid-column: 1/-1; text-align: center; padding: 50px;">
+          <p>Wali wax content ah lama soo gelin. Fadlan Admin-ka ka soo dar!</p>
+      </div>
     {% endfor %}
 
   </div>

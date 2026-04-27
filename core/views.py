@@ -1,7 +1,7 @@
 import zipfile
 from io import BytesIO
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
@@ -14,11 +14,19 @@ from .models import App, UserActivity, SiteSetting, HomepageContent, Quiz, Poll,
 # -----------------------------------------------------------
 
 def home(request):
-    """Homepage-ka rasmiga ah oo leh Content, Quiz, iyo Poll"""
+    """Homepage-ka rasmiga ah: Wuxuu soo bandhigaa xogta ugu dambeysa"""
+    # 1. Hubi haddii Website-ku Maintenance ku jiro
+    setting = SiteSetting.objects.first()
+    if setting and setting.maintenance_mode and not request.user.is_staff:
+        return redirect('maintenance')
+
     contents = HomepageContent.objects.filter(is_active=True).order_by('-created_at')
     main_contents = Content.objects.all().order_by('-created_at')
-    setting = SiteSetting.objects.first()
+    
+    # Soo qaad Quiz-kii ugu dambeeyay ee Active ah
     quiz = Quiz.objects.filter(is_active=True).last()
+    
+    # Soo qaad Poll-kii ugu dambeeyay ee Active ah
     poll = Poll.objects.filter(is_active=True).last()
 
     return render(request, 'core/homepage.html', {
@@ -29,24 +37,28 @@ def home(request):
         'poll': poll
     })
 
-def homepage(request):
-    """Simple view for homepage (Alternative)"""
-    return render(request, 'core/homepage.html')
-
-def quiz_page(request):
-    return render(request, 'core/quiz.html')
-
-def poll_page(request):
-    return render(request, 'core/poll.html')
-
 def about_page(request):
+    """Bogga ku saabsan website-ka"""
     return render(request, 'core/about.html')
 
 def contact_page(request):
+    """Bogga xiriirka (Contact)"""
     return render(request, 'core/contact.html')
 
 def content_page(request):
-    return render(request, 'core/content.html')
+    """Bogga muujinaya dhamaan content-ka"""
+    all_contents = Content.objects.all().order_by('-created_at')
+    return render(request, 'core/content.html', {'all_contents': all_contents})
+
+def quiz_page(request):
+    """Dhamaan Quizzes-ka firfircoon"""
+    quizzes = Quiz.objects.filter(is_active=True).order_by('-id')
+    return render(request, 'core/quiz.html', {'quizzes': quizzes})
+
+def poll_page(request):
+    """Dhamaan Polls-ka firfircoon"""
+    polls = Poll.objects.filter(is_active=True).order_by('-id')
+    return render(request, 'core/poll.html', {'polls': polls})
 
 def maintenance(request):
     setting = SiteSetting.objects.first()
@@ -59,13 +71,10 @@ def maintenance(request):
 @login_required
 def like_content(request, content_id):
     content = get_object_or_404(Content, id=content_id)
-    like, created = Like.objects.get_or_create(
-        user=request.user,
-        content=content
-    )
+    like, created = Like.objects.get_or_create(user=request.user, content=content)
     if not created:
-        like.delete()  # Haddii uu hore u jiray waa laga masaxayaa (Unlike)
-    return redirect('home')
+        like.delete()
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
 
 @login_required
 def add_comment(request, content_id):
@@ -73,26 +82,24 @@ def add_comment(request, content_id):
         content = get_object_or_404(Content, id=content_id)
         text = request.POST.get("text")
         if text:
-            Comment.objects.create(
-                user=request.user,
-                content=content,
-                text=text
-            )
-    return redirect('home')
+            Comment.objects.create(user=request.user, content=content, text=text)
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
 
 def submit_quiz(request):
+    """Hubinta jawaabta Quiz-ka (Logic-ga saxda ah)"""
     if request.method == "POST":
-        selected = request.POST.get("answer")
-        correct = request.POST.get("correct")
+        selected = request.POST.get("answer") # Tan waxaa laga helaa Radio Button-ka
+        correct = request.POST.get("correct")   # Tan waxaa laga helaa Hidden Input-ka
+        
         if selected == correct:
             messages.success(request, "Hambalyo! Jawaabtaadu waa sax. ✅")
-            return redirect('/?quiz=correct')
         else:
             messages.error(request, "Waan ka xunnahay, jawaabtu ma saxna. ❌")
-            return redirect('/?quiz=wrong')
-    return redirect('home')
+            
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
 
 def vote_poll(request, poll_id):
+    """Codeynta Poll-ka"""
     if request.method == "POST":
         poll = get_object_or_404(Poll, id=poll_id)
         choice = request.POST.get("choice")
@@ -102,7 +109,7 @@ def vote_poll(request, poll_id):
             poll.votes2 += 1
         poll.save()
         messages.success(request, "Codkaaga waa la diiwaangeliyey. 👍")
-    return redirect('home')
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
 
 # -----------------------------------------------------------
 # 3. AUTH & DASHBOARD VIEWS
@@ -111,33 +118,30 @@ def vote_poll(request, poll_id):
 def login_view(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
-        remember_me = request.POST.get('remember_me')
         if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                auth_login(request, user)
-                if not remember_me:
-                    request.session.set_expiry(0)
-                else:
-                    request.session.set_expiry(60 * 60 * 24 * 365)
-                
-                UserActivity.objects.create(
-                    user=user, 
-                    action="Wuxuu soo galay (Login)", 
-                    ip_address=request.META.get('REMOTE_ADDR')
-                )
-                messages.info(request, f"Ku soo dhawaaw: {username}.")
-                return redirect('dashboard')
+            user = form.get_user()
+            auth_login(request, user)
+            
+            # Remember me logic
+            if not request.POST.get('remember_me'):
+                request.session.set_expiry(0)
             else:
-                messages.error(request, "Username ama password waa khalad")
-        else:
-            messages.error(request, "Xogta ma saxna.")
+                request.session.set_expiry(1209600) # 2 todobaad
+
+            UserActivity.objects.create(
+                user=user, 
+                action="Wuxuu soo galay (Login)", 
+                ip_address=request.META.get('REMOTE_ADDR')
+            )
+            return redirect('dashboard')
     else:
         form = AuthenticationForm()
-        form.fields['username'].label = "Telefoonka / Username"
     return render(request, 'core/login.html', {'form': form})
+
+def logout_view(request):
+    auth_logout(request)
+    messages.info(request, "Si guul ah ayaad uga baxday.")
+    return redirect('login')
 
 def register(request):
     if request.method == 'POST':
@@ -149,7 +153,7 @@ def register(request):
                 action="Wuxuu sameystay Account", 
                 ip_address=request.META.get('REMOTE_ADDR')
             )
-            messages.success(request, 'Si guul ah ayaa lagu diiwaangeliyey!')
+            messages.success(request, 'Si guul ah ayaad u diiwaangashay!')
             return redirect('login')
     else:
         form = UserRegisterForm()
@@ -157,6 +161,7 @@ def register(request):
 
 @login_required
 def dashboard(request):
+    # CILAD-BAX: 'order_of' waxaa loo beddelay 'order_by'
     apps = App.objects.filter(owner=request.user).order_by('-created_at')
     return render(request, 'core/dashboard.html', {'apps': apps})
 
@@ -197,6 +202,7 @@ def edit_code(request, app_id):
             app_name=app.name, 
             ip_address=request.META.get('REMOTE_ADDR')
         )
+        messages.success(request, "Koodhka waa la badbaadiyey!")
         return redirect('dashboard')
     return render(request, 'core/editor.html', {'app': app})
 
@@ -206,6 +212,8 @@ def app_detail(request, slug):
 
 def download_app(request, slug):
     app = get_object_or_404(App, slug=slug)
+    
+    # Record activity
     if request.user.is_authenticated:
         UserActivity.objects.create(
             user=request.user, 
@@ -213,14 +221,28 @@ def download_app(request, slug):
             app_name=app.name, 
             ip_address=request.META.get('REMOTE_ADDR')
         )
+
     buffer = BytesIO()
     with zipfile.ZipFile(buffer, 'w') as zip_file:
-        html_content = f"<!DOCTYPE html><html><head><meta charset='UTF-8'><title>{app.name}</title><link rel='stylesheet' href='style.css'></head><body>{app.html_code}<script src='script.js'></script></body></html>"
+        html_content = f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <title>{app.name}</title>
+    <link rel='stylesheet' href='style.css'>
+</head>
+<body>
+    {app.html_code}
+    <script src='script.js'></script>
+</body>
+</html>"""
         zip_file.writestr("index.html", html_content)
         zip_file.writestr("style.css", app.css_code or "")
         zip_file.writestr("script.js", app.js_code or "")
+        
         readme = f"{app.name}\nDhisay: {app.owner.username}\nDouble click 'index.html' si aad u furto."
         zip_file.writestr("README.txt", readme)
+
     buffer.seek(0)
     response = HttpResponse(buffer, content_type='application/zip')
     response['Content-Disposition'] = f'attachment; filename={app.slug}.zip'

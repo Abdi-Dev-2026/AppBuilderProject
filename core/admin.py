@@ -12,12 +12,13 @@ class AppAdmin(admin.ModelAdmin):
     search_fields = ('name', 'owner__username')
     list_filter = ('created_at',)
 
-# 2. Admin-ka User Activity (Dhaqdhaqaaqa Users-ka)
+# 2. Admin-ka User Activity
 @admin.register(UserActivity)
 class UserActivityAdmin(admin.ModelAdmin):
     list_display = ('user', 'action', 'app_name', 'timestamp', 'ip_address')
     list_filter = ('action', 'timestamp')
     search_fields = ('user__username', 'action', 'app_name')
+    readonly_fields = ('timestamp', 'ip_address') # Looma baahna in la beddelo xogtan
 
 # 3. Admin-ka Site Settings
 @admin.register(SiteSetting)
@@ -31,7 +32,7 @@ class HomepageContentAdmin(admin.ModelAdmin):
     list_filter = ('is_active', 'created_at')
     search_fields = ('title', 'description')
 
-# 5. NEW: Admin-ka Content (Meesha Like-ta iyo Comment-ka ay ku xiran yihiin)
+# 5. Admin-ka Content (Like-ta iyo Comment-ka)
 @admin.register(Content)
 class ContentAdmin(admin.ModelAdmin):
     list_display = ('title', 'created_at', 'get_total_likes')
@@ -41,29 +42,31 @@ class ContentAdmin(admin.ModelAdmin):
         return obj.total_likes()
     get_total_likes.short_description = 'Total Likes'
 
-# 6. NEW: Admin-ka Like
+# 6. Admin-ka Like & Comment
 @admin.register(Like)
 class LikeAdmin(admin.ModelAdmin):
     list_display = ('user', 'content')
-    list_filter = ('content',)
 
-# 7. NEW: Admin-ka Comment
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('user', 'content', 'text', 'created_at')
-    list_filter = ('created_at', 'user')
     search_fields = ('text', 'user__username')
+    list_filter = ('created_at',)
 
-# 8. Admin-ka Quiz
+# 7. Admin-ka Quiz
 @admin.register(Quiz)
 class QuizAdmin(admin.ModelAdmin):
-    list_display = ('question', 'is_active', 'correct_answer')
+    # Waxaan ku daray 'correct_answer' si aad Admin-ka uga aragto option-ka saxda ah (1, 2, ama 3)
+    list_display = ('question', 'correct_answer', 'is_active')
     list_filter = ('is_active',)
     search_fields = ('question',)
 
-# 9. Admin-ka Poll
+# 8. Admin-ka Poll
 @admin.register(Poll)
 class PollAdmin(admin.ModelAdmin):
     list_display = ('question', 'is_active', 'votes1', 'votes2')
     list_filter = ('is_active',)
     search_fields = ('question',)
+
+# MUHIIM: Ha ku darin 'admin.site.register(App)' hoos, 
+# waayo '@admin.register(App)' ee sare ayaa qabanaysa shaqadaas.
