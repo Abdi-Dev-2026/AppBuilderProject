@@ -7,61 +7,112 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from .forms import UserRegisterForm, AppForm
-from .models import App, UserActivity, SiteSetting
+from .models import App, UserActivity, SiteSetting, HomepageContent, Quiz, Poll, Content, Like, Comment
 
-# 1. Maintenance View
-def maintenance(request):
+# 1. Homepage View (Multiple Contents, Quiz, Poll, Like & Comment support)
+def home(request):
+    # Soo qaad xogta xayeysiiska/content-ka bogga hore
+    contents = HomepageContent.objects.filter(is_active=True).order_by('-created_at')
+    
+    # Soo qaad content-ka kale ee dadku Like-ta iyo Comment-ka saarayaan
+    main_contents = Content.objects.all().order_by('-created_at')
+    
     setting = SiteSetting.objects.first()
-    return render(request, 'core/maintenance.html', {'setting': setting})
+    
+    # Soo qaad Quiz-ka iyo Poll-ka ugu dambeeyay ee firfircoon
+    quiz = Quiz.objects.filter(is_active=True).last()
+    poll = Poll.objects.filter(is_active=True).last()
 
-# 2. Login View (Nidaamka Remember Me iyo Activity Tracking)
+    return render(request, 'core/homepage.html', {
+        'contents': contents,
+        'main_contents': main_contents,
+        'setting': setting,
+        'quiz': quiz,
+        'poll': poll
+    })
+
+# 2. Interactive Logic (Like & Comment)
+@login_required
+def like_content(request, content_id):
+    content = get_object_or_404(Content, id=content_id)
+    like, created = Like.objects.get_or_create(
+        user=request.user,
+        content=content
+    )
+    if not created:
+        like.delete()  # Haddii uu hore u jiray waa laga masaxayaa (Unlike)
+    return redirect('home')
+
+@login_required
+def add_comment(request, content_id):
+    if request.method == "POST":
+        content = get_object_or_404(Content, id=content_id)
+        text = request.POST.get("text")
+        if text:
+            Comment.objects.create(
+                user=request.user,
+                content=content,
+                text=text
+            )
+    return redirect('home')
+
+# 3. Quiz & Poll Logic
+def submit_quiz(request):
+    if request.method == "POST":
+        selected = request.POST.get("answer")
+        correct = request.POST.get("correct")
+        if selected == correct:
+            messages.success(request, "Hambalyo! Jawaabtaadu waa sax. ✅")
+            return redirect('/?quiz=correct')
+        else:
+            messages.error(request, "Waan ka xunnahay, jawaabtu ma saxna. ❌")
+            return redirect('/?quiz=wrong')
+    return redirect('home')
+
+def vote_poll(request, poll_id):
+    if request.method == "POST":
+        poll = get_object_or_404(Poll, id=poll_id)
+        choice = request.POST.get("choice")
+        if choice == "1":
+            poll.votes1 += 1
+        elif choice == "2":
+            poll.votes2 += 1
+        poll.save()
+        messages.success(request, "Codkaaga waa la diiwaangeliyey. 👍")
+    return redirect('home')
+
+# 4. Auth & Dashboard Views
 def login_view(request):
     if request.method == 'POST':
-        # Waxaan isticmaaleynaa AuthenticationForm si amniga loo sugo
         form = AuthenticationForm(request, data=request.POST)
-        
-        # Haddii aad isticmaaleyso HTML form caadi ah (ma ahan {{ form }})
-        # waxaan ka aqrinaynaa 'remember_me' checkbox-ga
         remember_me = request.POST.get('remember_me')
-
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-            
-            # Hubinta user-ka
             user = authenticate(request, username=username, password=password)
-            
             if user is not None:
                 auth_login(request, user)
-                
-                # Nidaamka Remember Me:
-                # Haddii uusan calaamadeyn, session-ka wuxuu dhacayaa marka browser-ka la xiro (0)
-                # Haddii uu calaamadeeyo, wuxuu raacayaa SESSION_COOKIE_AGE-ga settings.py (1 sano)
                 if not remember_me:
                     request.session.set_expiry(0)
                 else:
-                    request.session.set_expiry(60 * 60 * 24 * 365) # 1 Year
-
-                # Diiwaangelinta dhaqdhaqaaqa
+                    request.session.set_expiry(60 * 60 * 24 * 365)
+                
                 UserActivity.objects.create(
                     user=user, 
                     action="Wuxuu soo galay (Login)", 
                     ip_address=request.META.get('REMOTE_ADDR')
                 )
-                
                 messages.info(request, f"Ku soo dhawaaw: {username}.")
                 return redirect('dashboard')
             else:
                 messages.error(request, "Username ama password waa khalad")
         else:
-            messages.error(request, "Nambarka ama Password-ka ma saxna.")
+            messages.error(request, "Xogta ma saxna.")
     else:
         form = AuthenticationForm()
         form.fields['username'].label = "Telefoonka / Username"
-        
     return render(request, 'core/login.html', {'form': form})
 
-# 3. Register View
 def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
@@ -78,13 +129,12 @@ def register(request):
         form = UserRegisterForm()
     return render(request, 'core/register.html', {'form': form})
 
-# 4. Dashboard
 @login_required
 def dashboard(request):
     apps = App.objects.filter(owner=request.user).order_by('-created_at')
     return render(request, 'core/dashboard.html', {'apps': apps})
 
-# 5. Create App
+# 5. App Building Logic
 @login_required
 def create_app(request):
     if request.method == 'POST':
@@ -104,7 +154,6 @@ def create_app(request):
         form = AppForm()
     return render(request, 'core/create_app.html', {'form': form})
 
-# 6. Edit Code
 @login_required
 def edit_code(request, app_id):
     app = get_object_or_404(App, id=app_id, owner=request.user)
@@ -122,53 +171,33 @@ def edit_code(request, app_id):
         return redirect('dashboard')
     return render(request, 'core/editor.html', {'app': app})
 
-# 7. App Detail
 def app_detail(request, slug):
     app = get_object_or_404(App, slug=slug)
     return render(request, 'core/app_detail.html', {'app': app})
 
-# 8. Download App (Offline Package)
+# 6. Tools & Utilities
 def download_app(request, slug):
     app = get_object_or_404(App, slug=slug)
-
     if request.user.is_authenticated:
         UserActivity.objects.create(
             user=request.user, 
-            action="Soo dejiyay Offline Package (ZIP)", 
+            action="Soo dejiyay ZIP Package", 
             app_name=app.name, 
             ip_address=request.META.get('REMOTE_ADDR')
         )
-
     buffer = BytesIO()
     with zipfile.ZipFile(buffer, 'w') as zip_file:
-        html_content = f"""
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>{app.name}</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-{app.html_code}
-<script src="script.js"></script>
-</body>
-</html>
-"""
+        html_content = f"<!DOCTYPE html><html><head><meta charset='UTF-8'><title>{app.name}</title><link rel='stylesheet' href='style.css'></head><body>{app.html_code}<script src='script.js'></script></body></html>"
         zip_file.writestr("index.html", html_content)
         zip_file.writestr("style.css", app.css_code or "")
         zip_file.writestr("script.js", app.js_code or "")
-        
-        readme = f"""
-{app.name}
-Sida loo isticmaalo:
-1. Fur (Unzip) folder-ka.
-2. Double click ku samee faylka 'index.html'.
-Waxaa dhisay: {app.owner.username}
-"""
+        readme = f"{app.name}\nDhisay: {app.owner.username}\nDouble click 'index.html' si aad u furto."
         zip_file.writestr("README.txt", readme)
-
     buffer.seek(0)
     response = HttpResponse(buffer, content_type='application/zip')
     response['Content-Disposition'] = f'attachment; filename={app.slug}.zip'
     return response
+
+def maintenance(request):
+    setting = SiteSetting.objects.first()
+    return render(request, 'core/maintenance.html', {'setting': setting})

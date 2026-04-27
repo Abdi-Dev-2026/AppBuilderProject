@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 
-# 1. MODEL-KA APP-KA
+# 1. MODEL-KA APP-KA (Halkaan dadku apps ku dhistaan)
 class App(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
@@ -26,7 +26,8 @@ class App(models.Model):
     def __str__(self):
         return f"{self.name} - {self.owner.username}"
 
-# 2. MODEL-KA USER ACTIVITY
+
+# 2. MODEL-KA USER ACTIVITY (Dhaqdhaqaaqa Users-ka)
 class UserActivity(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     action = models.CharField(max_length=255) 
@@ -38,7 +39,8 @@ class UserActivity(models.Model):
         verbose_name_plural = "User Activities"
 
     def __str__(self):
-        return f"{self.user.username} - {self.action} - {self.timestamp}"
+        return f"{self.user.username} - {self.action}"
+
 
 # 3. MODEL-KA SITE SETTINGS (Maintenance Mode)
 class SiteSetting(models.Model):
@@ -48,3 +50,82 @@ class SiteSetting(models.Model):
 
     def __str__(self):
         return "Site Settings"
+
+
+# 4. MODEL-KA CONTENT (Sawirro, Videos ama Xayeysiisyo)
+class Content(models.Model):
+    title = models.CharField(max_length=200, verbose_name="Cinwaanka")
+    image = models.ImageField(upload_to='content/', null=True, blank=True, verbose_name="Sawirka")
+    video_url = models.URLField(blank=True, null=True, verbose_name="YouTube URL")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def total_likes(self):
+        return self.likes.count()
+
+    def __str__(self):
+        return self.title
+
+
+# 5. MODEL-KA LIKE (Cidda Like saarta)
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.ForeignKey(Content, on_delete=models.CASCADE, related_name="likes")
+
+    class Meta:
+        unique_together = ('user', 'content') # Hal user hal mar ayuu like saari karaa hal content
+
+
+# 6. MODEL-KA COMMENT (Fikradaha dadweynaha)
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.ForeignKey(Content, on_delete=models.CASCADE, related_name="comments")
+    text = models.TextField(verbose_name="Faallada")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.content.title}"
+
+
+# 7. MODEL-KA HOMEPAGE CONTENT (Admin-ka oo xogta maamula)
+class HomepageContent(models.Model):
+    title = models.CharField(max_length=100, verbose_name="Cinwaanka")
+    description = models.TextField(blank=True, null=True, verbose_name="Sharaxaad")
+    image = models.ImageField(upload_to='homepage/', blank=True, null=True, verbose_name="Sawirka")
+    video_url = models.URLField(blank=True, null=True, verbose_name="YouTube Link")
+    is_active = models.BooleanField(default=True, verbose_name="Muuqaalka (Active)")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = "Homepage Contents"
+
+    def __str__(self):
+        return self.title
+
+
+# 8. MODEL-KA QUIZ
+class Quiz(models.Model):
+    question = models.CharField(max_length=255)
+    option1 = models.CharField(max_length=100)
+    option2 = models.CharField(max_length=100)
+    option3 = models.CharField(max_length=100, blank=True, null=True)
+    correct_answer = models.CharField(max_length=100)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name_plural = "Quizzes"
+
+    def __str__(self):
+        return self.question
+
+
+# 9. MODEL-KA POLL
+class Poll(models.Model):
+    question = models.CharField(max_length=255)
+    option1 = models.CharField(max_length=100)
+    option2 = models.CharField(max_length=100)
+    votes1 = models.IntegerField(default=0)
+    votes2 = models.IntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.question

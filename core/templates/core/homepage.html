@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Maxamed Samee App | Create Apps & Websites Online Free</title>
+    <meta name="description" content="Samee app iyo website online si fudud adigoon kood qoraya. Maamulo dashboard-kaaga oo dhis mustaqbalkaaga.">
+    <meta name="keywords" content="maxamed samee app, app builder somalia, create app online, somali app maker">
+    <meta name="author" content="Maxamed Samee App">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --dark-bg: #020617;
+            --nav-bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #22c55e;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .nav {
+            background: var(--nav-bg);
+            padding: 15px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav a {
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+            border-radius: 5px;
+        }
+
+        .nav a:hover {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 120px 20px;
+            background: linear-gradient(rgba(2, 6, 23, 0.85), rgba(2, 6, 23, 0.85)), 
+                        url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .hero h1 {
+            font-size: clamp(35px, 6vw, 60px);
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto 35px;
+        }
+
+        /* Generic Buttons */
+        .btn {
+            padding: 15px 35px;
+            background: var(--primary);
+            color: white;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        /* Section Layout */
+        .section {
+            padding: 60px 20px;
+            max-width: 1100px;
+            margin: 40px auto;
+            background: var(--nav-bg);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            text-align: center;
+        }
+
+        .section h2 {
+            font-size: 2.2rem;
+            margin-bottom: 35px;
+            color: var(--primary);
+        }
+
+        /* Content Grid & Social Interaction */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            padding: 10px;
+        }
+
+        .content-item {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+            transition: 0.3s;
+            text-align: left;
+        }
+
+        .content-item:hover {
+            transform: translateY(-5px);
+        }
+
+        iframe, img {
+            width: 100%;
+            border-radius: 10px;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            margin-bottom: 15px;
+        }
+
+        .item-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 10px 0;
+            color: white;
+        }
+
+        /* Social UI (Like & Comment) */
+        .like-section {
+            margin: 15px 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 15px;
+        }
+
+        .btn-like {
+            background: #2d3748;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-like:hover {
+            background: #e53e3e;
+        }
+
+        .comments-box {
+            margin-top: 20px;
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .comment-item {
+            background: #2d3748;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .comment-item b {
+            color: var(--primary);
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .comment-input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: white;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+
+        /* Interactive Elements (Quiz & Poll) */
+        .quiz-option {
+            display: flex;
+            align-items: center;
+            background: #1e293b;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .quiz-option:hover {
+            background: #334155;
+            border-color: var(--primary);
+        }
+
+        .poll-btn {
+            width: 100%;
+            padding: 14px;
+            margin: 10px 0;
+            background: #16a34a;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .vote-bar {
+            height: 10px;
+            background: #020617;
+            border-radius: 5px;
+            margin: -5px 0 15px;
+            overflow: hidden;
+        }
+
+        .vote-fill {
+            height: 100%;
+            background: var(--success);
+            transition: width 1s ease-in-out;
+        }
+
+        #installBox { display: none; text-align: center; margin-top: 20px; }
+
+        footer {
+            padding: 40px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid #1e293b;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="nav">
+    <a href="#">Home</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+    {% if user.is_authenticated %}
+        <a href="/dashboard/">Dashboard</a>
+        <a href="/logout/">Logout</a>
+    {% else %}
+        <a href="/login/">Login</a>
+        <a href="/register/" style="background: var(--primary);">Sign Up</a>
+    {% endif %}
+</div>
+
+<div class="hero">
+    <h1>Maxamed Samee App</h1>
+    <p>Ku dhis App-kaaga ama Website-kaaga si fudud adigoo isticmaalaya qalabka ugu casrisan online 🚀</p>
+    <a href="/register/" class="btn">Bilow Hadda - Waa Bilaash</a>
+    <div id="installBox">
+        <button onclick="installApp()" class="btn" style="margin-top:20px; background:#16a34a;">📲 Install Mobile App</button>
+    </div>
+</div>
+
+<div class="section" id="content">
+    <h2>🔥 Latest Content & Social</h2>
+    <div class="content-grid">
+        {% for item in contents %}
+            <div class="content-item">
+                {% if item.image %}
+                    <img src="{{ item.image.url }}" alt="{{ item.title }}">
+                {% endif %}
+
+                {% if item.video_url %}
+                    <iframe src="{{ item.video_url }}" frameborder="0" allowfullscreen></iframe>
+                {% endif %}
+
+                <p class="item-title">{{ item.title }}</p>
+                {% if item.description %}
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">{{ item.description }}</p>
+                {% endif %}
+
+                <div class="like-section">
+                    <form action="{% url 'like_content' item.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-like">
+                            ❤️ Like ({{ item.total_likes }})
+                        </button>
+                    </form>
+                </div>
+
+                <div class="comments-box">
+                    <h4 style="margin-top:0;">💬 Faallooyinka</h4>
+                    
+                    {% for comment in item.comments.all %}
+                        <div class="comment-item">
+                            <b>@{{ comment.user.username }}</b>
+                            <span>{{ comment.text }}</span>
+                        </div>
+                    {% empty %}
+                        <p style="color: var(--text-muted); font-size: 0.85rem;">Wali faallo lama dhiiban.</p>
+                    {% endfor %}
+
+                    <form action="{% url 'add_comment' item.id %}" method="POST" style="margin-top:15px;">
+                        {% csrf_token %}
+                        <input type="text" name="text" class="comment-input" placeholder="Qor faallo..." required>
+                        <button type="submit" class="btn" style="width:100%; padding:10px;">Dir</button>
+                    </form>
+                </div>
+            </div>
+        {% empty %}
+            <p style="width:100%;">Wali wax xog ah lama soo gelin.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="section">
+    <h2>🧠 Maanta iyo Quiz-ka</h2>
+    {% if quiz %}
+    <form method="POST" action="{% url 'submit_quiz' %}" style="text-align: left; max-width: 500px; margin: 0 auto;">
+        {% csrf_token %}
+        <p style="font-size:1.2rem; font-weight:bold; margin-bottom:20px;">{{ quiz.question }}</p>
+
+        <label class="quiz-option">
+            <input type="radio" name="answer" value="{{ quiz.option1 }}" required> &nbsp; {{ quiz.option1 }}
+        </label>
+
+        <label class="quiz-option">
+            <input type="radio" name="answer" value="{{ quiz.option2 }}"> &nbsp; {{ quiz.option2 }}
+        </label>
+
+        {% if quiz.option3 %}
+        <label class="quiz-option">
+            <input type="radio" name="answer" value="{{ quiz.option3 }}"> &nbsp; {{ quiz.option3 }}
+        </label>
+        {% endif %}
+
+        <input type="hidden" name="correct" value="{{ quiz.correct_answer }}">
+        <button type="submit" class="btn" style="width:100%; margin-top:20px;">🚀 Submit Answer</button>
+    </form>
+    {% else %}
+        <p>Ma jiro Quiz firfircoon hadda.</p>
+    {% endif %}
+</div>
+
+<div class="section">
+    <h2>📊 Codbixinta Toddobaadka</h2>
+    {% if poll %}
+    <form method="POST" action="{% url 'vote_poll' poll.id %}" style="max-width: 500px; margin: 0 auto;">
+        {% csrf_token %}
+        <p style="font-size:1.2rem; font-weight:bold; margin-bottom:20px;">{{ poll.question }}</p>
+
+        <button type="submit" name="choice" value="1" class="poll-btn">
+            <span>{{ poll.option1 }}</span> <span>{{ poll.votes1 }} cod</span>
+        </button>
+        <div class="vote-bar"><div class="vote-fill" style="width: {{ poll.votes1 }}%;"></div></div>
+
+        <button type="submit" name="choice" value="2" class="poll-btn">
+            <span>{{ poll.option2 }}</span> <span>{{ poll.votes2 }} cod</span>
+        </button>
+        <div class="vote-bar"><div class="vote-fill" style="width: {{ poll.votes2 }}%;"></div></div>
+    </form>
+    {% endif %}
+</div>
+
+<div class="section" id="about">
+    <h2>Naga Baro</h2>
+    <p>Maxamed Samee App waa madal loogu talagalay in dhalinyarada Soomaaliyeed ay si fudud ugu dhisato apps-kooda iyagoo adeegsanaya qalabka ugu casrisan ee coding-ka.</p>
+</div>
+
+<div class="section" id="contact">
+    <h2>Contact Support</h2>
+    <p>📧 Email: support@modeeq671@gmail.com</p>
+    <p>💬 WhatsApp: +252616898182</p>
+</div>
+
+<footer>
+    &copy; 2026 Maxamed Samee App. Dhamaan xuquuqda waa dhowran tahay.
+</footer>
+
+<script>
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        document.getElementById("installBox").style.display = "block";
+    });
+
+    function installApp() {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+        }
+    }
+</script>
+
+</body>
+</html>
