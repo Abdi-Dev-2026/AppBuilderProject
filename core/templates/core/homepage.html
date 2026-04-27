@@ -22,6 +22,8 @@
     --text: #f8fafc;
     --muted: #94a3b8;
     --glow: rgba(37, 99, 235, 0.4);
+    --success: #22c55e;
+    --error: #ef4444;
 }
 
 * {
@@ -72,6 +74,23 @@ body {
     box-shadow: 0 0 15px var(--glow);
 }
 
+/* --- MESSAGES (Alerts) --- */
+.messages {
+    list-style: none;
+    padding: 0;
+    margin: 20px auto;
+    max-width: 600px;
+}
+.messages li {
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+.success { background: var(--success); color: white; }
+.error { background: var(--error); color: white; }
+
 /* --- HERO SECTION --- */
 .hero {
     text-align: center;
@@ -105,9 +124,15 @@ body {
     color: white;
     border-radius: 12px;
     text-decoration: none;
+    border: none;
     font-weight: 700;
     box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
     transition: 0.3s;
+    cursor: pointer;
+}
+
+.btn:hover {
+    transform: scale(1.05);
 }
 
 /* --- GRID & CARDS --- */
@@ -117,10 +142,16 @@ body {
     padding: 40px 20px;
 }
 
+.section-title {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
 .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 25px;
+    padding: 20px;
 }
 
 .card {
@@ -137,40 +168,34 @@ body {
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
-/* --- MOBILE STYLES (Qaybta Mucjisada Mobile-ka) --- */
-@media (max-width: 768px) {
-    .nav {
-        padding: 10px 15px;
-    }
-    
-    .nav-links {
-        gap: 5px;
-        overflow-x: auto; /* Bogga wuxuu u weecanayaa dhinac haddii ay badanyihiin */
-        white-space: nowrap;
-        padding-bottom: 5px;
-        width: 100%;
-        justify-content: flex-start;
-    }
-
-    .nav a {
-        padding: 6px 12px;
-        font-size: 0.8rem;
-    }
-
-    .hero {
-        padding: 60px 15px;
-    }
-
-    .grid {
-        grid-template-columns: 1fr; /* Hal khaanad oo kaliya mobile-ka */
-    }
-
-    .card {
-        padding: 20px;
-    }
+/* --- QUIZ OPTIONS STYLING --- */
+.quiz-option {
+    display: block;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+    border: 1px solid transparent;
+    text-align: left;
+}
+.quiz-option:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary);
+}
+.quiz-option input {
+    margin-right: 10px;
 }
 
-/* --- FOOTER --- */
+/* --- MOBILE STYLES --- */
+@media (max-width: 768px) {
+    .nav { padding: 10px 15px; }
+    .hero { padding: 60px 15px; }
+    .grid { grid-template-columns: 1fr; }
+    .card { padding: 20px; }
+}
+
 .footer {
     text-align: center;
     padding: 40px;
@@ -184,19 +209,22 @@ body {
 <body>
 
 <div class="nav">
-  <a href="/">Home</a>
-  <a href="/quiz/">Quiz</a>
-  <a href="/poll/">Poll</a>
-  <a href="/about/">About</a>
-  <a href="/contact/">Contact</a>
+  <div class="nav-links">
+    <a href="/" class="active">Home</a>
+    <a href="/quiz/">Quiz</a>
+    <a href="/poll/">Poll</a>
+    <a href="/about/">About</a>
+    <a href="/contact/">Contact</a>
+  </div>
 
-  {% if user.is_authenticated %}
-    <a href="/dashboard/" style="background: var(--primary);">Dashboard</a>
-    <a href="/logout/">Logout</a>
-  {% else %}
-    <a href="/login/">Login</a>
-    <a href="/register/">Sign Up</a>
-  {% endif %}
+  <div class="nav-links">
+    {% if user.is_authenticated %}
+      <a href="/logout/">Logout</a>
+    {% else %}
+      <a href="/login/">Login</a>
+      <a href="/register/">Sign Up</a>
+    {% endif %}
+  </div>
 </div>
 
 {% if messages %}
@@ -217,61 +245,77 @@ body {
   {% endif %}
 </div>
 
-<div class="section">
-  <h2>🚀 Adeegyada Platform-ka</h2>
+<div class="container">
+  <h2 class="section-title">🚀 Adeegyada Platform-ka</h2>
 
   <div class="grid">
 
     <div class="card">
-      <h3>🧠 Latest Quiz</h3>
+      <h3 style="color: var(--secondary);">🧠 Latest Quiz</h3>
       {% if quiz %}
-        <p>{{ quiz.question }}</p>
-        <form action="/submit-quiz/" method="POST">
+        <p style="font-weight: bold; margin-bottom: 20px;">{{ quiz.question }}</p>
+        <form action="{% url 'submit_quiz' %}" method="POST">
             {% csrf_token %}
             <input type="hidden" name="correct" value="{{ quiz.correct_answer }}">
-            <select name="answer" style="width:100%; padding:8px; border-radius:5px; margin-bottom:10px;">
-                <option value="1">{{ quiz.option1 }}</option>
-                <option value="2">{{ quiz.option2 }}</option>
-            </select>
-            <button type="submit" class="btn" style="margin-top:0; width:100%;">Submit</button>
+            
+            <label class="quiz-option">
+                <input type="radio" name="answer" value="{{ quiz.option1 }}" required> {{ quiz.option1 }}
+            </label>
+            <label class="quiz-option">
+                <input type="radio" name="answer" value="{{ quiz.option2 }}"> {{ quiz.option2 }}
+            </label>
+            <label class="quiz-option">
+                <input type="radio" name="answer" value="{{ quiz.option3 }}"> {{ quiz.option3 }}
+            </label>
+            <label class="quiz-option">
+                <input type="radio" name="answer" value="{{ quiz.option4 }}"> {{ quiz.option4 }}
+            </label>
+
+            <button type="submit" class="btn" style="margin-top:15px; width:100%;">Gudbi Jawaabta</button>
         </form>
       {% else %}
         <p>Hadda ma jiro Quiz firfircoon.</p>
-        <a href="/quiz/">View All</a>
+        <a href="/quiz/" class="btn" style="width:100%; text-align:center;">Eeg Dhammaan</a>
       {% endif %}
     </div>
 
     <div class="card">
-      <h3>📊 Latest Poll</h3>
+      <h3 style="color: #06b6d4;">📊 Latest Poll</h3>
       {% if poll %}
-        <p>{{ poll.question }}</p>
-        <div style="text-align: left; font-size: 0.8rem; color: var(--muted);">
-            A: {{ poll.votes1 }} cod | B: {{ poll.votes2 }} cod
+        <p style="font-weight: bold;">{{ poll.question }}</p>
+        <div style="margin: 15px 0; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px;">
+            <div style="margin-bottom: 5px; font-size: 0.9rem;">
+                A: <b>{{ poll.votes1 }}</b> cod
+            </div>
+            <div style="font-size: 0.9rem;">
+                B: <b>{{ poll.votes2 }}</b> cod
+            </div>
         </div>
-        <a href="/poll/">Ka Qayb Qaado</a>
+        <a href="/poll/" class="btn" style="width:100%; text-align:center; background: #06b6d4;">Codee Hadda</a>
       {% else %}
         <p>Hadda ma jirto codbixin firfircoon.</p>
-        <a href="/poll/">Tag Poll</a>
+        <a href="/poll/" class="btn" style="width:100%; text-align:center;">Tag Polls</a>
       {% endif %}
     </div>
 
     <div class="card">
-      <h3>🔥 Content</h3>
-      <p>Daawo videos & sawiro admin-ka soo geliyo.</p>
-      <a href="/content/">Daawo Content-ka</a>
+      <h3 style="color: #f59e0b;">🔥 New Content</h3>
+      <p>Daawo videos & sawiro ku xiiso geliya oo admin-ka soo geliyo.</p>
+      <a href="/content/" class="btn" style="width:100%; text-align:center; background: #f59e0b;">Daawo Content-ka</a>
     </div>
 
     <div class="card">
-      <h3>📞 Support</h3>
-      <p>Nala soo xiriir si toos ah haddii aad caawimaad u baahato.</p>
-      <a href="/contact/">Nala Xiriir</a>
+      <h3 style="color: #10b981;">📞 Support</h3>
+      <p>Nala soo xiriir si toos ah haddii aad u baahato caawimaad farsamo.</p>
+      <a href="/contact/" class="btn" style="width:100%; text-align:center; background: #10b981;">Nala Xiriir</a>
     </div>
 
   </div>
 </div>
 
 <div class="footer">
-  © 2026 Maxamed Samee App | Version 2.0
+  © 2026 Maxamed Samee App | Version 2.0 <br>
+  <small style="color: var(--muted);">Dhisay Gemini AI - All Rights Reserved</small>
 </div>
 
 </body>

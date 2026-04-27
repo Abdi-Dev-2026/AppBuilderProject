@@ -1,4 +1,5 @@
 from django.contrib import admin
+from import_export.admin import ImportExportModelAdmin  # Tan waa muhiim in la soo dhisiyo
 from .models import (
     App, UserActivity, SiteSetting, HomepageContent, 
     Quiz, Poll, Content, Like, Comment
@@ -18,7 +19,7 @@ class UserActivityAdmin(admin.ModelAdmin):
     list_display = ('user', 'action', 'app_name', 'timestamp', 'ip_address')
     list_filter = ('action', 'timestamp')
     search_fields = ('user__username', 'action', 'app_name')
-    readonly_fields = ('timestamp', 'ip_address') # Looma baahna in la beddelo xogtan
+    readonly_fields = ('timestamp', 'ip_address')
 
 # 3. Admin-ka Site Settings
 @admin.register(SiteSetting)
@@ -32,7 +33,7 @@ class HomepageContentAdmin(admin.ModelAdmin):
     list_filter = ('is_active', 'created_at')
     search_fields = ('title', 'description')
 
-# 5. Admin-ka Content (Like-ta iyo Comment-ka)
+# 5. Admin-ka Content (Post-yada)
 @admin.register(Content)
 class ContentAdmin(admin.ModelAdmin):
     list_display = ('title', 'created_at', 'get_total_likes')
@@ -53,12 +54,13 @@ class CommentAdmin(admin.ModelAdmin):
     search_fields = ('text', 'user__username')
     list_filter = ('created_at',)
 
-# 7. Admin-ka Quiz
+# -----------------------------------------------------------
+# 7. ADMIN-KA QUIZ (CUSBOONAYSIIN: IMPORT/EXPORT)
+# -----------------------------------------------------------
 @admin.register(Quiz)
-class QuizAdmin(admin.ModelAdmin):
-    # Waxaan ku daray 'correct_answer' si aad Admin-ka uga aragto option-ka saxda ah (1, 2, ama 3)
-    list_display = ('question', 'correct_answer', 'is_active')
-    list_filter = ('is_active',)
+class QuizAdmin(ImportExportModelAdmin): # Kani wuxuu kuu oggolaanayaa soo gelinta kumanaan su'aalood
+    list_display = ('question', 'correct_answer', 'is_active', 'created_at')
+    list_filter = ('is_active', 'created_at')
     search_fields = ('question',)
 
 # 8. Admin-ka Poll
@@ -67,6 +69,3 @@ class PollAdmin(admin.ModelAdmin):
     list_display = ('question', 'is_active', 'votes1', 'votes2')
     list_filter = ('is_active',)
     search_fields = ('question',)
-
-# MUHIIM: Ha ku darin 'admin.site.register(App)' hoos, 
-# waayo '@admin.register(App)' ee sare ayaa qabanaysa shaqadaas.

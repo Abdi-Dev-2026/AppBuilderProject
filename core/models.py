@@ -1,4 +1,4 @@
-from django.db import models  # Waa la saxay (V-ga waa laga saaray)
+from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 
@@ -51,7 +51,7 @@ class SiteSetting(models.Model):
         return "Site Settings"
 
 
-# 4. MODEL-KA CONTENT
+# 4. MODEL-KA CONTENT (Articles/Posts)
 class Content(models.Model):
     title = models.CharField(max_length=200, verbose_name="Cinwaanka")
     image = models.ImageField(upload_to='content/', null=True, blank=True, verbose_name="Sawirka")
@@ -101,21 +101,19 @@ class HomepageContent(models.Model):
         return self.title
 
 
-# 8. MODEL-KA QUIZ (Waa la mideeyay, lana saxay)
+# 8. MODEL-KA QUIZ (CUSBOONAYSIIN: 4 Options & Advanced Logic)
 class Quiz(models.Model):
-    question = models.CharField(max_length=255)
-    option1 = models.CharField(max_length=100)
-    option2 = models.CharField(max_length=100)
-    option3 = models.CharField(max_length=100, blank=True, null=True)
+    question = models.CharField(max_length=500, verbose_name="Su'aasha")
+    option1 = models.CharField(max_length=255, verbose_name="Doorashada 1aad")
+    option2 = models.CharField(max_length=255, verbose_name="Doorashada 2aad")
+    option3 = models.CharField(max_length=255, verbose_name="Doorashada 3aad")
+    option4 = models.CharField(max_length=255, verbose_name="Doorashada 4aad")
     
-    # Waxaan kuu daray doorasho (Choices) si Admin-ka loogu fududeeyo
-    ANSWERS = (
-        ('1', 'Option 1'),
-        ('2', 'Option 2'),
-        ('3', 'Option 3'),
-    )
-    correct_answer = models.CharField(max_length=1, choices=ANSWERS, help_text="Dooro nambarka option-ka saxda ah")
-    is_active = models.BooleanField(default=True)
+    # Halkan waxaad ku qori doontaa qoraalka saxda ah (e.g. haddii option2 sax yahay, qoraalkiisa halkan ku qor)
+    correct_answer = models.CharField(max_length=255, verbose_name="Jawaabta Saxda Ah")
+    
+    is_active = models.BooleanField(default=True, verbose_name="Ma firfircoonaa?")
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name_plural = "Quizzes"
@@ -124,7 +122,7 @@ class Quiz(models.Model):
         return self.question
 
 
-# 9. MODEL-KA POLL
+# 9. MODEL-KA POLL (Codeynta)
 class Poll(models.Model):
     question = models.CharField(max_length=255)
     option1 = models.CharField(max_length=100)

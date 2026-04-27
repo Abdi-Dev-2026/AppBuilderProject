@@ -2,109 +2,106 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Quiz | Maxamed Samee App</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<title>Quiz Casri Ah</title>
 <style>
-body{
-  margin:0;
-  font-family:system-ui;
-  background:#020617;
-  color:white;
-}
+    :root {
+        --bg: #020617;
+        --card: #0f172a;
+        --primary: #2563eb;
+        --text: #f8fafc;
+    }
+    body { margin: 0; font-family: sans-serif; background: var(--bg); color: var(--text); }
+    .nav { background: var(--card); padding: 15px; text-align: center; border-bottom: 1px solid #1e293b; }
+    .nav a { color: white; margin: 0 15px; text-decoration: none; font-weight: 500; }
+    
+    .container { max-width: 600px; margin: 40px auto; padding: 20px; }
+    .quiz-card { background: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    
+    .option-label {
+        display: block;
+        background: #1e293b;
+        padding: 15px;
+        margin-bottom: 12px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: 0.3s;
+        border: 1px solid transparent;
+    }
+    .option-label:hover { background: #334155; border-color: var(--primary); }
+    .option-label input { margin-right: 15px; transform: scale(1.2); }
+    
+    .btn {
+        width: 100%; padding: 15px; background: var(--primary);
+        color: white; border: none; border-radius: 12px;
+        font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 10px;
+    }
 
-/* NAV */
-.nav{
-  background:#0f172a;
-  padding:15px;
-  text-align:center;
-}
-
-.nav a{
-  color:white;
-  margin:0 10px;
-  text-decoration:none;
-}
-
-/* CONTAINER */
-.container{
-  max-width:600px;
-  margin:50px auto;
-  background:#0f172a;
-  padding:25px;
-  border-radius:15px;
-}
-
-/* OPTIONS */
-.option{
-  display:block;
-  background:#1e293b;
-  padding:12px;
-  margin:10px 0;
-  border-radius:10px;
-  cursor:pointer;
-}
-
-.option:hover{
-  background:#334155;
-}
-
-/* BUTTON */
-.btn{
-  width:100%;
-  margin-top:15px;
-  padding:12px;
-  background:#2563eb;
-  border:none;
-  border-radius:10px;
-  color:white;
-  font-weight:bold;
-  cursor:pointer;
-}
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .container { margin: 20px auto; padding: 15px; }
+        .quiz-card { padding: 20px; }
+    }
 </style>
 </head>
-
 <body>
 
 <div class="nav">
-  <a href="/">Home</a>
-  <a href="/poll/">Poll</a>
+    <a href="/">Home</a>
+    <a href="/quiz/">Dhammaan Quiz-yada</a>
 </div>
 
 <div class="container">
-  <h2>🧠 Quiz</h2>
+    <div style="text-align: right; margin-bottom: 10px; color: #60a5fa;">
+        <b>Dhibcahaaga: {{ score }} / {{ total }}</b>
+    </div>
 
-  {% if quiz %}
-  <form method="POST" action="{% url 'submit_quiz' %}">
-    {% csrf_token %}
-
-    <p><b>{{ quiz.question }}</b></p>
-
-    <label class="option">
-      <input type="radio" name="answer" value="{{ quiz.option1 }}">
-      {{ quiz.option1 }}
-    </label>
-
-    <label class="option">
-      <input type="radio" name="answer" value="{{ quiz.option2 }}">
-      {{ quiz.option2 }}
-    </label>
-
-    {% if quiz.option3 %}
-    <label class="option">
-      <input type="radio" name="answer" value="{{ quiz.option3 }}">
-      {{ quiz.option3 }}
-    </label>
+    {% if messages %}
+        {% for message in messages %}
+            <div style="padding: 15px; margin-bottom: 20px; border-radius: 10px; background: #1e293b; color: white; border-left: 5px solid {% if 'success' in message.tags %}#22c55e{% else %}#ef4444{% endif %};">
+                {{ message }}
+            </div>
+        {% endfor %}
     {% endif %}
 
-    <input type="hidden" name="correct" value="{{ quiz.correct_answer }}">
+    {% if quiz %}
+    <div class="quiz-card">
+        <h2 style="color: var(--primary);">🧠 Challenge-ka Maanta</h2>
+        <p style="font-size: 1.2rem; margin-bottom: 25px;"><b>{{ quiz.question }}</b></p>
 
-    <button type="submit" class="btn">Submit Answer</button>
-  </form>
-  {% else %}
-    <p>Ma jiro quiz hadda.</p>
-  {% endif %}
+        <form method="POST" action="{% url 'submit_quiz' %}">
+            {% csrf_token %}
+            
+            <label class="option-label">
+                <input type="radio" name="answer" value="{{ quiz.option1 }}" required> {{ quiz.option1 }}
+            </label>
 
+            <label class="option-label">
+                <input type="radio" name="answer" value="{{ quiz.option2 }}"> {{ quiz.option2 }}
+            </label>
+
+            <label class="option-label">
+                <input type="radio" name="answer" value="{{ quiz.option3 }}"> {{ quiz.option3 }}
+            </label>
+
+            <label class="option-label">
+                <input type="radio" name="answer" value="{{ quiz.option4 }}"> {{ quiz.option4 }}
+            </label>
+
+            <input type="hidden" name="correct" value="{{ quiz.correct_answer }}">
+            <button type="submit" class="btn">Gudbi & Tan Xigta ➔</button>
+        </form>
+    </div>
+    {% else %}
+        <div class="quiz-card" style="text-align: center;">
+            <p>Ma jiro quiz firfircoon hadda. Iska hubi mar kale hadhow!</p>
+            <a href="/" style="color: var(--primary); text-decoration: none;">Ku laabo Home-ka</a>
+        </div>
+    {% endif %}
+
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{% url 'reset_quiz' %}" style="color: #94a3b8; text-decoration: none; font-size: 0.8rem;">Eber ka billow Quiz-ka</a>
+    </div>
 </div>
 
 </body>
