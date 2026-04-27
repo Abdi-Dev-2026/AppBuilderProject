@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Quiz | Maxamed Samee App</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  margin:0;
+  font-family:system-ui;
+  background:#020617;
+  color:white;
+}
+
+/* NAV */
+.nav{
+  background:#0f172a;
+  padding:15px;
+  text-align:center;
+}
+
+.nav a{
+  color:white;
+  margin:0 10px;
+  text-decoration:none;
+}
+
+/* CONTAINER */
+.container{
+  max-width:600px;
+  margin:50px auto;
+  background:#0f172a;
+  padding:25px;
+  border-radius:15px;
+}
+
+/* OPTIONS */
+.option{
+  display:block;
+  background:#1e293b;
+  padding:12px;
+  margin:10px 0;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+.option:hover{
+  background:#334155;
+}
+
+/* BUTTON */
+.btn{
+  width:100%;
+  margin-top:15px;
+  padding:12px;
+  background:#2563eb;
+  border:none;
+  border-radius:10px;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="nav">
+  <a href="/">Home</a>
+  <a href="/poll/">Poll</a>
+</div>
+
+<div class="container">
+  <h2>🧠 Quiz</h2>
+
+  {% if quiz %}
+  <form method="POST" action="{% url 'submit_quiz' %}">
+    {% csrf_token %}
+
+    <p><b>{{ quiz.question }}</b></p>
+
+    <label class="option">
+      <input type="radio" name="answer" value="{{ quiz.option1 }}">
+      {{ quiz.option1 }}
+    </label>
+
+    <label class="option">
+      <input type="radio" name="answer" value="{{ quiz.option2 }}">
+      {{ quiz.option2 }}
+    </label>
+
+    {% if quiz.option3 %}
+    <label class="option">
+      <input type="radio" name="answer" value="{{ quiz.option3 }}">
+      {{ quiz.option3 }}
+    </label>
+    {% endif %}
+
+    <input type="hidden" name="correct" value="{{ quiz.correct_answer }}">
+
+    <button type="submit" class="btn">Submit Answer</button>
+  </form>
+  {% else %}
+    <p>Ma jiro quiz hadda.</p>
+  {% endif %}
+
+</div>
+
+</body>
+</html>

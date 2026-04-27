@@ -2,11 +2,12 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from core import views # Soo dhoweynta views-ka core
+from core import views  # Soo dhoweynta views-ka core
 
 urlpatterns = [
     # 1. Homepage & Interactive Features (Direct Access)
-    path('', views.home, name='home'), 
+    # Waxaad ka heli kartaa halkan haddii aad rabto inaad si toos ah views u wacdo
+    path('', views.homepage, name='home'), 
     path('submit-quiz/', views.submit_quiz, name='submit_quiz'),
     path('vote/<int:poll_id>/', views.vote_poll, name='vote_poll'),
     
@@ -17,7 +18,8 @@ urlpatterns = [
     # 2. Admin Panel
     path('admin/', admin.site.urls),
 
-    # 3. Core URLs (Login, Register, Dashboard, etc.)
+    # 3. Core URLs (Login, Register, Dashboard, Code Editor, etc.)
+    # Khadkan wuxuu soo aqrinayaa dhamaan wixii ku jira core/urls.py
     path('', include('core.urls')),
 ]
 

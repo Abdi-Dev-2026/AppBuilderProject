@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Content | Maxamed Samee App</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  margin:0;
+  font-family:system-ui;
+  background:#020617;
+  color:white;
+}
+
+/* NAV */
+.nav{
+  background:#0f172a;
+  padding:15px;
+  text-align:center;
+}
+
+.nav a{
+  color:white;
+  margin:0 10px;
+  text-decoration:none;
+}
+
+/* SECTION */
+.container{
+  max-width:1100px;
+  margin:40px auto;
+  padding:20px;
+}
+
+/* GRID */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:20px;
+}
+
+/* CARD */
+.card{
+  background:#1e293b;
+  padding:15px;
+  border-radius:15px;
+  transition:0.3s;
+}
+
+.card:hover{
+  transform:translateY(-5px);
+}
+
+/* MEDIA */
+img, iframe{
+  width:100%;
+  border-radius:10px;
+  margin-bottom:10px;
+}
+
+/* TITLE */
+.title{
+  font-weight:bold;
+  margin-top:5px;
+}
+
+/* DESC */
+.desc{
+  color:#94a3b8;
+  font-size:0.9rem;
+}
+
+/* BUTTONS */
+.actions{
+  margin-top:10px;
+}
+
+.btn{
+  padding:8px 12px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  margin-right:5px;
+}
+
+.like{background:#ef4444;color:white;}
+.comment{background:#2563eb;color:white;}
+</style>
+</head>
+
+<body>
+
+<div class="nav">
+  <a href="/">Home</a>
+  <a href="/quiz/">Quiz</a>
+  <a href="/poll/">Poll</a>
+  <a href="/about/">About</a>
+  <a href="/contact/">Contact</a>
+</div>
+
+<div class="container">
+  <h2>🔥 Latest Content</h2>
+
+  <div class="grid">
+
+    {% for item in contents %}
+    <div class="card">
+
+      {% if item.image %}
+        <img src="{{ item.image.url }}">
+      {% endif %}
+
+      {% if item.video_url %}
+        <iframe src="{{ item.video_url }}"></iframe>
+      {% endif %}
+
+      <div class="title">{{ item.title }}</div>
+
+      {% if item.description %}
+        <div class="desc">{{ item.description }}</div>
+      {% endif %}
+
+      <!-- ACTIONS (future backend) -->
+      <div class="actions">
+        <button class="btn like">❤️ Like</button>
+        <button class="btn comment">💬 Comment</button>
+      </div>
+
+    </div>
+    {% empty %}
+      <p>Wali wax content ah lama soo gelin.</p>
+    {% endfor %}
+
+  </div>
+</div>
+
+</body>
+</html>

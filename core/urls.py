@@ -3,30 +3,38 @@ from . import views
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    # 0. Maintenance Mode (CUSUB)
+    # -----------------------------------------------------------
+    # 1. BOGAGGA GUUD (Public Pages)
+    # -----------------------------------------------------------
+    path('', views.homepage, name='home'),
+    path('about/', views.about_page, name='about'),
+    path('contact/', views.contact_page, name='contact'),
+    path('content/', views.content_page, name='content'),
     path('maintenance/', views.maintenance, name='maintenance'),
 
-    # 1. Diiwaangelinta (Register)
+    # -----------------------------------------------------------
+    # 2. XUBNAHA & AMAANKA (Auth & Dashboard)
+    # -----------------------------------------------------------
     path('register/', views.register, name='register'),
-    
-    # 2. Gelitaanka (Login)
     path('login/', views.login_view, name='login'), 
-    
-    # 3. Ka bixitaanka (Logout)
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    
-    # 4. Dashboard-ka (Liiska Apps-ka uu user-ku dhistay)
     path('dashboard/', views.dashboard, name='dashboard'),
-    
-    # 5. Dhismaha App-ka cusub
+
+    # -----------------------------------------------------------
+    # 3. DHISMAHA & MAAMULKA APP-KA (App Builder Logic)
+    # -----------------------------------------------------------
     path('create-app/', views.create_app, name='create_app'),
-
-    # 6. EDIT CODE (Matoorka Editor-ka iyo Live Preview-ga)
     path('edit-code/<int:app_id>/', views.edit_code, name='edit_code'),
-
-    # 7. BOGGA LIVE-KA AH (Public App Link)
     path('app/<slug:slug>/', views.app_detail, name='app_detail'),
-
-    # 8. SOO DEJINTA APP-KA (Download ZIP)
     path('download/<slug:slug>/', views.download_app, name='download_app'),
+
+    # -----------------------------------------------------------
+    # 4. WAXYAABAHA INTERACTIVE-KA AH (Quiz & Polls)
+    # -----------------------------------------------------------
+    path('quiz/', views.quiz_page, name='quiz'),
+    path('poll/', views.poll_page, name='poll'),
+    
+    # Haddii aad leedahay views-ka submit-ka iyo voting-ka halkan ku dar:
+    # path('submit-quiz/', views.submit_quiz, name='submit_quiz'),
+    # path('vote/<int:poll_id>/', views.vote_poll, name='vote_poll'),
 ]

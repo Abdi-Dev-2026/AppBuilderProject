@@ -9,17 +9,15 @@ from django.http import HttpResponse
 from .forms import UserRegisterForm, AppForm
 from .models import App, UserActivity, SiteSetting, HomepageContent, Quiz, Poll, Content, Like, Comment
 
-# 1. Homepage View (Multiple Contents, Quiz, Poll, Like & Comment support)
+# -----------------------------------------------------------
+# 1. BOGAGGA GUUD (Public & Static Pages)
+# -----------------------------------------------------------
+
 def home(request):
-    # Soo qaad xogta xayeysiiska/content-ka bogga hore
+    """Homepage-ka rasmiga ah oo leh Content, Quiz, iyo Poll"""
     contents = HomepageContent.objects.filter(is_active=True).order_by('-created_at')
-    
-    # Soo qaad content-ka kale ee dadku Like-ta iyo Comment-ka saarayaan
     main_contents = Content.objects.all().order_by('-created_at')
-    
     setting = SiteSetting.objects.first()
-    
-    # Soo qaad Quiz-ka iyo Poll-ka ugu dambeeyay ee firfircoon
     quiz = Quiz.objects.filter(is_active=True).last()
     poll = Poll.objects.filter(is_active=True).last()
 
@@ -31,7 +29,33 @@ def home(request):
         'poll': poll
     })
 
-# 2. Interactive Logic (Like & Comment)
+def homepage(request):
+    """Simple view for homepage (Alternative)"""
+    return render(request, 'core/homepage.html')
+
+def quiz_page(request):
+    return render(request, 'core/quiz.html')
+
+def poll_page(request):
+    return render(request, 'core/poll.html')
+
+def about_page(request):
+    return render(request, 'core/about.html')
+
+def contact_page(request):
+    return render(request, 'core/contact.html')
+
+def content_page(request):
+    return render(request, 'core/content.html')
+
+def maintenance(request):
+    setting = SiteSetting.objects.first()
+    return render(request, 'core/maintenance.html', {'setting': setting})
+
+# -----------------------------------------------------------
+# 2. INTERACTIVE LOGIC (Like, Comment, Quiz & Poll)
+# -----------------------------------------------------------
+
 @login_required
 def like_content(request, content_id):
     content = get_object_or_404(Content, id=content_id)
@@ -56,7 +80,6 @@ def add_comment(request, content_id):
             )
     return redirect('home')
 
-# 3. Quiz & Poll Logic
 def submit_quiz(request):
     if request.method == "POST":
         selected = request.POST.get("answer")
@@ -81,7 +104,10 @@ def vote_poll(request, poll_id):
         messages.success(request, "Codkaaga waa la diiwaangeliyey. 👍")
     return redirect('home')
 
-# 4. Auth & Dashboard Views
+# -----------------------------------------------------------
+# 3. AUTH & DASHBOARD VIEWS
+# -----------------------------------------------------------
+
 def login_view(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
@@ -134,7 +160,10 @@ def dashboard(request):
     apps = App.objects.filter(owner=request.user).order_by('-created_at')
     return render(request, 'core/dashboard.html', {'apps': apps})
 
-# 5. App Building Logic
+# -----------------------------------------------------------
+# 4. APP BUILDING & TOOLS
+# -----------------------------------------------------------
+
 @login_required
 def create_app(request):
     if request.method == 'POST':
@@ -175,7 +204,6 @@ def app_detail(request, slug):
     app = get_object_or_404(App, slug=slug)
     return render(request, 'core/app_detail.html', {'app': app})
 
-# 6. Tools & Utilities
 def download_app(request, slug):
     app = get_object_or_404(App, slug=slug)
     if request.user.is_authenticated:
@@ -197,7 +225,3 @@ def download_app(request, slug):
     response = HttpResponse(buffer, content_type='application/zip')
     response['Content-Disposition'] = f'attachment; filename={app.slug}.zip'
     return response
-
-def maintenance(request):
-    setting = SiteSetting.objects.first()
-    return render(request, 'core/maintenance.html', {'setting': setting})
