@@ -237,7 +237,7 @@ body {
 
 <div class="hero">
   <h1>Maxamed Samee App 🚀</h1>
-  <p>Samee app & website adigoon kood Qoraya. Bilow mashruucaaga maanta.</p>
+  <p>Samee app & website adigoo kood Qoraya. Bilow mashruucaaga maanta.</p>
   {% if not user.is_authenticated %}
     <a href="/register/" class="btn">Bilow Hadda (Free)</a>
   {% else %}
@@ -251,7 +251,7 @@ body {
   <div class="grid">
 
     <div class="card">
-      <h3 style="color: var(--secondary);">🧠 Latest Quiz</h3>
+      <h3 style="color: var(--secondary);">🧠 Su`aalo jijaabo ah</h3>
       {% if quiz %}
         <p style="font-weight: bold; margin-bottom: 20px;">{{ quiz.question }}</p>
         <form action="{% url 'submit_quiz' %}" method="POST">
@@ -280,7 +280,7 @@ body {
     </div>
 
     <div class="card">
-      <h3 style="color: #06b6d4;">🤖 Latest Poll</h3>
+      <h3 style="color: #06b6d4;">🤖 Cod bixinta maanta </h3>
       {% if poll %}
         <p style="font-weight: bold;">{{ poll.question }}</p>
         <div style="margin: 15px 0; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px;">
@@ -299,13 +299,13 @@ body {
     </div>
 
     <div class="card">
-      <h3 style="color: #f59e0b;">🔥 New Content</h3>
-      <p>Daawo videos & sawiro ku xiiso geliya oo admin-ka soo geliyo.</p>
+      <h3 style="color: #f59e0b;">🔥 Warbaahinta </h3>
+      <p>Daawo videos & sawiro ku xiiso geliya oo shirkadda soo gelisay.</p>
       <a href="/content/" class="btn" style="width:100%; text-align:center; background: #f59e0b;">Daawo Content-ka</a>
     </div>
 
     <div class="card">
-      <h3 style="color: #10b981;">📞 Support</h3>
+      <h3 style="color: #10b981;">📞 Caawimaad</h3>
       <p>Nala soo xiriir si toos ah haddii aad u baahato caawimaad farsamo.</p>
       <a href="/contact/" class="btn" style="width:100%; text-align:center; background: #10b981;">Nala Xiriir</a>
     </div>

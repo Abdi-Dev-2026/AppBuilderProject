@@ -23,25 +23,29 @@
             margin: 0; 
             background: var(--primary-bg); 
             color: white; 
-            overflow: hidden;
+            /* Waxaan ka saarnay overflow: hidden si moobilka loogu dhex socon karo */
         }
 
         header {
-            padding: 15px 30px;
+            padding: 15px 20px;
             background: rgba(30, 41, 59, 0.8);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid #334155;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap; /* Si uu madaxu isu dhuujiyo moobilka */
+            gap: 10px;
         }
+
+        header h2 { font-size: 1.2rem; margin: 0; }
 
         .container { 
             display: flex; 
             flex: 1; 
             padding: 20px; 
-            gap: 30px; 
-            overflow: hidden;
+            gap: 20px; 
+            overflow: hidden; /* Laptop-ka si uusan u jirin scroll labo ah */
         }
 
         /* --- EDITOR SECTION --- */
@@ -49,18 +53,19 @@
             flex: 1; 
             display: flex; 
             flex-direction: column; 
-            gap: 15px; 
+            gap: 12px; 
             background: var(--card-bg);
             padding: 20px;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             border: 1px solid #334155;
+            min-width: 0; /* Waxay ka hortagtaa inuu dillaaco */
         }
 
         label {
             font-weight: bold;
             color: var(--accent-color);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -78,6 +83,7 @@
             resize: none;
             transition: 0.3s;
             outline: none;
+            box-sizing: border-box;
         }
 
         textarea:focus {
@@ -85,38 +91,25 @@
             box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
         }
 
-        /* --- INFINIX NOTE 40 STYLE PREVIEW --- */
+        /* --- PREVIEW SECTION --- */
         .preview-section { 
-            width: 420px; 
+            width: 400px; 
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
         }
 
         .phone-case {
             position: relative;
-            width: 380px; 
-            height: 780px;
+            width: 340px; 
+            height: 680px;
             background: var(--phone-border);
-            border-radius: 45px; 
-            padding: 12px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), inset 0 0 2px 2px #444;
+            border-radius: 40px; 
+            padding: 10px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
             border: 4px solid #222;
-        }
-
-        .phone-case::before {
-            content: "";
-            position: absolute;
-            top: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 15px;
-            height: 15px;
-            background: #111;
-            border-radius: 50%;
-            z-index: 10;
-            border: 2px solid #222;
+            box-sizing: border-box;
         }
 
         iframe { 
@@ -124,64 +117,70 @@
             height: 100%; 
             background: white; 
             border: none; 
-            border-radius: 35px; 
+            border-radius: 30px; 
         }
 
         /* --- BUTTONS --- */
         .controls {
             display: flex;
-            gap: 15px;
-            margin-top: 10px;
+            gap: 10px;
+            margin-top: 5px;
+            flex-wrap: wrap;
         }
 
-        .save-btn { 
-            background: linear-gradient(135deg, #22c55e, #16a34a); 
-            color: white; 
-            padding: 15px; 
+        .save-btn, .share-btn, .download-link { 
+            padding: 12px; 
             border: none; 
             cursor: pointer; 
-            font-size: 1rem; 
+            font-size: 0.9rem; 
             font-weight: bold;
-            border-radius: 12px; 
+            border-radius: 10px; 
             flex: 1;
             transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
-        }
-
-        .save-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4); }
-
-        /* --- BADHANKA CUSUB EE SHARE --- */
-        .share-btn {
-            background: linear-gradient(135deg, #a855f7, #7e22ce);
-            color: white;
-            padding: 15px;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: bold;
-            flex: 1;
-            transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
-        }
-
-        .share-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4); }
-
-        .download-link {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: white;
-            padding: 15px;
-            border-radius: 12px;
+            text-align: center;
             text-decoration: none;
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            font-weight: bold;
-            transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            gap: 5px;
+            min-width: 120px;
         }
 
-        .download-link:hover { transform: translateY(-2px); }
+        .save-btn { background: linear-gradient(135deg, #22c55e, #16a34a); box-shadow: 0 4px 10px rgba(34, 197, 94, 0.2); }
+        .share-btn { background: linear-gradient(135deg, #a855f7, #7e22ce); }
+        .download-link { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+
+        /* --- RESPONSIVE DESIGN (MOOBILKA) --- */
+        @media (max-width: 850px) {
+            body {
+                overflow-y: auto; /* U oggolow scroll marka moobilka la joogo */
+                height: auto;
+            }
+
+            .container {
+                flex-direction: column; /* Isu saar editor-ka iyo preview-ga */
+                padding: 10px;
+                overflow: visible;
+            }
+
+            .editors {
+                height: 500px; /* Dherer go'an sii moobilka si uu scroll u yeesho dhexdiisa */
+            }
+
+            .preview-section {
+                width: 100%;
+                margin-top: 20px;
+            }
+
+            .phone-case {
+                width: 100%;
+                max-width: 320px; /* Moobillada yar yar ku habee */
+                height: 600px;
+            }
+
+            header h2 { font-size: 1rem; }
+        }
 
     </style>
      <link rel="manifest" href="/static/manifest.json">
@@ -190,32 +189,26 @@
 <body>
 
     <header>
-        <h2><i class="fas fa-code" style="color: var(--accent-color);"></i> App Factory: {{ app.name }}</h2>
-        <span style="color: #94a3b8;">Shaashadda Live-ka ah (Infinix Note 40 View)</span>
+        <h2><i class="fas fa-code" style="color: var(--accent-color);"></i> Magaca app kaaga  {{ app.name }}</h2>
+        <span style="color: #94a3b8; font-size: 0.8rem;">Shaashadda Live-ka ah </span>
     </header>
 
     <div class="container">
         <form method="post" class="editors">
             {% csrf_token %}
-            <label><i class="fab fa-html5"></i> HTML Koodhka</label>
-            <textarea name="html_code" id="html" placeholder="Ku qor HTML-ka halkan...">{{ app.html_code }}</textarea>
+            <label><i class="fab fa-html5"></i>Koodka HTML</label>
+            <textarea name="html_code" id="html" placeholder="HTML halkan...">{{ app.html_code }}</textarea>
             
-            <label><i class="fab fa-css3-alt"></i> CSS Qurxinta</label>
-            <textarea name="css_code" id="css" placeholder="Ku qor CSS-ka halkan...">{{ app.css_code }}</textarea>
+            <label><i class="fab fa-css3-alt"></i> Koodka CSS</label>
+            <textarea name="css_code" id="css" placeholder="CSS halkan...">{{ app.css_code }}</textarea>
             
-            <label><i class="fab fa-js"></i> JS Dhaqdhaqaaqa</label>
-            <textarea name="js_code" id="js" placeholder="Ku qor JavaScript-ka halkan...">{{ app.js_code }}</textarea>
+            <label><i class="fab fa-js"></i>Koodka JS</label>
+            <textarea name="js_code" id="js" placeholder="JS halkan...">{{ app.js_code }}</textarea>
             
             <div class="controls">
-                <button type="submit" class="save-btn"><i class="fas fa-cloud-upload-alt"></i> Kaydi & Daabac</button>
-                
-                <button type="button" onclick="copyLink()" class="share-btn">
-                    <i class="fas fa-share-alt"></i> Share Link
-                </button>
-
-                <a href="{% url 'download_app' app.slug %}" class="download-link">
-                    <i class="fas fa-file-archive"></i> Download ZIP
-                </a>
+                <button type="submit" class="save-btn"><i class="fas fa-save"></i>ii Kaydi</button>
+                <button type="button" onclick="copyLink()" class="share-btn"><i class="fas fa-share"></i> isii link</button>
+                <a href="{% url 'download_app' app.slug %}" class="download-link"><i class="fas fa-download"></i>isii file ZIP ah</a>
             </div>
         </form>
 
@@ -224,7 +217,7 @@
                 <iframe id="preview"></iframe>
             </div>
             <p style="margin-top: 15px; color: #94a3b8; font-size: 0.8rem;">
-                <i class="fas fa-mobile-alt"></i> Muuqaalka Taleefanka (Real-time)
+                <i class="fas fa-mobile-alt"></i> Muuqaalka Taleefanka
             </p>
         </div>
     </div>
@@ -238,13 +231,10 @@
             iframe.srcdoc = html + css + js;
         }
 
-        // Shaqada koobiyeynta link-ga
         function copyLink() {
             let link = "https://maxamed.up.railway.app/app/{{ app.slug }}/";
             navigator.clipboard.writeText(link).then(() => {
-                alert("Link-ga App-kaaga waa la koobiyey: " + link);
-            }).catch(err => {
-                console.error('Qalad baa dhacay: ', err);
+                alert("Link-ga waa la koobiyey!");
             });
         }
 
@@ -253,13 +243,14 @@
         });
 
         window.onload = updatePreview;
-if ('serviceWorker' in navigator) {
-  window.addEventListener("load", function() {
-    navigator.serviceWorker.register('/static/sw.js')
-      .then(() => console.log("SW Registered"))
-      .catch(err => console.log("SW Error", err));
-  });
-}
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener("load", function() {
+                navigator.serviceWorker.register('/static/sw.js')
+                .then(() => console.log("SW Registered"))
+                .catch(err => console.log("SW Error", err));
+            });
+        }
     </script>
 </body>
 </html>

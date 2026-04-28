@@ -110,16 +110,16 @@ button:hover{
 
 <div class="nav">
   <a href="/">Home</a>
-  <a href="/quiz/">Quiz</a>
-  <a href="/poll/">Poll</a>
+  <a href="/quiz/">Ciyaar</a>
+  <a href="/poll/">Codayn</a>
   <a href="/about/">About</a>
-   <a href="{% url 'my_messages' %}">My Messages</a>
+   <a href="{% url 'my_messages' %}">Fariintayda</a>
 </div>
 
 <div class="container">
-  <h2>📞 Contact Us</h2>
+  <h2>📞 Nagala sooxiriir</h2>
   <p style="color:#94a3b8;">Haddii aad qabto su’aal ama aad rabto caawimaad, nala soo xiriir:</p>
-
+<p>fadlan si aan kuugu soo jawaabbo qeebta ay hoose ee ay kuqoran tahay "Subject (optional)" igu soo qor nambarkaaga ama email kaaga si aan jawaab kugu soo diro mahadsanid! </p>
   {% if messages %}
     {% for message in messages %}
       <div class="alert alert-success">
