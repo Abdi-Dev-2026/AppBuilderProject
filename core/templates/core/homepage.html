@@ -204,6 +204,8 @@ body {
     border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 </style>
+<link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#0f172a">
 </head>
 
 <body>
@@ -211,8 +213,6 @@ body {
 <div class="nav">
   <div class="nav-links">
     <a href="/" class="active">Home</a>
-    <a href="/quiz/">Quiz</a>
-    <a href="/poll/">Poll</a>
     <a href="/about/">About</a>
     <a href="/contact/">Contact</a>
   </div>
@@ -237,7 +237,7 @@ body {
 
 <div class="hero">
   <h1>Maxamed Samee App 🚀</h1>
-  <p>Samee app & website adigoon kood qorayn. Bilow mashruucaaga maanta.</p>
+  <p>Samee app & website adigoon kood Qoraya. Bilow mashruucaaga maanta.</p>
   {% if not user.is_authenticated %}
     <a href="/register/" class="btn">Bilow Hadda (Free)</a>
   {% else %}
@@ -280,7 +280,7 @@ body {
     </div>
 
     <div class="card">
-      <h3 style="color: #06b6d4;">📊 Latest Poll</h3>
+      <h3 style="color: #06b6d4;">🤖 Latest Poll</h3>
       {% if poll %}
         <p style="font-weight: bold;">{{ poll.question }}</p>
         <div style="margin: 15px 0; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px;">
@@ -315,8 +315,16 @@ body {
 
 <div class="footer">
   © 2026 Maxamed Samee App | Version 2.0 <br>
-  <small style="color: var(--muted);">Dhisay Gemini AI - All Rights Reserved</small>
+  <small style="color: var(--muted);">Dhisay maxamed cabdullahi cabduqaadir ibrahim</small>
 </div>
-
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register('/static/sw.js')
+      .then(() => console.log("SW Registered"))
+      .catch(err => console.log("SW Error", err));
+  });
+}
+</script>
 </body>
 </html>

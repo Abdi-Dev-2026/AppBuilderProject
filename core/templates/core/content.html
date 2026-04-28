@@ -93,6 +93,8 @@ img, iframe{
 .like{background:#ef4444;color:white;}
 .comment{background:#2563eb;color:white;}
 </style>
+ <link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#0f172a">
 </head>
 
 <body>
@@ -146,6 +148,14 @@ img, iframe{
 
   </div>
 </div>
-
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register('/static/sw.js')
+      .then(() => console.log("SW Registered"))
+      .catch(err => console.log("SW Error", err));
+  });
+}
+</script>
 </body>
 </html>

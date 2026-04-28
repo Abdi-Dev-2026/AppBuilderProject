@@ -7,6 +7,8 @@
         body { background: #0f172a; color: white; text-align: center; padding: 50px; font-family: sans-serif; }
         iframe { margin-top: 20px; width: 90%; max-width: 500px; height: 300px; border-radius: 10px; }
     </style>
+     <link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#0f172a">
 </head>
 <body>
     <h1>🚧 Website Wuu Xiran Yahay</h1>
@@ -14,5 +16,14 @@
     {% if setting.video_url %}
         <iframe src="{{ setting.video_url }}" frameborder="0" allowfullscreen></iframe>
     {% endif %}
+    <script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register('/static/sw.js')
+      .then(() => console.log("SW Registered"))
+      .catch(err => console.log("SW Error", err));
+  });
+}
+</script>
 </body>
 </html>

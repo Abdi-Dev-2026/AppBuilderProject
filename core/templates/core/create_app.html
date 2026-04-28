@@ -13,6 +13,8 @@
         .btn-submit:hover { background: #218838; }
         .back-link { display: block; text-align: center; margin-top: 20px; text-decoration: none; color: #666; }
     </style>
+     <link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#0f172a">
 </head>
 <body>
 
@@ -25,6 +27,14 @@
         </form>
         <a href="{% url 'dashboard' %}" class="back-link">← Ku laabo Dashboard-ka</a>
     </div>
-
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register('/static/sw.js')
+      .then(() => console.log("SW Registered"))
+      .catch(err => console.log("SW Error", err));
+  });
+}
+</script>
 </body>
 </html>

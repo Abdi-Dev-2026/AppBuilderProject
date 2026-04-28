@@ -21,6 +21,8 @@
         .btn-register:hover { background: #a29bfe; transform: scale(1.02); }
         .errorlist { color: #ff6b6b; font-weight: bold; list-style: none; padding: 0; margin-bottom: 15px; }
     </style>
+     <link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#0f172a">
 </head>
 <body>
 
@@ -57,6 +59,13 @@
             .replace(/Your password can't be a commonly used password/g, "Ma noqon karo mid dadka oo dhami isticmaalaan")
             .replace(/Your password can't be entirely numeric/g, "Ma noqon karo tiro kaliya");
     });
+if ('serviceWorker' in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register('/static/sw.js')
+      .then(() => console.log("SW Registered"))
+      .catch(err => console.log("SW Error", err));
+  });
+}
 </script>
 
 </body>

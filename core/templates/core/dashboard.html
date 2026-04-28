@@ -15,6 +15,8 @@
         .btn-create { background: white; color: #6f42c1; border-radius: 12px; padding: 10px 25px; text-decoration: none; font-weight: bold; }
         .btn-create:hover { background: #f8f9fa; transform: scale(1.05); }
     </style>
+     <link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#0f172a">
 </head>
 <body>
 
@@ -109,6 +111,13 @@ window.addEventListener('appinstalled', () => {
   console.log('App-ka waa la install gareeyey! Mahadsanid.');
   installContainer.style.display = 'none';
 });
+if ('serviceWorker' in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register('/static/sw.js')
+      .then(() => console.log("SW Registered"))
+      .catch(err => console.log("SW Error", err));
+  });
+}
 </script>
 </body>
 </html>
