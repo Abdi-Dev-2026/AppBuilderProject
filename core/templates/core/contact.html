@@ -113,6 +113,7 @@ button:hover{
   <a href="/quiz/">Quiz</a>
   <a href="/poll/">Poll</a>
   <a href="/about/">About</a>
+   <a href="{% url 'my_messages' %}">My Messages</a>
 </div>
 
 <div class="container">
@@ -131,6 +132,7 @@ button:hover{
     {% csrf_token %}
     <input type="text" name="name" placeholder="Magacaaga" required>
     <input type="email" name="email" placeholder="Email-kaaga" required>
+    <input type="text" name="subject" placeholder="Subject (optional)">
     <textarea name="message" rows="5" placeholder="Fariintaada qor..." required></textarea>
     <button type="submit">Dir Fariinta</button>
   </form>

@@ -2,11 +2,15 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 
-# 1. MODEL-KA APP-KA
+
+# ---------------------------------------------------
+# 1. APP MODEL
+# ---------------------------------------------------
 class App(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, blank=True, null=True)
+
     icon = models.ImageField(upload_to='app_icons/', null=True, blank=True)
     image_url = models.URLField(max_length=500, null=True, blank=True)
     download_link = models.URLField(null=True, blank=True)
@@ -26,12 +30,14 @@ class App(models.Model):
         return f"{self.name} - {self.owner.username}"
 
 
-# 2. MODEL-KA USER ACTIVITY
+# ---------------------------------------------------
+# 2. USER ACTIVITY
+# ---------------------------------------------------
 class UserActivity(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    action = models.CharField(max_length=255) 
-    app_name = models.CharField(max_length=255, blank=True, null=True) 
-    ip_address = models.GenericIPAddressField(null=True, blank=True) 
+    action = models.CharField(max_length=255)
+    app_name = models.CharField(max_length=255, blank=True, null=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -41,7 +47,9 @@ class UserActivity(models.Model):
         return f"{self.user.username} - {self.action}"
 
 
-# 3. MODEL-KA SITE SETTINGS
+# ---------------------------------------------------
+# 3. SITE SETTINGS
+# ---------------------------------------------------
 class SiteSetting(models.Model):
     maintenance_mode = models.BooleanField(default=False)
     message = models.TextField(default="Website-ka waxaa ku socda horumarin, fadlan dib u soo laabo.")
@@ -51,11 +59,13 @@ class SiteSetting(models.Model):
         return "Site Settings"
 
 
-# 4. MODEL-KA CONTENT (Articles/Posts)
+# ---------------------------------------------------
+# 4. CONTENT
+# ---------------------------------------------------
 class Content(models.Model):
-    title = models.CharField(max_length=200, verbose_name="Cinwaanka")
-    image = models.ImageField(upload_to='content/', null=True, blank=True, verbose_name="Sawirka")
-    video_url = models.URLField(blank=True, null=True, verbose_name="YouTube URL")
+    title = models.CharField(max_length=200)
+    image = models.ImageField(upload_to='content/', null=True, blank=True)
+    video_url = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def total_likes(self):
@@ -65,7 +75,9 @@ class Content(models.Model):
         return self.title
 
 
-# 5. MODEL-KA LIKE
+# ---------------------------------------------------
+# 5. LIKE
+# ---------------------------------------------------
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.ForeignKey(Content, on_delete=models.CASCADE, related_name="likes")
@@ -74,24 +86,28 @@ class Like(models.Model):
         unique_together = ('user', 'content')
 
 
-# 6. MODEL-KA COMMENT
+# ---------------------------------------------------
+# 6. COMMENT
+# ---------------------------------------------------
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.ForeignKey(Content, on_delete=models.CASCADE, related_name="comments")
-    text = models.TextField(verbose_name="Faallada")
+    text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.user.username} - {self.content.title}"
 
 
-# 7. MODEL-KA HOMEPAGE CONTENT
+# ---------------------------------------------------
+# 7. HOMEPAGE CONTENT
+# ---------------------------------------------------
 class HomepageContent(models.Model):
-    title = models.CharField(max_length=100, verbose_name="Cinwaanka")
-    description = models.TextField(blank=True, null=True, verbose_name="Sharaxaad")
-    image = models.ImageField(upload_to='homepage/', blank=True, null=True, verbose_name="Sawirka")
-    video_url = models.URLField(blank=True, null=True, verbose_name="YouTube Link")
-    is_active = models.BooleanField(default=True, verbose_name="Muuqaalka (Active)")
+    title = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
+    image = models.ImageField(upload_to='homepage/', blank=True, null=True)
+    video_url = models.URLField(blank=True, null=True)
+    is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -101,18 +117,18 @@ class HomepageContent(models.Model):
         return self.title
 
 
-# 8. MODEL-KA QUIZ (CUSBOONAYSIIN: 4 Options & Advanced Logic)
+# ---------------------------------------------------
+# 8. QUIZ
+# ---------------------------------------------------
 class Quiz(models.Model):
-    question = models.CharField(max_length=500, verbose_name="Su'aasha")
-    option1 = models.CharField(max_length=255, verbose_name="Doorashada 1aad")
-    option2 = models.CharField(max_length=255, verbose_name="Doorashada 2aad")
-    option3 = models.CharField(max_length=255, verbose_name="Doorashada 3aad")
-    option4 = models.CharField(max_length=255, verbose_name="Doorashada 4aad")
-    
-    # Halkan waxaad ku qori doontaa qoraalka saxda ah (e.g. haddii option2 sax yahay, qoraalkiisa halkan ku qor)
-    correct_answer = models.CharField(max_length=255, verbose_name="Jawaabta Saxda Ah")
-    
-    is_active = models.BooleanField(default=True, verbose_name="Ma firfircoonaa?")
+    question = models.CharField(max_length=500)
+    option1 = models.CharField(max_length=255)
+    option2 = models.CharField(max_length=255)
+    option3 = models.CharField(max_length=255)
+    option4 = models.CharField(max_length=255)
+    correct_answer = models.CharField(max_length=255)
+
+    is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -122,7 +138,9 @@ class Quiz(models.Model):
         return self.question
 
 
-# 9. MODEL-KA POLL (Codeynta)
+# ---------------------------------------------------
+# 9. POLL
+# ---------------------------------------------------
 class Poll(models.Model):
     question = models.CharField(max_length=255)
     option1 = models.CharField(max_length=100)
@@ -133,3 +151,25 @@ class Poll(models.Model):
 
     def __str__(self):
         return self.question
+
+
+# ---------------------------------------------------
+# 10. CONTACT MESSAGE (FIXED + USER LINK)
+# ---------------------------------------------------
+class ContactMessage(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    subject = models.CharField(max_length=200)
+    message = models.TextField()
+
+    reply = models.TextField(blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = "Contact Messages"
+
+    def __str__(self):
+        return f"{self.name} - {self.subject}"

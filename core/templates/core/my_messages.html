@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Messages</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    margin: 0;
+    font-family: system-ui, Arial;
+    background: #0b1220;
+    color: #e5e7eb;
+}
+
+/* HEADER */
+.header {
+    text-align: center;
+    padding: 20px;
+    background: #111827;
+    border-bottom: 1px solid #1f2937;
+}
+
+.header h2 {
+    margin: 0;
+}
+
+/* CONTAINER */
+.container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* CARD */
+.card {
+    background: #111827;
+    border: 1px solid #1f2937;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.01);
+    border-color: #3b82f6;
+}
+
+/* SUBJECT */
+.subject {
+    font-size: 18px;
+    font-weight: bold;
+    color: #60a5fa;
+    margin-bottom: 8px;
+}
+
+/* MESSAGE */
+.message {
+    background: #1f2937;
+    padding: 10px;
+    border-radius: 8px;
+    color: #d1d5db;
+}
+
+/* REPLY */
+.reply {
+    margin-top: 12px;
+    background: #064e3b;
+    padding: 10px;
+    border-radius: 8px;
+    border-left: 4px solid #10b981;
+}
+
+/* PENDING */
+.pending {
+    margin-top: 12px;
+    color: #fbbf24;
+    font-style: italic;
+}
+
+/* BADGE */
+.badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.badge-replied {
+    background: #10b981;
+    color: white;
+}
+
+.badge-pending {
+    background: #f59e0b;
+    color: black;
+}
+
+/* EMPTY */
+.empty {
+    text-align: center;
+    margin-top: 50px;
+    color: #9ca3af;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h2>📩 My Messages</h2>
+    <p>Fariimahaaga iyo jawaabaha admin-ka</p>
+</div>
+
+<div class="container">
+
+{% for msg in messages %}
+
+<div class="card">
+
+    {% if msg.reply %}
+        <span class="badge badge-replied">Replied</span>
+    {% else %}
+        <span class="badge badge-pending">Pending</span>
+    {% endif %}
+
+    <div class="subject">
+        {{ msg.subject }}
+    </div>
+
+    <div class="message">
+        {{ msg.message }}
+    </div>
+
+    {% if msg.reply %}
+        <div class="reply">
+            <b>Admin Reply:</b><br>
+            {{ msg.reply }}
+        </div>
+    {% else %}
+        <div class="pending">
+            ⏳ Weli lagama jawaabin
+        </div>
+    {% endif %}
+
+</div>
+
+{% empty %}
+    <div class="empty">
+        📭 Wax fariin ah ma jirto.
+    </div>
+{% endfor %}
+
+</div>
+
+</body>
+</html>
