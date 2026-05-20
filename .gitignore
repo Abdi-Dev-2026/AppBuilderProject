@@ -1,1 +1,5 @@
 .env
+media/
+media_uploads/
+staticfiles/
+db.sqlite3
