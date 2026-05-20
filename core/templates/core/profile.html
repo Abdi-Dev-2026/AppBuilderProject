@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="so">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile-kaaga</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .profile-card {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 25px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            text-align: center;
+        }
+
+        .avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+            margin: 0 auto 20px;
+            font-weight: bold;
+        }
+
+        h2 {
+            font-weight: 800;
+            margin-bottom: 25px;
+        }
+
+        .info {
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .info p {
+            background: rgba(255,255,255,0.05);
+            padding: 12px 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            border-left: 4px solid #6c5ce7;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #a29bfe;
+        }
+
+        .user-id {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            background: linear-gradient(90deg, #00c9ff, #92fe9d);
+            color: #000;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        /* Qaybta Cusub ee Foomka Password-ka */
+        .download-section {
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .form-control {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #6c5ce7;
+            color: white;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .form-control:focus {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            box-shadow: 0 0 10px #6c5ce7;
+            border-color: #a29bfe;
+        }
+
+        .qr-box {
+            margin-top: 25px;
+        }
+
+        .qr-box img {
+            width: 180px;
+            border-radius: 12px;
+            background: white;
+            padding: 10px;
+        }
+
+        .btn-custom {
+            margin-top: 15px;
+            background: #6c5ce7;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+            display: block;
+            width: 100%;
+            transition: 0.3s;
+        }
+
+        .btn-custom:hover {
+            background: #a29bfe;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-back {
+            background: transparent;
+            border: 1px solid #95afc0;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .profile-card {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="profile-card">
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="avatar">👤</div>
+    <h2>Profile-kaaga</h2>
+
+    <div class="info">
+        <p><span class="label">Magaca:</span> {{ profile.first_name|escape }}</p>
+        <p><span class="label">Magaca Aabbaha:</span> {{ profile.father_name|escape }}</p>
+        <p><span class="label">Magaca Awoowaha:</span> {{ profile.grandfather_name|escape }}</p>
+    </div>
+
+    <div class="user-id">🆔 User ID: {{ profile.user_id_code }}</div>
+
+    <div class="qr-box">
+        <p style="color:#ccc;">QR Code-kaaga</p>
+        <img src="data:image/png;base64,{{ qr_image }}" alt="QR Code">
+    </div>
+
+    <div class="download-section">
+        <h5 class="mb-3" style="color: #f9ca24;"><i class="fas fa-lock"></i> Soo Degso Kaarka</h5>
+        <form action="{% url 'download_id_card' %}" method="POST">
+            {% csrf_token %}
+            
+            <div class="mb-3 text-start">
+                <label class="form-label small">Password-ka aad rabto inuu kaarka kuugu qormo:</label>
+                <input type="text" name="manual_password" class="form-control" placeholder="Geli password-kaaga" required>
+            </div>
+
+            <button type="submit" class="btn-custom">
+                <i class="fas fa-file-pdf"></i> Download ID Card
+            </button>
+        </form>
+    </div>
+
+    <a href="{% url 'dashboard' %}" class="btn-custom btn-back">
+        <i class="fas fa-arrow-left"></i> Back Dashboard
+    </a>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

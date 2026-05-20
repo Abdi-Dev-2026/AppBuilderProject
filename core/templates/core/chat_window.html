@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="so">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - {{ other_user.username }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* CSS RESET */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+       
+        body {
+            background-color: #020617;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        #chat-stars { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+
+        /* MAIN CONTAINER */
+        .chat-container {
+            width: 100%;
+            max-width: 900px;
+            height: 100vh; /* Mobile Default */
+            background: rgba(15, 23, 42, 0.7);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 10;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Desktop specific styles */
+        @media (min-width: 768px) {
+            .chat-container {
+                height: 90vh;
+                border-radius: 24px;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            }
+        }
+
+        /* HEADER */
+        .chat-header {
+            padding: 15px 20px;
+            background: rgba(15, 23, 42, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .user-info { display: flex; align-items: center; gap: 12px; color: white; }
+        
+        .back-btn {
+            color: #3b82f6;
+            text-decoration: none;
+            font-size: 1.5rem;
+            margin-right: 10px;
+            transition: 0.3s;
+        }
+
+        .avatar {
+            width: 45px; height: 45px;
+            background: linear-gradient(135deg, #3b82f6, #00d2ff);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; 
+            font-weight: 600; font-size: 1.1rem;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+        }
+
+        /* MESSAGES AREA */
+        .messages-box {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: url('https://www.transparenttextures.com/patterns/cubes.png'); /* Pattern khafiif ah */
+        }
+
+        /* Scrollbar Styling */
+        .messages-box::-webkit-scrollbar { width: 4px; }
+        .messages-box::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.3); border-radius: 10px; }
+
+        .message {
+            max-width: 75%;
+            padding: 12px 18px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            position: relative;
+            word-wrap: break-word;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .sent {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border-radius: 20px 20px 4px 20px;
+        }
+
+        .received {
+            align-self: flex-start;
+            background: rgba(30, 41, 59, 0.8);
+            color: #e2e8f0;
+            border-radius: 20px 20px 20px 4px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* ATTACHMENT BOX */
+        .attachment-box {
+            margin-top: 8px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .attachment-icon { font-size: 1.2rem; }
+
+        /* INPUT AREA */
+        .input-area {
+            padding: 20px;
+            background: rgba(15, 23, 42, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .input-form { display: flex; gap: 12px; align-items: center; max-width: 1000px; margin: 0 auto; }
+
+        .input-group {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 30px;
+            padding: 10px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+        }
+
+        .input-group:focus-within {
+            border-color: #3b82f6;
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        .input-group input {
+            background: transparent; border: none; color: white; flex: 1; outline: none; font-size: 0.95rem;
+        }
+
+        .btn-send {
+            background: #3b82f6;
+            color: white; border: none;
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-send:hover { transform: scale(1.05); background: #2563eb; }
+
+        .attach-btn {
+            color: #94a3b8;
+            font-size: 1.4rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .attach-btn:hover { color: #3b82f6; }
+
+        /* TIME STAMP */
+        .msg-time {
+            display: block;
+            font-size: 0.65rem;
+            margin-top: 5px;
+            opacity: 0.7;
+            text-align: right;
+        }
+
+        /* MOBILE ADJUSTMENTS */
+        @media (max-width: 480px) {
+            .message { max-width: 85%; font-size: 0.85rem; }
+            .chat-header { padding: 10px 15px; }
+            .input-area { padding: 15px; padding-bottom: 30px; }
+            .btn-send { width: 45px; height: 45px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="chat-stars"></canvas>
+
+    <div class="chat-container">
+        <header class="chat-header">
+            <div class="user-info">
+                <a href="{% url 'chats_page' %}" class="back-btn">❮</a>
+                <div class="avatar">{{ other_user.username|slice:":1"|upper }}</div>
+                <div>
+                    <h4 style="margin: 0; font-size: 1rem; letter-spacing: 0.5px;">{{ other_user.username }}</h4>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <span style="width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></span>
+                        <small style="color: #94a3b8;">Active Now</small>
+                    </div>
+                </div>
+            </div>
+            <div style="color: #3b82f6; cursor: pointer; font-size: 1.2rem;">⚙️</div>
+        </header>
+
+        <main class="messages-box" id="msg-container">
+            {% for msg in chat_messages %}
+                <div class="message {% if msg.sender == request.user %}sent{% else %}received{% endif %}">
+                    {% if msg.message %}
+                        <p>{{ msg.message }}</p>
+                    {% endif %}
+
+                    {% if msg.attachment %}
+                        <div class="attachment-box">
+                            <span class="attachment-icon">{% if msg.is_folder %}📁{% else %}📄{% endif %}</span>
+                            <div style="flex: 1; overflow: hidden;">
+                                <small style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff;">
+                                    {{ msg.attachment.name|slice:"-20:" }}
+                                </small>
+                                <a href="{{ msg.attachment.url }}" download style="color: #00d2ff; text-decoration: none; font-size: 0.7rem; font-weight: bold;">DOWNLOAD</a>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <span class="msg-time">{{ msg.timestamp|time:"H:i" }}</span>
+                </div>
+            {% endfor %}
+        </main>
+
+        <footer class="input-area">
+            <form class="input-form" method="POST" enctype="multipart/form-data" id="chat-form">
+                {% csrf_token %}
+                
+                <label for="file-input" class="attach-btn">📎</label>
+                <input type="file" id="file-input" name="attachment" style="display: none;" onchange="updateFileName()">
+                <input type="hidden" name="is_folder" id="is_folder_input" value="false">
+
+                <div class="input-group">
+                    <input type="text" name="message" placeholder="Qor fariin..." id="chat-input" autocomplete="off">
+                </div>
+
+                <button type="submit" class="btn-send">➤</button>
+            </form>
+            <div id="file-status" style="color: #3b82f6; font-size: 0.65rem; margin-top: 8px; font-weight: 600; text-align: center;"></div>
+        </footer>
+    </div>
+
+    <script>
+        // 1. Auto-scroll to bottom
+        const container = document.getElementById('msg-container');
+        function scrollToBottom() {
+            container.scrollTop = container.scrollHeight;
+        }
+        window.onload = scrollToBottom;
+
+        // 2. File Upload Name Preview
+        function updateFileName() {
+            const fileInput = document.getElementById('file-input');
+            const status = document.getElementById('file-status');
+            if (fileInput.files.length > 0) {
+                let fileName = fileInput.files[0].name;
+                status.innerText = "📎 Diyaar: " + fileName;
+                
+                // Hubi haddii uu yahay folder (Zip)
+                if (fileName.toLowerCase().endsWith('.zip') || fileName.toLowerCase().endsWith('.rar')) {
+                    document.getElementById('is_folder_input').value = "true";
+                }
+            }
+        }
+
+        // 3. Stars Animation (Background)
+        const canvas = document.getElementById('chat-stars');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        function init() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5;
+                this.opacity = Math.random();
+                this.blinkSpeed = 0.005 + Math.random() * 0.01;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+            }
+            update() {
+                this.opacity -= this.blinkSpeed;
+                if (this.opacity <= 0 || this.opacity >= 1) this.blinkSpeed *= -1;
+            }
+        }
+
+        function createParticles() {
+            particles = [];
+            for (let i = 0; i < 80; i++) particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+
+        init(); createParticles(); animate();
+        window.addEventListener('resize', () => { init(); createParticles(); });
+    </script>
+</body>
+</html>

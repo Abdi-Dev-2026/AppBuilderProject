@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="so">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dayactir | Maxamed Samee App</title>
+   
+    <style>
+        /* --- BACKGROUND DYNAMICS --- */
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at bottom, #0f172a 0%, #020617 100%);
+            color: white;
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- XIDDIGAHA DHAQDHAQAAQAYA (Star Animation) --- */
+        .stars-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: twinkle var(--duration) infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.5); opacity: 1; }
+        }
+
+        /* --- CARD QURUX BADAN (Glassmorphism) --- */
+        .maintenance-card {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            animation: float 6s infinite ease-in-out;
+            margin: 20px auto;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #3b82f6, #06b6d4, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        p {
+            color: #cbd5e1;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        /* --- MEDIA CONTAINER STYLING (Sawirada & Muuqaaladi Tooska Ah) --- */
+        .media-wrapper {
+            position: relative;
+            width: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.2);
+            background: #020617;
+            margin-bottom: 20px;
+        }
+
+        /* Naqshada Muuqaalka Jiifa iyo Sawirada caadiga ah */
+        .media-landscape {
+            aspect-ratio: 16 / 9;
+        }
+
+        /* Naqshada haddii uu yahay Muuqaal Taagan (Portrait) - wuxuu si otomaatig ah u qaadanayaa cabirka ku habboon moobaylka */
+        .media-portrait {
+            max-width: 340px;
+            aspect-ratio: 9 / 16;
+            margin: 0 auto 20px auto;
+        }
+
+        .media-wrapper img, 
+        .media-wrapper video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .media-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            border: none;
+        }
+
+        /* --- GLOW EFFECT --- */
+        .glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: var(--color);
+            filter: blur(100px);
+            opacity: 0.2;
+            z-index: 2;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 480px) {
+            .maintenance-card { padding: 25px; }
+            h1 { font-size: 1.8rem; }
+            p { font-size: 0.95rem; }
+            .media-portrait { max-width: 100%; }
+        }
+    </style>
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#020617">
+</head>
+<body>
+
+    <div class="stars-container" id="stars"></div>
+
+    <div class="glow" style="top: 10%; left: 10%; --color: #3b82f6;"></div>
+    <div class="glow" style="bottom: 10%; right: 10%; --color: #8b5cf6;"></div>
+
+    <div class="maintenance-card">
+        <h1>🚧 Dayactir Ayaa Socda</h1>
+        <p>{{ setting.message }}</p>
+
+        <!-- 1. BANDHIGA MUUQALKA (VIDEO) -->
+        {% if setting.video_file %}
+            <!-- Muuqaal Kombuyuutarka laga soo rarkay toos ah -->
+            <div class="media-wrapper media-landscape">
+                <video controls autoplay muted loop>
+                    <source src="{{ setting.video_file.url }}" type="video/mp4">
+                    Browser-kaagu ma taageerayo video-ga.
+                </video>
+            </div>
+        {% elif setting.video_url %}
+            <!-- Muuqaal Link ah (Sida YouTube) -->
+            <div class="media-wrapper media-landscape">
+                <iframe src="{{ setting.video_url }}" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            </div>
+        {% endif %}
+
+        <!-- 2. BANDHIGA SAWIRKA (IMAGE) -->
+        {% if setting.image_file %}
+            <!-- Sawir Kombuyuutarka laga soo rarkay -->
+            <div class="media-wrapper media-landscape">
+                <img src="{{ setting.image_file.url }}" alt="Dayactir">
+            </div>
+        {% elif setting.image_url %}
+            <!-- Sawir Link ah -->
+            <div class="media-wrapper media-landscape">
+                <img src="{{ setting.image_url }}" alt="Dayactir">
+            </div>
+        {% endif %}
+
+        <div style="margin-top: 25px;">
+            <div style="display: inline-block; width: 10px; height: 10px; background: #22c55e; border-radius: 50%; margin-right: 5px; box-shadow: 0 0 10px #22c55e;"></div>
+            <span style="font-size: 0.8rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Update-ka waa toos</span>
+        </div>
+    </div>
+
+    <script>
+        // Star Generator Script
+        const starsContainer = document.getElementById('stars');
+        const starCount = 100;
+
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            const size = Math.random() * 3 + 'px';
+            star.style.width = size;
+            star.style.height = size;
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+            starsContainer.appendChild(star);
+        }
+
+        // Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener("load", function() {
+                navigator.serviceWorker.register('/static/sw.js')
+                    .then(() => console.log("SW Registered"))
+                    .catch(err => console.log("SW Error", err));
+            });
+        }
+    </script>
+</body>
+</html>

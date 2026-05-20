@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="so">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUCJISADA Chat - Real Time</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+       
+        body {
+            background-color: #020617;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        #chat-stars { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+
+        .chat-master {
+            display: flex;
+            width: 95%;
+            height: 90vh;
+            background: rgba(30, 41, 59, 0.4);
+            border-radius: 30px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            position: relative;
+            z-index: 10;
+        }
+
+        .chat-sidebar {
+            width: 350px;
+            background: rgba(15, 23, 42, 0.8);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .search-input-group {
+            display: flex;
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+        .search-input-group input {
+            background: transparent; border: none; color: white; flex: 1; outline: none;
+        }
+        .btn-search { background: transparent; border: none; cursor: pointer; color: #3b82f6; }
+
+        .friend-list { overflow-y: auto; flex: 1; padding-right: 5px; }
+       
+        /* Custom Scrollbar */
+        .friend-list::-webkit-scrollbar { width: 5px; }
+        .friend-list::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.5); border-radius: 10px; }
+
+        .user-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 15px;
+            margin-bottom: 10px;
+            color: white;
+            transition: 0.3s;
+            border: 1px solid transparent;
+        }
+        .user-card:hover { background: rgba(59, 130, 246, 0.1); }
+
+        .user-avatar {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, #3b82f6, #00d2ff);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-weight: bold;
+        }
+
+        /* BADHAMADA SHAQADA */
+        .btn-action {
+            padding: 6px 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.7rem;
+            font-weight: bold;
+            transition: 0.3s;
+            display: inline-block;
+            text-align: center;
+        }
+        .btn-request { background: #3b82f6; color: white; }
+        .btn-accept { background: #10b981; color: white; margin-bottom: 5px; }
+        .btn-reject { background: #ef4444; color: white; }
+        .btn-chat { background: transparent; color: #00d2ff; border: 1px solid #00d2ff; }
+        .btn-pending { background: #64748b; color: white; cursor: default; }
+
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .chat-master { flex-direction: column; height: 95vh; }
+            .chat-sidebar { width: 100%; height: 50%; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); }
+            .chat-main { height: 50%; }
+        }
+
+        .section-title { color: #64748b; font-size: 0.7rem; margin: 15px 0 10px 0; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <a href="/" style="position: absolute; top: 10px; right: 10px; z-index: 100; color: white; text-decoration: none; background: #3b82f6; padding: 5px 15px; border-radius: 10px; font-weight: bold;">🏠</a>
+
+    <canvas id="chat-stars"></canvas>
+
+    <main class="chat-master">
+       
+        <aside class="chat-sidebar">
+            <h3 style="color: #3b82f6; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 1.5rem;">🌌</span> MUCJISADA CHAT
+            </h3>
+
+            <div class="search-section">
+                <form action="{% url 'chats_page' %}" method="GET">
+                    <div class="search-input-group">
+                        <input type="text" name="search_id" placeholder="Geli Player ID (Tusaale: 0004)" value="{{ request.GET.search_id }}">
+                        <button type="submit" class="btn-search">🔍</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="friend-list">
+               
+                {% if pending_requests %}
+                    <p class="section-title" style="color: #f59e0b;">Codsiyo kuu soo dhacay ({{ pending_requests.count }})</p>
+                    {% for req in pending_requests %}
+                        <div class="user-card" style="border-color: rgba(245, 158, 11, 0.3);">
+                            <div class="user-avatar" style="background: #f59e0b;">{{ req.sender.username|slice:":1"|upper }}</div>
+                            <div class="user-info" style="flex: 1;">
+                                <div style="font-weight: 600; font-size: 0.8rem; color: white;">{{ req.sender.username }}</div>
+                                <div style="font-size: 0.55rem; color: #94a3b8;">Wuxuu rabaa inuu kula hadlo</div>
+                            </div>
+                            <div style="display: flex; flex-direction: column;">
+                                <a href="{% url 'accept_request' req.id %}" class="btn-action btn-accept">AQBAL</a>
+                                <a href="{% url 'reject_request' req.id %}" class="btn-action btn-reject">DIID</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <p class="section-title" style="color: #00d2ff;">Saaxiibadaada</p>
+                {% for friend in my_profile.friends.all %}
+                    <div class="user-card" style="border-left: 3px solid #00d2ff;">
+                        <div class="user-avatar" style="background: #00d2ff;">{{ friend.username|slice:":1"|upper }}</div>
+                        <div class="user-info" style="flex: 1;">
+                            <div style="font-weight: 600; font-size: 0.8rem; color: white;">{{ friend.username }}</div>
+                            <div style="font-size: 0.6rem; color: #00ff00;">● Online (Chat Ready)</div>
+                        </div>
+                        <a href="{% url 'chat_with_user' friend.username %}" class="btn-action btn-chat">WADA HADAL</a>
+                    </div>
+                {% empty %}
+                    <p style="color: #475569; font-size: 0.65rem; text-align: center; margin-bottom: 10px;">Weli saaxiib ma lihid.</p>
+                {% endfor %}
+
+                {% if search_result %}
+                    <p class="section-title">Natiijada Raadinta</p>
+                    <div class="user-card" style="background: rgba(59, 130, 246, 0.1); border-color: #3b82f6;">
+                        <div class="user-avatar">{{ search_result.user.username|slice:":1"|upper }}</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; font-size: 0.8rem; color: white;">{{ search_result.user.username }}</div>
+                            <div style="font-size: 0.6rem; color: #94a3b8;">ID: {{ search_result.user_id_code }}</div>
+                        </div>
+                        {% if search_result.user != request.user %}
+                            {% if search_result.user in my_profile.friends.all %}
+                                <a href="{% url 'chat_with_user' search_result.user.username %}" class="btn-action btn-chat">CHAT</a>
+                            {% else %}
+                                <a href="{% url 'send_friend_request' search_result.id %}" class="btn-action btn-request">REQUEST</a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                <p class="section-title">Dadka kale</p>
+                {% for profile in all_users %}
+                    {% if profile.user != request.user and profile.user not in my_profile.friends.all %}
+                        <div class="user-card">
+                            <div class="user-avatar">{{ profile.user.username|slice:":1"|upper }}</div>
+                            <div class="user-info" style="flex: 1;">
+                                <div style="font-weight: 600; font-size: 0.8rem; color: white;">{{ profile.user.username }}</div>
+                                <div style="font-size: 0.6rem; color: #94a3b8;">ID: {{ profile.user_id_code }}</div>
+                            </div>
+                            <a href="{% url 'send_friend_request' profile.id %}" class="btn-action btn-request">ADD</a>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </aside>
+
+        <section class="chat-main">
+            <div class="empty-state" style="text-align: center;">
+                <div class="icon-box" style="position: relative; display: inline-block;">
+                    <span class="icon" style="font-size: 5.5rem; filter: drop-shadow(0 0 25px #3b82f6); display: block;">🚀</span>
+                </div>
+                <h2 style="color: white; margin-top: 25px; letter-spacing: 2px;">MUCJISADA CHAT</h2>
+                <div style="width: 50px; height: 3px; background: #3b82f6; margin: 15px auto; border-radius: 5px;"></div>
+                <p style="color: #94a3b8; font-size: 0.9rem; max-width: 320px; line-height: 1.6;">
+                    Waqti dhab ah kula sheekayso saaxiibadaada. 
+                    <br><span style="color: #3b82f6; font-weight: bold;">Tallaabada 1:</span> Raadi ID-ga saaxiibkaa.
+                    <br><span style="color: #3b82f6; font-weight: bold;">Tallaabada 2:</span> U dir codsi (Request).
+                    <br><span style="color: #3b82f6; font-weight: bold;">Tallaabada 3:</span> Markuu aqbalo, bilow sheekada!
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const canvas = document.getElementById('chat-stars');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        function init() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2;
+                this.speedX = Math.random() * 0.4 - 0.2;
+                this.speedY = Math.random() * 0.4 - 0.2;
+                this.opacity = Math.random();
+            }
+            update() {
+                this.x += this.speedX; this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            draw() { ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
+        }
+        function create() { particles = []; for (let i = 0; i < 150; i++) particles.push(new Particle()); }
+        function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
+        init(); create(); animate();
+        window.addEventListener('resize', () => { init(); create(); });
+    </script>
+</body>
+</html>
