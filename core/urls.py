@@ -1,6 +1,8 @@
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic import RedirectView  # 👈 KAN AYAA KA MAQNAA
+from django.contrib.staticfiles.storage import staticfiles_storage # 👈 KANNA WUU KA MAQNAA
 from . import views
 
 urlpatterns = [
@@ -13,8 +15,7 @@ urlpatterns = [
     path('about/', views.about_page, name='about'),
     path('contact/', views.contact_page, name='contact'),
     path('content/', views.content_page, name='content'),
-    path('maintenance/', views.maintenance, name='maintenance'),
-
+    path('maintenance/', views.maintenance, name='maintenance_view'),
     # ---------------------------------------------------
     # 🔐 2. AUTH SYSTEM
     # ---------------------------------------------------
@@ -50,7 +51,6 @@ urlpatterns = [
     path('chats/', views.chats_page, name='chats_page'),
     path('chats/request/<int:profile_id>/', views.send_friend_request, name='send_friend_request'),
     path('chats/accept/<int:request_id>/', views.accept_request, name='accept_request'),
-    # Kani waa kii aad codsatay in lagu daro:
     path('chats/reject/<int:request_id>/', views.reject_request, name='reject_request'),
     path('chats/t/<str:username>/', views.chat_with_user, name='chat_with_user'),
 
@@ -72,15 +72,16 @@ urlpatterns = [
     # ---------------------------------------------------
     path('like/<int:content_id>/', views.like_content, name='like_content'),
     path('comment/<int:content_id>/', views.add_comment, name='add_comment'),
-    # urls.py dhexdiisa ka dhig:
     path('imtixaanka/', views.banaadir_view, name='exam_view'),
     path('tts/', views.tts_interface_view, name='tts_interface'),
+    
+    # --- PWA SERVICE WORKER ROUTE ---
+    # Waxaan ku darnay permanent=False si uusan browser-ku u khaldamin xilliga hard-cache-ka
+    path('sw.js', RedirectView.as_view(url=staticfiles_storage.url('sw.js'), permanent=False), name='sw_js'),
 ]
 
 # ---------------------------------------------------
 # 📁 MEDIA FILES (IMAGE & VIDEO CODSIGA)
 # ---------------------------------------------------
-# Habayntaan waxay suurtogal ka dhigaysaa in sawirrada iyo muuqaallada
-# aad Admin-ka ka soo geliso laga furo Browser-ka xilliga horumarinta (Development).
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

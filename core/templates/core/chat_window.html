@@ -2,14 +2,17 @@
 <html lang="so">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat - {{ other_user.username }}</title>
-    <link rel="manifest" href="/static/manifest.json">
-    <meta name="theme-color" content="#0f172a">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         /* CSS RESET */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
         
         body {
             background-color: #020617;
@@ -18,10 +21,16 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            position: relative;
         }
 
-        #chat-stars { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        #chat-stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
 
         /* MAIN CONTAINER */
         .chat-container {
@@ -49,14 +58,19 @@
         /* HEADER */
         .chat-header {
             padding: 15px 20px;
-            background: rgba(15, 23, 42, 0.9);
+            background: rgba(15, 23, 42, 0.95);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
-        .user-info { display: flex; align-items: center; gap: 12px; color: white; }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+        }
         
         .back-btn {
             color: #3b82f6;
@@ -67,28 +81,17 @@
         }
 
         .avatar {
-            width: 45px; height: 45px;
+            width: 45px;
+            height: 45px;
             background: linear-gradient(135deg, #3b82f6, #00d2ff);
             border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; 
-            font-weight: 600; font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center; 
+            font-weight: 600;
+            font-size: 1.1rem;
             box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
         }
-
-        /* OFFLINE ALERT CHAT BANNER */
-        .chat-offline-banner {
-            display: none;
-            background: #7f1d1d;
-            color: #fca5a5;
-            text-align: center;
-            padding: 8px 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            border-bottom: 1px solid #ef4444;
-            animation: slideDown 0.3s ease;
-        }
-
-        @keyframes slideDown { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         /* MESSAGES AREA */
         .messages-box {
@@ -98,12 +101,18 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
-            background: url('https://www.transparenttextures.com/patterns/cubes.png');
+            background: url('https://www.transparenttextures.com/patterns/cubes.png'); /* Pattern khafiif ah */
         }
 
         /* Scrollbar Styling */
-        .messages-box::-webkit-scrollbar { width: 4px; }
-        .messages-box::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.3); border-radius: 10px; }
+        .messages-box::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .messages-box::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.3);
+            border-radius: 10px;
+        }
 
         .message {
             max-width: 75%;
@@ -142,7 +151,9 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        .attachment-icon { font-size: 1.2rem; }
+        .attachment-icon {
+            font-size: 1.2rem;
+        }
 
         /* INPUT AREA */
         .input-area {
@@ -151,7 +162,13 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .input-form { display: flex; gap: 12px; align-items: center; max-width: 1000px; margin: 0 auto; }
+        .input-form {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
 
         .input-group {
             flex: 1;
@@ -170,31 +187,32 @@
         }
 
         .input-group input {
-            background: transparent; border: none; color: white; flex: 1; outline: none; font-size: 0.95rem;
+            background: transparent;
+            border: none;
+            color: white;
+            flex: 1;
+            outline: none;
+            font-size: 0.95rem;
         }
 
         .btn-send {
             background: #3b82f6;
-            color: white; border: none;
-            width: 50px; height: 50px;
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: 0.3s;
             box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
         }
 
-        .btn-send:hover { transform: scale(1.05); background: #2563eb; }
-
-        /* Form styling when offline */
-        .input-form.app-offline-state .input-group {
-            background: rgba(255, 255, 255, 0.01);
-            border-color: rgba(239, 68, 68, 0.2);
-        }
-        .input-form.app-offline-state .btn-send {
-            background: #475569;
-            box-shadow: none;
-            cursor: not-allowed;
+        .btn-send:hover {
+            transform: scale(1.05);
+            background: #2563eb;
         }
 
         .attach-btn {
@@ -203,7 +221,10 @@
             cursor: pointer;
             transition: 0.3s;
         }
-        .attach-btn:hover { color: #3b82f6; }
+        
+        .attach-btn:hover {
+            color: #3b82f6;
+        }
 
         /* TIME STAMP */
         .msg-time {
@@ -216,38 +237,29 @@
 
         /* MOBILE ADJUSTMENTS */
         @media (max-width: 480px) {
-            .message { max-width: 85%; font-size: 0.85rem; }
-            .chat-header { padding: 10px 15px; }
-            .input-area { padding: 15px; padding-bottom: 30px; }
-            .btn-send { width: 45px; height: 45px; }
+            .message {
+                max-width: 85%;
+                font-size: 0.85rem;
+            }
+            .chat-header {
+                padding: 10px 15px;
+            }
+            .input-area {
+                padding: 15px;
+                padding-bottom: 30px;
+            }
+            .btn-send {
+                width: 45px;
+                height: 45px;
+            }
         }
     </style>
 </head>
 <body>
 
-    {% if chat_settings %}
-        {% if chat_settings.bg_video_file or chat_settings.bg_video_url %}
-            <video autoplay loop {% if chat_settings.is_video_muted %}muted{% endif %} playsinline 
-                   style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1;">
-                <source src="{% if chat_settings.bg_video_file %}{{ chat_settings.bg_video_file.url }}{% else %}{{ chat_settings.bg_video_url }}{% endif %}" type="video/mp4">
-            </video>
-        {% elif chat_settings.bg_image_file or chat_settings.bg_image_url %}
-            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-                        background: url('{% if chat_settings.bg_image_file %}{{ chat_settings.bg_image_file.url }}{% else %}{{ chat_settings.bg_image_url }}{% endif %}') no-repeat center center; 
-                        background-size: cover; z-index: 1;">
-            </div>
-        {% else %}
-            <canvas id="chat-stars"></canvas>
-        {% endif %}
-    {% else %}
-        <canvas id="chat-stars"></canvas>
-    {% endif %}
+    <canvas id="chat-stars"></canvas>
 
     <div class="chat-container">
-        <div id="chatOfflineAlert" class="chat-offline-banner">
-            📡 Waxaad ku jirtaa qaabka Offline. Fariintaada si kumeel gaar ah ayay u xanibnaan doontaa ilaa internet-ku ka soo laabanayo.
-        </div>
-
         <header class="chat-header">
             <div class="user-info">
                 <a href="{% url 'chats_page' %}" class="back-btn">❮</a>
@@ -255,8 +267,8 @@
                 <div>
                     <h4 style="margin: 0; font-size: 1rem; letter-spacing: 0.5px;">{{ other_user.username }}</h4>
                     <div style="display: flex; align-items: center; gap: 5px;">
-                        <span id="status-dot" style="width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></span>
-                        <small id="status-text" style="color: #94a3b8;">Active Now</small>
+                        <span style="width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></span>
+                        <small style="color: #94a3b8;">Active Now</small>
                     </div>
                 </div>
             </div>
@@ -290,7 +302,7 @@
             <form class="input-form" method="POST" enctype="multipart/form-data" id="chat-form">
                 {% csrf_token %}
                 
-                <label for="file-input" class="attach-btn" id="attach-label">📎</label>
+                <label for="file-input" class="attach-btn">📎</label>
                 <input type="file" id="file-input" name="attachment" style="display: none;" onchange="updateFileName()">
                 <input type="hidden" name="is_folder" id="is_folder_input" value="false">
 
@@ -298,7 +310,7 @@
                     <input type="text" name="message" placeholder="Qor fariin..." id="chat-input" autocomplete="off">
                 </div>
 
-                <button type="submit" class="btn-send" id="send-btn">➤</button>
+                <button type="submit" class="btn-send">➤</button>
             </form>
             <div id="file-status" style="color: #3b82f6; font-size: 0.65rem; margin-top: 8px; font-weight: 600; text-align: center;"></div>
         </footer>
@@ -308,7 +320,7 @@
         // 1. Auto-scroll to bottom
         const container = document.getElementById('msg-container');
         function scrollToBottom() {
-            if (container) container.scrollTop = container.scrollHeight;
+            container.scrollTop = container.scrollHeight;
         }
         window.onload = scrollToBottom;
 
@@ -316,107 +328,66 @@
         function updateFileName() {
             const fileInput = document.getElementById('file-input');
             const status = document.getElementById('file-status');
-            if (fileInput && fileInput.files.length > 0) {
+            if (fileInput.files.length > 0) {
                 let fileName = fileInput.files[0].name;
                 status.innerText = "📎 Diyaar: " + fileName;
                 
+                // Hubi haddii uu yahay folder (Zip)
                 if (fileName.toLowerCase().endsWith('.zip') || fileName.toLowerCase().endsWith('.rar')) {
                     document.getElementById('is_folder_input').value = "true";
                 }
             }
         }
 
-        // 3. OFFLINE HANDLER & FORM DEFENSE
-        const chatForm = document.getElementById('chat-form');
-        const chatInput = document.getElementById('chat-input');
-        const chatOfflineAlert = document.getElementById('chatOfflineAlert');
-        const statusDot = document.getElementById('status-dot');
-        const statusText = document.getElementById('status-text');
-
-        function updateNetworkUI() {
-            if (!chatForm || !chatInput || !chatOfflineAlert) return;
-            if (navigator.onLine) {
-                chatOfflineAlert.style.display = 'none';
-                chatForm.classList.remove('app-offline-state');
-                if(statusDot) statusDot.style.background = '#10b981';
-                if(statusText) {
-                    statusText.innerText = 'Active Now';
-                    statusText.style.color = '#94a3b8';
-                }
-                chatInput.placeholder = "Qor fariin...";
-            } else {
-                chatOfflineAlert.style.display = 'block';
-                chatForm.classList.add('app-offline-state');
-                if(statusDot) statusDot.style.background = '#ef4444';
-                if(statusText) {
-                    statusText.innerText = 'Offline Mode';
-                    statusText.style.color = '#ef4444';
-                }
-                chatInput.placeholder = "Ma qori kartid fariin adoo offline ah...";
-            }
-        }
-
-        if (chatForm) {
-            chatForm.addEventListener('submit', function(e) {
-                if (!navigator.onLine) {
-                    e.preventDefault(); 
-                    alert("Muuqaalka Offline: Fadlan dib u tijaabi marka uu internet-kaagu soo laabto si fariinta loo diro.");
-                }
-            });
-        }
-
-        window.addEventListener('online', updateNetworkUI);
-        window.addEventListener('offline', updateNetworkUI);
-        updateNetworkUI();
-
-        // 4. Stars Animation (Canvas Background)
+        // 3. Stars Animation (Background)
         const canvas = document.getElementById('chat-stars');
-        if (canvas) {
-            const ctx = canvas.getContext('2d');
-            let particles = [];
-            function init() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-            
-            class Particle {
-                constructor() {
-                    this.x = Math.random() * canvas.width;
-                    this.y = Math.random() * canvas.height;
-                    this.size = Math.random() * 1.5;
-                    this.opacity = Math.random();
-                    this.blinkSpeed = 0.005 + Math.random() * 0.01;
-                }
-                draw() {
-                    ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-                    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
-                }
-                update() {
-                    this.opacity -= this.blinkSpeed;
-                    if (this.opacity <= 0 || this.opacity >= 1) this.blinkSpeed *= -1;
-                }
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        
+        function init() { 
+            canvas.width = window.innerWidth; 
+            canvas.height = window.innerHeight; 
+        }
+        
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5;
+                this.opacity = Math.random();
+                this.blinkSpeed = 0.005 + Math.random() * 0.01;
             }
-
-            function createParticles() {
-                particles = [];
-                for (let i = 0; i < 80; i++) particles.push(new Particle());
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.beginPath(); 
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); 
+                ctx.fill();
             }
-
-            function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                particles.forEach(p => { p.update(); p.draw(); });
-                requestAnimationFrame(animate);
+            update() {
+                this.opacity -= this.blinkSpeed;
+                if (this.opacity <= 0 || this.opacity >= 1) this.blinkSpeed *= -1;
             }
-
-            init(); createParticles(); animate();
-            window.addEventListener('resize', () => { init(); createParticles(); });
         }
 
-        // Service Worker Support
-        if ('serviceWorker' in navigator) {
-            window.addEventListener("load", function() {
-                navigator.serviceWorker.register('/static/sw.js')
-                    .then(() => console.log("SW Registered"))
-                    .catch(err => console.log("SW Error", err));
-            });
+        function createParticles() {
+            particles = [];
+            for (let i = 0; i < 80; i++) particles.push(new Particle());
         }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+
+        init(); 
+        createParticles(); 
+        animate();
+        
+        window.addEventListener('resize', () => { 
+            init(); 
+            createParticles(); 
+        });
     </script>
 </body>
 </html>

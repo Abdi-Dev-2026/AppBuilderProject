@@ -2,49 +2,28 @@
 <html lang="so">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editor - {{ app.name }}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-    
     <style>
+        /* --- 3D NEUMORPHIC DESIGN --- */
         :root {
             --primary-bg: #0f172a;
             --card-bg: #1e293b;
             --accent-color: #38bdf8;
             --success-color: #22c55e;
             --phone-border: #111;
-            --text-dim: #94a3b8;
-            --border: rgba(255, 255, 255, 0.08);
         }
 
         body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             display: flex; 
             flex-direction: column; 
             height: 100vh; 
             margin: 0; 
             background: var(--primary-bg); 
             color: white; 
-            -webkit-font-smoothing: antialiased;
         }
-
-        /* GLOBAL OFFLINE BANNER */
-        .editor-offline-banner {
-            display: none;
-            width: 100%;
-            background: #7f1d1d;
-            color: #fca5a5;
-            text-align: center;
-            padding: 10px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            border-bottom: 1px solid #ef4444;
-            z-index: 2000;
-            animation: slideDown 0.3s ease;
-        }
-
-        @keyframes slideDown { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
         header {
             padding: 15px 20px;
@@ -58,7 +37,7 @@
             gap: 10px;
         }
 
-        header h2 { font-size: 1.2rem; margin: 0; font-weight: 800; }
+        header h2 { font-size: 1.2rem; margin: 0; }
 
         .container { 
             display: flex; 
@@ -103,7 +82,6 @@
             transition: 0.3s;
             outline: none;
             box-sizing: border-box;
-            font-size: 0.9rem;
         }
 
         textarea:focus {
@@ -122,7 +100,7 @@
         .phone-case {
             position: relative;
             width: 340px; 
-            height: 640px;
+            height: 680px;
             background: var(--phone-border);
             border-radius: 40px; 
             padding: 10px;
@@ -150,7 +128,7 @@
             padding: 12px; 
             border: none; 
             cursor: pointer; 
-            font-size: 0.85rem; 
+            font-size: 0.9rem; 
             font-weight: bold;
             border-radius: 10px; 
             flex: 1;
@@ -169,38 +147,27 @@
         .share-btn { background: linear-gradient(135deg, #a855f7, #7e22ce); }
         .download-link { background: linear-gradient(135deg, #3b82f6, #2563eb); }
 
-        /* Offline Style Restrictions */
-        .app-offline-active .save-restricted {
-            background: #334155 !important;
-            color: #64748b !important;
-            cursor: not-allowed;
-            box-shadow: none !important;
-            pointer-events: none;
-        }
-
         @media (max-width: 850px) {
             body { overflow-y: auto; height: auto; }
             .container { flex-direction: column; padding: 10px; overflow: visible; }
-            .editors { height: 550px; }
+            .editors { height: 500px; }
             .preview-section { width: 100%; margin-top: 20px; }
             .phone-case { width: 100%; max-width: 320px; height: 600px; }
             header h2 { font-size: 1rem; }
         }
     </style>
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#0f172a">
 </head>
 <body>
 
-    <div id="editorOfflineAlert" class="editor-offline-banner">
-        📡 Koodh tijaabintu waa noogu furan tahay qaabka Offline, laakiin badbaadinta iyo soo degsashada lama furi karo ilaa internet-ku soo laabto.
-    </div>
-
     <header>
-        <h2><i class="fas fa-code" style="color: var(--accent-color);"></i> App: {{ app.name }}</h2>
-        <span id="sync-status" style="color: #94a3b8; font-size: 0.8rem;"><i class="fas fa-circle-check" style="color: var(--success-color)"></i> Koodhka waa diyaar</span>
+        <h2><i class="fas fa-code" style="color: var(--accent-color);"></i> Magaca app kaaga: {{ app.name }}</h2>
+        <span style="color: #94a3b8; font-size: 0.8rem;">Shaashadda Live-ka ah </span>
     </header>
 
     <div class="container">
-        <form method="post" class="editors" id="code-editor-form">
+        <form method="post" class="editors">
             {% csrf_token %}
             <label><i class="fab fa-html5"></i> Koodka HTML</label>
             <textarea name="html_code" id="html" placeholder="HTML halkan...">{{ app.html_code }}</textarea>
@@ -212,9 +179,9 @@
             <textarea name="js_code" id="js" placeholder="JS halkan...">{{ app.js_code }}</textarea>
             
             <div class="controls">
-                <button type="submit" class="save-btn save-restricted" id="save-code-btn"><i class="fas fa-save"></i> ii Kaydi</button>
+                <button type="submit" class="save-btn"><i class="fas fa-save"></i> ii Kaydi</button>
                 <button type="button" onclick="copyLink()" class="share-btn"><i class="fas fa-share"></i> isii link</button>
-                <a href="{% url 'download_app' app.slug %}" class="download-link save-restricted" id="download-zip-link"><i class="fas fa-download"></i> isii file ZIP ah</a>
+                <a href="{% url 'download_app' app.slug %}" class="download-link"><i class="fas fa-download"></i> isii file ZIP ah</a>
             </div>
         </form>
 
@@ -223,115 +190,38 @@
                 <iframe id="preview"></iframe>
             </div>
             <p style="margin-top: 15px; color: #94a3b8; font-size: 0.8rem;">
-                <i class="fas fa-mobile-alt"></i> Muuqaalka Taleefanka (Live Preview)
+                <i class="fas fa-mobile-alt"></i> Muuqaalka Taleefanka
             </p>
         </div>
     </div>
 
     <script>
-        const htmlArea = document.getElementById("html");
-        const cssArea = document.getElementById("css");
-        const jsArea = document.getElementById("js");
-        const syncStatus = document.getElementById("sync-status");
-        const offlineBanner = document.getElementById('editorOfflineAlert');
-        const saveForm = document.getElementById('code-editor-form');
-
-        // APP KEY FOR LOCAL STORAGE CACHING
-        const cacheKey = "app_editor_backup_{{ app.id }}";
-
         function updatePreview() {
-            let html = htmlArea.value;
-            let css = "<style>" + cssArea.value + "</style>";
-            let js = "<script>" + jsArea.value + "<\/script>";
+            let html = document.getElementById("html").value;
+            let css = "<style>" + document.getElementById("css").value + "</style>";
+            let js = "<script>" + document.getElementById("js").value + "<\/script>";
             let iframe = document.getElementById("preview");
             iframe.srcdoc = html + css + js;
-
-            // Haddii uu offline yahay, koodhka ku xafid local storage si uusan u lumin
-            if (!navigator.onLine) {
-                const backupData = {
-                    html: html,
-                    css: cssArea.value,
-                    js: jsArea.value,
-                    timestamp: Date.now()
-                };
-                localStorage.setItem(cacheKey, JSON.stringify(backupData));
-                syncStatus.innerHTML = `<i class="fas fa-hdd" style="color: var(--accent-color)"></i> Koodhka offline baa loo kaydiyey local-ka`;
-            }
         }
 
         function copyLink() {
             let link = "https://maxamed.serveousercontent.com/app/{{ app.slug }}/";
             navigator.clipboard.writeText(link).then(() => {
-                alert("Link-ga app-ka waa la koobiyey!");
+                alert("Link-ga waa la koobiyey!");
             });
         }
 
-        // CONTROL NETWORK UTILITIES
-        function handleNetworkChange() {
-            if (navigator.onLine) {
-                offlineBanner.style.display = 'none';
-                document.body.classList.remove('app-offline-active');
-                syncStatus.innerHTML = `<i class="fas fa-circle-check" style="color: var(--success-color)"></i> Khadka waad ku jirtaa`;
-                
-                // Hubi haddii uu jiro koodh offline lagu soo qoray oo u baahan in server-ka la geeyo
-                if (localStorage.getItem(cacheKey)) {
-                    syncStatus.innerHTML = `<i class="fas fa-triangle-exclamation" style="color: #eab308"></i> Waxaa jira koodh offline ah oo aan la kaydin. Riix 'ii Kaydi'`;
-                }
-            } else {
-                offlineBanner.style.display = 'block';
-                document.body.classList.add('app-offline-active');
-                syncStatus.innerHTML = `<i class="fas fa-wifi-slash" style="color: #ef4444"></i> Offline Mode`;
-            }
-        }
-
-        // Ka hortag in la submit gareeyo foomka marka la offline yahay
-        saveForm.addEventListener('submit', function(e) {
-            if (!navigator.onLine) {
-                e.preventDefault();
-                alert("Koodhka si toos ah looma badbaadin karo adoo offline ah. Laakiin koodhkaaga waa badbaado gudaha birautarka (local).");
-            } else {
-                // Haddii si guul leh loo save gareeyo, masax backup-ka local-ka ah
-                localStorage.removeItem(cacheKey);
-            }
-        });
-
-        // Ka hortag soo degsashada ZIP-ka haddii la offline yahay
-        document.getElementById('download-zip-link').addEventListener('click', function(e) {
-            if (!navigator.onLine) {
-                e.preventDefault();
-                alert("Ma soo degsan kartid file ZIP ah ilaa aad khadka dib ugu xiranto.");
-            }
-        });
-
-        // Event listeners ee tixraaca isbeddelada koodhka
-        [htmlArea, cssArea, jsArea].forEach(el => {
+        document.querySelectorAll('textarea').forEach(el => {
             el.addEventListener('input', updatePreview);
         });
 
-        // Soo kabo koodhkii ugu dambeeyey haddii uu ku jiro LocalStorage backup
-        window.onload = function() {
-            const savedBackup = localStorage.getItem(cacheKey);
-            if (savedBackup) {
-                const data = JSON.parse(savedBackup);
-                if (confirm("Waxaa jira koodh aad qortay adoo offline ah oo aan la kaydin. Ma rabbaa in dib loo soo celiyo?")) {
-                    htmlArea.value = data.html;
-                    cssArea.value = data.css;
-                    jsArea.value = data.js;
-                }
-            }
-            updatePreview();
-            handleNetworkChange();
-        };
+        window.onload = updatePreview;
 
-        window.addEventListener('online', handleNetworkChange);
-        window.addEventListener('offline', handleNetworkChange);
-
-        // SERVICE WORKER REGISTRATION
         if ('serviceWorker' in navigator) {
             window.addEventListener("load", function() {
                 navigator.serviceWorker.register('/static/sw.js')
-                .then(() => console.log("SW Registered Successfully"))
-                .catch(err => console.log("SW Error", err));
+                    .then(() => console.log("SW Registered"))
+                    .catch(err => console.log("SW Error", err));
             });
         }
     </script>

@@ -1,296 +1,144 @@
-{% load static %}
 <!DOCTYPE html>
-<html lang="so">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cod-bixinta | Maxamed Samee App</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Poll | Maxamed Samee App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
-        :root {
-            --bg: #030712;
-            --card: rgba(30, 41, 59, 0.45);
-            --nav-bg: rgba(17, 24, 39, 0.6);
-            --primary: #6c5ce7;
-            --primary-hover: #a29bfe;
-            --text: #f8fafc;
-            --muted: #94a3b8;
-            --glass-border: rgba(255, 255, 255, 0.12);
-        }
-
         body {
             margin: 0;
-            padding: 0;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #0f0c29, #24243e, #0f172a);
-            color: var(--text);
-            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-            padding-bottom: 50px;
+            font-family: system-ui;
+            background: #020617;
+            color: white;
         }
 
-        /* NETWORK BANNER */
-        .auth-offline-banner {
-            display: none;
-            width: 100%;
-            background: rgba(239, 68, 68, 0.2);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid #ef4444;
-            color: #fca5a5;
-            text-align: center;
-            padding: 10px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        /* NAVIGATION BAR */
+        /* NAV */
         .nav {
-            background: var(--nav-bg);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            padding: 18px;
+            background: #0f172a;
+            padding: 15px;
             text-align: center;
-            border-bottom: 1px solid var(--glass-border);
-            position: relative;
-            z-index: 99;
         }
 
         .nav a {
-            color: var(--muted);
-            margin: 0 15px;
+            color: white;
+            margin: 0 10px;
             text-decoration: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: color 0.3s ease;
-        }
-
-        .nav a:hover, .nav a.active {
-            color: var(--text);
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
         /* CONTAINER */
         .container {
-            max-width: 650px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        h2 {
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            margin-bottom: 30px;
-            background: linear-gradient(135deg, #fff 40%, #a29bfe 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 10px;
         }
 
         /* POLL CARD */
         .poll-card {
-            background: var(--card);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 30px;
-            border-radius: 24px;
-            margin-bottom: 25px;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease, border-color 0.3s ease;
-        }
-
-        .poll-card:hover {
-            transform: translateY(-2px);
-            border-color: rgba(108, 92, 231, 0.3);
-        }
-
-        .poll-card p b {
-            font-size: 1.15rem;
-            color: #f1f5f9;
-            line-height: 1.5;
-            display: block;
+            background: #0f172a;
+            padding: 25px;
+            border-radius: 15px;
             margin-bottom: 20px;
+            border: 1px solid #1e293b;
         }
 
         /* BUTTONS */
         .poll-btn {
             width: 100%;
-            padding: 14px 18px;
-            margin: 12px 0 6px 0;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 14px;
-            color: var(--text);
-            font-weight: 600;
-            font-size: 0.95rem;
+            padding: 12px;
+            margin: 10px 0 5px 0;
+            background: #16a34a;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
             cursor: pointer;
             text-align: left;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            transition: all 0.2s ease;
         }
 
         .poll-btn:hover {
-            background: linear-gradient(135deg, #6c5ce7, #4834d4);
-            border-color: transparent;
-            transform: scale(1.01);
-            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.2);
-        }
-
-        .poll-btn:disabled {
-            background: rgba(255, 255, 255, 0.02) !important;
-            border-color: rgba(255, 255, 255, 0.03) !important;
-            color: #64748b !important;
-            cursor: not-allowed !important;
+            background: #15803d;
         }
 
         /* BARS */
         .bar {
             height: 8px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            margin-bottom: 20px;
+            background: #334155;
+            border-radius: 5px;
+            margin-bottom: 15px;
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.03);
         }
 
         .fill {
             height: 100%;
-            background: linear-gradient(90deg, #6c5ce7, #a29bfe);
-            width: 0%; /* Isku bedelka waxaa maamulaya CSS style */
-            border-radius: 10px;
-            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 0 10px rgba(108, 92, 231, 0.5);
+            background: #22c55e;
+            transition: width 0.5s ease-in-out;
         }
 
         .stats {
-            font-size: 0.85rem;
-            color: var(--muted);
-            margin-top: 15px;
-            margin-bottom: 0;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* EMPTY STATE */
-        .empty-state {
-            text-align: center;
-            padding: 50px 30px;
-            background: var(--card);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            border: 1px solid var(--glass-border);
-            color: var(--muted);
-        }
-
-        @media (max-width: 576px) {
-            .container { margin: 25px auto; }
-            .poll-card { padding: 20px; border-radius: 20px; }
-            .poll-btn { padding: 12px 14px; font-size: 0.9rem; }
+            font-size: 0.8rem;
+            color: #94a3b8;
         }
     </style>
-    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <link rel="manifest" href="/static/manifest.json">
     <meta name="theme-color" content="#0f172a">
 </head>
 
 <body>
 
-    <div id="pollOfflineBanner" class="auth-offline-banner">
-        ⚠️ Internet ma jiro. Ma dhiiban kartid codkaaga ilaa aad dib ugu laabato khadka.
-    </div>
-
-    <div class="nav shadow-sm">
+    <div class="nav">
         <a href="/">Home</a>
         <a href="/quiz/">Quiz</a>
-        <a href="/poll/" class="active">Poll</a>
+        <a href="/poll/">Poll</a>
         <a href="/content/">Content</a>
     </div>
 
     <div class="container">
-        <h2 class="text-center">Cod-bixinnada Firfircoon 📊</h2>
+        <h2 style="text-align: center;"> Cod-bixinnada website ka</h2>
 
         {% for poll in polls %}
-        <div class="poll-card shadow-lg">
-            <form method="POST" action="{% url 'vote_poll' poll.id %}" class="poll-form">
-                {% csrf_token %}
+            <div class="poll-card">
+                <form method="POST" action="{% url 'vote_poll' poll.id %}">
+                    {% csrf_token %}
 
-                <p><b>{{ poll.question }}</b></p>
+                    <p><b>{{ poll.question }}</b></p>
 
-                <button type="submit" class="poll-btn" name="choice" value="1">
-                    <span>A) {{ poll.option1 }}</span>
-                    <span>{{ poll.votes1 }} cod ({{ poll.pct1|default:0 }}%)</span>
-                </button>
-                <div class="bar">
-                    <div class="fill" style="width: {{ poll.pct1|default:0 }}%;"></div>
-                </div>
+                    <button class="poll-btn" name="choice" value="1">
+                        <span>A) {{ poll.option1 }}</span>
+                        <span>{{ poll.votes1 }} cod</span>
+                    </button>
+                    <div class="bar">
+                        <div class="fill" style="width: {{ poll.votes1 }}%;"></div>
+                    </div>
 
-                <button type="submit" class="poll-btn" name="choice" value="2">
-                    <span>B) {{ poll.option2 }}</span>
-                    <span>{{ poll.votes2 }} cod ({{ poll.pct2|default:0 }}%)</span>
-                </button>
-                <div class="bar">
-                    <div class="fill" style="width: {{ poll.pct2|default:0 }}%;"></div>
-                </div>
+                    <button class="poll-btn" name="choice" value="2">
+                        <span>B) {{ poll.option2 }}</span>
+                        <span>{{ poll.votes2 }} cod</span>
+                    </button>
+                    <div class="bar">
+                        <div class="fill" style="width: {{ poll.votes2 }}%;"></div>
+                    </div>
 
-                <p class="stats">
-                    📊 Wadarta guud ee codadka: <b>{{ poll.total_votes }}</b>
-                </p>
-
-            </form>
-        </div>
+                    <p class="stats">Wadarta guud ee codadka: {{ poll.total_votes }}</p>
+                </form>
+            </div>
         {% empty %}
-        <div class="empty-state shadow">
-            <p style="font-size: 3rem; margin-bottom: 10px;">🗳️</p>
-            <p class="mb-0">Hadda wax cod-bixin ah ma jiraan. Fadlan dib ugu soo laabo mar kale!</p>
-        </div>
+            <div style="text-align: center; padding: 50px;">
+                <p>Hadda wax cod-bixin ah ma jiraan. Admin-ka ka soo geli!</p>
+            </div>
         {% endfor %}
-
     </div>
 
     <script>
-        // OFFLINE NET GUARDIAN
-        const offlineBanner = document.getElementById('pollOfflineBanner');
-        const pollButtons = document.querySelectorAll('.poll-btn');
-        const pollForms = document.querySelectorAll('.poll-form');
-
-        function updateNetworkUI() {
-            if (navigator.onLine) {
-                offlineBanner.style.display = 'none';
-                pollButtons.forEach(btn => btn.disabled = false);
-            } else {
-                offlineBanner.style.display = 'block';
-                pollButtons.forEach(btn => btn.disabled = true);
-            }
-        }
-
-        window.addEventListener('online', updateNetworkUI);
-        window.addEventListener('offline', updateNetworkUI);
-
-        // Block accidental offline submissions
-        pollForms.forEach(form => {
-            form.addEventListener('submit', function(e) {
-                if (!navigator.onLine) {
-                    e.preventDefault();
-                    alert("Ma dhiiban kartid codkaaga adoo offline ah!");
-                }
-            });
-        });
-
-        // SERVICE WORKER
         if ('serviceWorker' in navigator) {
             window.addEventListener("load", function() {
                 navigator.serviceWorker.register('/static/sw.js')
-                    .then(() => console.log("PWA Active on Poll Page"));
+                    .then(() => console.log("SW Registered"))
+                    .catch(err => console.log("SW Error", err));
             });
         }
-
-        // Run network check on load
-        updateNetworkUI();
     </script>
 </body>
 </html>

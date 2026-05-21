@@ -1,32 +1,20 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="so">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Profile-kaaga | Maxamed Samee App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile-kaaga</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
-        :root {
-            --bg: #030712;
-            --card: rgba(30, 41, 59, 0.45);
-            --primary: #6c5ce7;
-            --primary-hover: #a29bfe;
-            --text: #f8fafc;
-            --muted: #94a3b8;
-            --glass-border: rgba(255, 255, 255, 0.12);
-        }
-
         body {
             margin: 0;
-            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: white;
             min-height: 100vh;
-            background: linear-gradient(135deg, #0f0c29, #24243e, #0f172a);
-            color: var(--text);
-            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -34,42 +22,33 @@
         }
 
         .profile-card {
-            background: var(--card);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 25px;
             padding: 40px;
             width: 100%;
-            max-width: 480px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
             text-align: center;
-            animation: fadeIn 0.4s ease;
         }
 
         .avatar {
             width: 90px;
             height: 90px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #6c5ce7, #4834d4);
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
+            font-size: 35px;
             margin: 0 auto 20px;
-            font-weight: 800;
-            color: white;
-            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            font-weight: bold;
         }
 
         h2 {
             font-weight: 800;
-            letter-spacing: -0.5px;
             margin-bottom: 25px;
-            background: linear-gradient(135deg, #fff 40%, #a29bfe 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
 
         .info {
@@ -78,218 +57,148 @@
         }
 
         .info p {
-            background: rgba(255, 255, 255, 0.03);
-            padding: 14px 18px;
-            border-radius: 14px;
-            margin-bottom: 12px;
-            border-left: 4px solid var(--primary);
-            border-top: 1px solid rgba(255, 255, 255, 0.02);
-            border-right: 1px solid rgba(255, 255, 255, 0.02);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
-            font-size: 0.95rem;
-            display: flex;
-            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            border-left: 4px solid #6c5ce7;
         }
 
         .label {
-            font-weight: 700;
-            color: var(--muted);
-        }
-
-        .value {
-            color: #f1f5f9;
-            font-weight: 600;
+            font-weight: bold;
+            color: #a29bfe;
         }
 
         .user-id {
-            margin-top: 25px;
-            padding: 16px;
-            border-radius: 14px;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 12px;
             background: linear-gradient(90deg, #00c9ff, #92fe9d);
-            color: #020617;
-            font-weight: 800;
+            color: #000;
+            font-weight: bold;
             font-size: 1.1rem;
-            letter-spacing: 0.5px;
-            box-shadow: 0 10px 20px rgba(0, 201, 255, 0.2);
         }
 
-        /* DOWNLOAD SECTION */
+        /* Qaybta Cusub ee Foomka Password-ka */
         .download-section {
             background: rgba(0, 0, 0, 0.2);
-            padding: 24px;
-            border-radius: 20px;
+            padding: 20px;
+            border-radius: 15px;
             margin-top: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .form-control {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(108, 92, 231, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #6c5ce7;
             color: white;
-            padding: 12px;
-            border-radius: 12px;
+            border-radius: 10px;
             text-align: center;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
         }
 
         .form-control:focus {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.2);
             color: white;
-            box-shadow: 0 0 15px rgba(108, 92, 231, 0.25);
-            border-color: var(--primary);
+            box-shadow: 0 0 10px #6c5ce7;
+            border-color: #a29bfe;
         }
 
         .qr-box {
             margin-top: 25px;
-            background: rgba(255, 255, 255, 0.02);
-            padding: 20px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
         }
 
         .qr-box img {
-            width: 170px;
-            height: 170px;
-            border-radius: 16px;
+            width: 180px;
+            border-radius: 12px;
             background: white;
-            padding: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            padding: 10px;
         }
 
         .btn-custom {
             margin-top: 15px;
-            background: linear-gradient(135deg, #6c5ce7, #4834d4);
+            background: #6c5ce7;
             border: none;
-            padding: 14px 20px;
-            border-radius: 14px;
+            padding: 12px 20px;
+            border-radius: 10px;
             color: white;
-            font-weight: 700;
-            font-size: 0.95rem;
+            font-weight: bold;
             text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            display: block;
             width: 100%;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.25);
-            cursor: pointer;
+            transition: 0.3s;
         }
 
         .btn-custom:hover {
-            background: linear-gradient(135deg, #8b5cf6, #6c5ce7);
+            background: #a29bfe;
             color: white;
             transform: translateY(-2px);
-            box-shadow: 0 12px 25px rgba(108, 92, 231, 0.35);
         }
 
         .btn-back {
             background: transparent;
-            border: 1px solid rgba(149, 175, 192, 0.4);
-            color: #cbd5e1;
-            box-shadow: none;
-            margin-top: 15px;
+            border: 1px solid #95afc0;
+            margin-top: 10px;
         }
 
-        .btn-back:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: #cbd5e1;
-            color: white;
-            box-shadow: none;
-        }
-
-        .alert {
-            border-radius: 14px;
-            font-size: 0.9rem;
-            border: none;
-            background: rgba(239, 68, 68, 0.15);
-            color: #fca5a5;
-        }
-        
-        .alert-success {
-            background: rgba(16, 185, 129, 0.15);
-            color: #a7f3d0;
-        }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        @media (max-width: 576px) {
-            .profile-card { padding: 30px 20px; border-radius: 24px; }
-            .info p { padding: 12px 14px; font-size: 0.9rem; }
+        @media (max-width: 600px) {
+            .profile-card {
+                padding: 25px;
+            }
         }
     </style>
-    <link rel="manifest" href="{% static 'manifest.json' %}">
-    <meta name="theme-color" content="#0f172a">
 </head>
 
 <body>
 
-<div class="profile-card shadow-lg">
+    <div class="profile-card">
 
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %} alert-dismissible fade show" role="alert">
-                <i class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %} me-2"></i>
-                {{ message }}
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endfor %}
-    {% endif %}
-
-    <div class="avatar">
-        {% if profile.first_name %}
-            {{ profile.first_name|slice:":1"|upper }}
-        {% else %}
-            👤
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
         {% endif %}
+
+        <div class="avatar">👤</div>
+        <h2>Profile-kaaga</h2>
+
+        <div class="info">
+            <p><span class="label">Magaca:</span> {{ profile.first_name|escape }}</p>
+            <p><span class="label">Magaca Aabbaha:</span> {{ profile.father_name|escape }}</p>
+            <p><span class="label">Magaca Awoowaha:</span> {{ profile.grandfather_name|escape }}</p>
+        </div>
+
+        <div class="user-id">🆔 User ID: {{ profile.user_id_code }}</div>
+
+        <div class="qr-box">
+            <p style="color:#ccc;">QR Code-kaaga</p>
+            <img src="data:image/png;base64,{{ qr_image }}" alt="QR Code">
+        </div>
+
+        <div class="download-section">
+            <h5 class="mb-3" style="color: #f9ca24;"><i class="fas fa-lock"></i> Soo Degso Kaarka</h5>
+            <form action="{% url 'download_id_card' %}" method="POST">
+                {% csrf_token %}
+                
+                <div class="mb-3 text-start">
+                    <label class="form-label small">Password-ka aad rabto inuu kaarka kuugu qormo:</label>
+                    <input type="text" name="manual_password" class="form-control" placeholder="Geli password-kaaga" required>
+                </div>
+
+                <button type="submit" class="btn-custom">
+                    <i class="fas fa-file-pdf"></i> Download ID Card
+                </button>
+            </form>
+        </div>
+
+        <a href="{% url 'dashboard' %}" class="btn-custom btn-back">
+            <i class="fas fa-arrow-left"></i> Back Dashboard
+        </a>
+
     </div>
-    <h2>Profile-kaaga</h2>
 
-    <div class="info">
-        <p><span class="label">Magaca:</span> <span class="value">{{ profile.first_name|escape }}</span></p>
-        <p><span class="label">Magaca Aabbaha:</span> <span class="value">{{ profile.father_name|escape }}</span></p>
-        <p><span class="label">Magaca Awoowaha:</span> <span class="value">{{ profile.grandfather_name|escape }}</span></p>
-    </div>
-
-    <div class="user-id">🆔 User ID: {{ profile.user_id_code }}</div>
-
-    <div class="qr-box">
-        <p class="small mb-2" style="color: var(--muted); font-weight: 600; letter-spacing: 0.5px;">QR CODE-KAAGA AQOONSIGA</p>
-        <img src="data:image/png;base64,{{ qr_image }}" alt="QR Code">
-    </div>
-
-    <div class="download-section">
-        <h5 class="mb-3" style="color: #f9ca24; font-weight: 700; font-size: 1rem;"><i class="fas fa-lock-open me-1"></i> Soo Degso Kaarka</h5>
-        <form action="{% url 'download_id_card' %}" method="POST">
-            {% csrf_token %}
-            
-            <div class="mb-3 text-start">
-                <label class="form-label small text-muted" style="font-weight: 600;">Password-ka aad rabto inuu kaarka ku qormo:</label>
-                <input type="text" name="manual_password" class="form-control" placeholder="Geli password-ka amniga" required autocomplete="off">
-            </div>
-
-            <button type="submit" class="btn-custom">
-                <i class="fas fa-file-pdf"></i> Download ID Card (PDF)
-            </button>
-        </form>
-    </div>
-
-    <a href="{% url 'dashboard' %}" class="btn-custom btn-back">
-        <i class="fas fa-arrow-left"></i> Ku noqo Dashboard-ka
-    </a>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // PWA SERVICE WORKER REGISTRATION
-    if ('serviceWorker' in navigator) {
-        window.addEventListener("load", function() {
-            navigator.serviceWorker.register('/static/sw.js')
-            .then(() => console.log("PWA Active on Profile Page"));
-        });
-    }
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

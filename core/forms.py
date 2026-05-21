@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import App, UserProfile
 
 # ---------------------------------------------------
-# USER REGISTER FORM (STABLE + NO VALIDATION ERROR)
+# USER REGISTER FORM (STABLE + NO INTEGRITY ERROR)
 # ---------------------------------------------------
 class UserRegisterForm(UserCreationForm):
 
@@ -28,21 +28,23 @@ class UserRegisterForm(UserCreationForm):
         widget=forms.TextInput(attrs={'placeholder': 'Magaca Awoowaha'})
     )
 
-    class Meta(UserCreationForm.Meta):
+    class Meta:
         model = User
-        # Halkan waxaan ku daraynaa field-yadaada gaarka ah annagoo ka fogaanayna password-ka gacanta laga qoro
-        fields = UserCreationForm.Meta.fields + (
+        fields = [
             'email',
             'first_name',
             'father_name',
             'grandfather_name',
-        )
+            'password1',
+            'password2'
+        ]
 
     # ---------------------------------------------------
     # 🔥 SAVE USER + PROFILE (FIXED INTEGRITY ERROR)
     # ---------------------------------------------------
     def save(self, commit=True):
         user = super().save(commit=False)
+
         email = self.cleaned_data['email']
 
         # 🔄 USERNAME UNIQUE LOGIC
@@ -59,9 +61,12 @@ class UserRegisterForm(UserCreationForm):
         if commit:
             user.save()
 
-            # ✅ XALKA CILADDA: get_or_create
+            # ✅ XALKA CILADDA: 
+            # Waxaan isticmaalaynaa get_or_create halkii ay ka ahayd create.
+            # Tani waxay ka hortagaysaa "UNIQUE constraint failed: core_userprofile.user_id"
             profile, created = UserProfile.objects.get_or_create(user=user)
             
+            # Hadda xogta ku dar profile-ka jira ama kan cuzub ee dhashay
             profile.first_name = self.cleaned_data['first_name']
             profile.father_name = self.cleaned_data['father_name']
             profile.grandfather_name = self.cleaned_data['grandfather_name']
@@ -92,6 +97,9 @@ class AppForm(forms.ModelForm):
             'download_link': forms.URLInput(attrs={'placeholder': 'https://...'}),
         }
 
+    # ---------------------------------------------------
+    # 🔥 VALIDATION: ICON vs IMAGE_URL
+    # ---------------------------------------------------
     def clean(self):
         cleaned_data = super().clean()
         icon = cleaned_data.get('icon')

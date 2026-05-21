@@ -1,242 +1,164 @@
 <!DOCTYPE html>
-<html lang="so">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Contact | Maxamed Samee App</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<link rel="manifest" href="/static/manifest.json">
-<meta name="theme-color" content="#0f172a">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Contact | Maxamed Samee App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-body{
-  margin:0;
-  font-family: 'Poppins', sans-serif;
-  background:#020617;
-  color:white;
-}
+    <style>
+        body {
+            margin: 0;
+            font-family: system-ui;
+            background: #020617;
+            color: white;
+        }
 
-/* GLOBAL OFFLINE BANNER */
-.contact-offline-banner {
-    display: none;
-    width: 100%;
-    background: #7f1d1d;
-    color: #fca5a5;
-    text-align: center;
-    padding: 10px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    border-bottom: 1px solid #ef4444;
-    animation: slideDown 0.3s ease;
-}
+        /* NAV */
+        .nav {
+            background: #0f172a;
+            padding: 15px;
+            text-align: center;
+        }
 
-@keyframes slideDown { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .nav a {
+            color: white;
+            margin: 0 10px;
+            text-decoration: none;
+        }
 
-/* NAV */
-.nav{
-  background:#0f172a;
-  padding:15px;
-  text-align:center;
-  border-bottom: 1px solid #1e293b;
-}
+        /* CONTAINER */
+        .container {
+            max-width: 700px;
+            margin: 50px auto;
+            background: #0f172a;
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #1e293b;
+        }
 
-.nav a{
-  color:white;
-  margin:0 10px;
-  text-decoration:none;
-  font-size: 0.9rem;
-  transition: 0.3s;
-}
-.nav a:hover { color: #2563eb; }
+        /* FORM */
+        input, textarea {
+            width: 100%;
+            box-sizing: border-box; /* Si padding-ku uusan bannaanka ugu saarin */
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background: #1e293b;
+            color: white;
+            outline: none;
+        }
 
-/* CONTAINER */
-.container{
-  max-width:700px;
-  margin:40px auto;
-  background:rgba(15, 23, 42, 0.8);
-  padding:30px;
-  border-radius:15px;
-  border: 1px solid #1e293b;
-  backdrop-filter: blur(10px);
-}
+        input:focus, textarea:focus {
+            border-color: #2563eb;
+        }
 
-/* FORM */
-input, textarea{
-  width: 100%;
-  box-sizing: border-box;
-  padding:12px;
-  margin:10px 0;
-  border-radius:8px;
-  border:1px solid #334155;
-  background:#1e293b;
-  color:white;
-  outline: none;
-  font-family: 'Poppins', sans-serif;
-}
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #2563eb;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
 
-input:focus, textarea:focus {
-  border-color: #2563eb;
-}
+        button:hover {
+            background: #1d4ed8;
+        }
 
-button{
-  width:100%;
-  padding:12px;
-  background:#2563eb;
-  border:none;
-  border-radius:10px;
-  color:white;
-  font-weight:bold;
-  cursor:pointer;
-  transition: 0.3s;
-  font-family: 'Poppins', sans-serif;
-  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
-}
+        /* SOCIAL */
+        .social {
+            margin-top: 30px;
+            text-align: center;
+            border-top: 1px solid #334155;
+            padding-top: 20px;
+        }
 
-button:hover{
-  background: #1d4ed8;
-  transform: scale(1.01);
-}
+        .social a {
+            display: inline-block;
+            margin: 5px;
+            color: white;
+            text-decoration: none;
+            background: #1e293b;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
 
-/* Offline Action Styling */
-.app-offline-active button {
-    background: #475569 !important;
-    color: #94a3b8 !important;
-    cursor: not-allowed;
-    box-shadow: none;
-}
+        .social a:hover {
+            background: #334155;
+        }
 
-/* SOCIAL */
-.social{
-  margin-top:30px;
-  text-align:center;
-  border-top: 1px solid #334155;
-  padding-top: 20px;
-}
-
-.social h3 { font-size: 1.1rem; margin-bottom: 15px; }
-
-.social a{
-  display:inline-block;
-  margin:5px;
-  color:white;
-  text-decoration:none;
-  background:#1e293b;
-  padding:10px 20px;
-  border-radius:8px;
-  font-size: 0.85rem;
-  transition: 0.3s;
-}
-
-.social a:hover {
-  background: #334155;
-  color: #2563eb;
-}
-
-/* ALERT MESSAGES */
-.alert {
-  padding: 15px;
-  margin-bottom: 20px;
-  border-radius: 8px;
-  text-align: center;
-}
-.alert-success { background: #10b981; color: white; }
-
-@media (max-width: 768px) {
-    .container { margin: 20px 15px; padding: 20px; }
-    .nav a { margin: 0 5px; font-size: 0.8rem; }
-}
-</style>
+        /* ALERT MESSAGES */
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .alert-success { 
+            background: #10b981; 
+            color: white; 
+        }
+    </style>
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#0f172a">
 </head>
-
 <body>
 
-<div id="contactOfflineAlert" class="contact-offline-banner">
-    📡 Lifaaqa internet-kaaga ayaa go'an. Ma diri kartid fariin cusub ilaa aad khadka dib ugu soo laabato.
-</div>
+    <div class="nav">
+        <a href="/">Home</a>
+        <a href="/quiz/">Ciyaar</a>
+        <a href="/poll/">Codayn</a>
+        <a href="/about/">About</a>
+        <a href="{% url 'my_messages' %}">Fariintayda</a>
+    </div>
 
-<div class="nav">
-  <a href="/">Home</a>
-  <a href="/quiz/">Ciyaar</a>
-  <a href="/poll/">Codayn</a>
-  <a href="/about/">About</a>
-  <a href="{% url 'my_messages' %}">Fariintayda</a>
-</div>
+    <div class="container">
+        <h2>📞 Nagala sooxiriir</h2>
+        <p style="color:#94a3b8;">Haddii aad qabto su’aal ama aad rabto caawimaad, nala soo xiriir:</p>
+        <p>fadlan si aan kuugu soo jawaabbo qeebta ay hoose ee ay kuqoran tahay "Subject (optional)" igu soo qor nambarkaaga ama email kaaga si aan jawaab kugu soo diro mahadsanid! </p>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
 
-<div class="container">
-  <h2>📞 Nagala soo xiriir</h2>
-  <p style="color:#94a3b8; font-size: 0.9rem; margin-top: 5px;">Haddii aad qabto su’aal ama aad rabto caawimaad, nala soo xiriir:</p>
-  <p style="font-size: 0.85rem; margin: 15px 0; color: #cbd5e1; background: rgba(37, 99, 235, 0.1); padding: 12px; border-radius: 8px; border-left: 3px solid #2563eb;">
-    Fadlan si aan kuugu soo jawaabbo, qaybta hoose ee ay ku qoran tahay <strong>"Subject (optional)"</strong> iigu soo qor nambarkaaga ama email-kaaga si aan jawaab kugu soo diro, mahadsanid!
-  </p>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" name="name" placeholder="Magacaaga" required>
+            <input type="email" name="email" placeholder="Email-kaaga" required>
+            <input type="text" name="subject" placeholder="Subject (optional)">
+            <textarea name="message" rows="5" placeholder="Fariintaada qor..." required></textarea>
+            <button type="submit">Dir Fariinta</button>
+        </form>
 
-  {% if messages %}
-    {% for message in messages %}
-      <div class="alert alert-success">
-        {{ message }}
-      </div>
-    {% endfor %}
-  {% endif %}
+        <div class="social">
+            <h3>📲 Nala Soco</h3>
+            <a href="https://wa.me/252616898182" target="_blank">WhatsApp</a>
+            <a href="#">Instagram</a>
+            <a href="#">TikTok</a>
+            <a href="#">Facebook</a>
+            <a href="#">Telegram</a>
+        </div>
+    </div>
 
-  <form method="POST" id="contact-form">
-    {% csrf_token %}
-    <input type="text" name="name" id="form-name" placeholder="Magacaaga" required>
-    <input type="email" name="email" id="form-email" placeholder="Email-kaaga" required>
-    <input type="text" name="subject" id="form-subject" placeholder="Subject (optional)">
-    <textarea name="message" id="form-message" rows="5" placeholder="Fariintaada qor..." required></textarea>
-    <button type="submit" id="submit-btn">Dir Fariinta</button>
-  </form>
-
-  <div class="social">
-    <h3>📲 Nala Soco</h3>
-    <a href="https://wa.me/252616898182" target="_blank">WhatsApp</a>
-    <a href="#">Instagram</a>
-    <a href="#">TikTok</a>
-    <a href="#">Facebook</a>
-    <a href="#">Telegram</a>
-  </div>
-
-</div>
-
-<script>
-// NETWORK MANAGEMENT
-const offlineBanner = document.getElementById('contactOfflineAlert');
-const contactForm = document.getElementById('contact-form');
-const submitBtn = document.getElementById('submit-btn');
-
-function handleNetworkChange() {
-    if (navigator.onLine) {
-        offlineBanner.style.display = 'none';
-        document.body.classList.remove('app-offline-active');
-        submitBtn.removeAttribute('disabled');
-        submitBtn.innerText = "Dir Fariinta";
-    } else {
-        offlineBanner.style.display = 'block';
-        document.body.classList.add('app-offline-active');
-        submitBtn.setAttribute('disabled', 'true');
-        submitBtn.innerText = "Ma diri kartid adoo offline ah";
-    }
-}
-
-// Ka hortag in foomka la dhaafo haddii la offline yahay
-contactForm.addEventListener('submit', function(e) {
-    if (!navigator.onLine) {
-        e.preventDefault();
-        alert("Fariinta lama diri karo hadda. Fadlan hubi internet-kaaga ka dibna dib u tijaabi.");
-    }
-});
-
-window.addEventListener('online', handleNetworkChange);
-window.addEventListener('offline', handleNetworkChange);
-handleNetworkChange(); // Initial check
-
-// SERVICE WORKER REGISTRATION
-if ('serviceWorker' in navigator) {
-  window.addEventListener("load", function() {
-    navigator.serviceWorker.register('/static/sw.js')
-      .then(() => console.log("SW Registered"))
-      .catch(err => console.log("SW Error", err));
-  });
-}
-</script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener("load", function() {
+                navigator.serviceWorker.register('/static/sw.js')
+                    .then(() => console.log("SW Registered"))
+                    .catch(err => console.log("SW Error", err));
+            });
+        }
+    </script>
 </body>
 </html>

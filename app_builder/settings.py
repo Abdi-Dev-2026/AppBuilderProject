@@ -9,16 +9,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 # Ammaanka Furayaasha (Waxaa laga soo akhrinayaa .env)
-# Waxaa lagu daray furihii hore oo ammaan u ah fallback haddii .env la waayo waqti tijaabo ah
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-moxamed-samee-app-builder-project-key')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-# ALLOWED_HOSTS - Waxaa lagu daray domains-ka aad ku kalsoon tahay ee ku jiray CSRF
+# ALLOWED_HOSTS - Waxaan ka saarnay '*' si loogu xiro kaliya meelaha rasmiga ah
 ALLOWED_HOSTS = [
     'maxamed.serveo.net', 
     'maxamed.serveousercontent.com', 
-    'maxamed.up.railway.app',                      # Loo baahan yahay Railway
-    'facebook-cranial-crabbing.ngrok-free.dev',    # Loo baahan yahay Ngrok
     '127.0.0.1', 
     'localhost'
 ]
@@ -37,16 +34,13 @@ INSTALLED_APPS = [
 
 # Middleware
 MIDDLEWARE = [
+    'core.middleware.MaintenanceMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware', 
-    'django.contrib.sessions.middleware.SessionMiddleware',  # Nidaamka Session-ka (Loo baahan yahay)
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware', # Nidaamka aqoonsiga User-ka (Halkan ayuu ku dhalanayaa)
-    
-    # 🔥 HALKAN DHIG: Hadda request.user si nabad ah ayuu u shaqaynayaa
-    'core.middleware.MaintenanceMiddleware', 
-    
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -70,15 +64,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'app_builder.wsgi.application'
 
-# Database (PostgreSQL) - Waxaa gabi ahaanba loo wareejiyay .env dynamic config
+# Database (PostgreSQL) - Password-ka waa la qariyay hadda!
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'AppBuilderProject'),
-        'USER': os.environ.get('DB_USER', 'postgres'),
+        'NAME': 'AppBuilderProject',
+        'USER': 'postgres',
         'PASSWORD': os.environ.get('DB_PASSWORD'), 
-        'HOST': os.environ.get('DB_HOST', '127.0.0.1'),
-        'PORT': os.environ.get('DB_PORT', '5432'),
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
 

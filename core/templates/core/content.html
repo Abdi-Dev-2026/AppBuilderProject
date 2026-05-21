@@ -1,423 +1,331 @@
 <!DOCTYPE html>
-<html lang="so">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Content | Premium Experience</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<link rel="manifest" href="/static/manifest.json">
-<meta name="theme-color" content="#0f172a">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Content | Premium Experience</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2=family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
 
-<style>
-:root {
-    --bg: #020617;
-    --card-bg: rgba(15, 23, 42, 0.6);
-    --primary: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-    --accent: #22d3ee;
-    --text-main: #f8fafc;
-    --text-dim: #94a3b8;
-    --glass: rgba(255, 255, 255, 0.03);
-    --border: rgba(255, 255, 255, 0.08);
-}
+    <style>
+        :root {
+            --bg: #020617;
+            --card-bg: rgba(15, 23, 42, 0.6);
+            --primary: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            --accent: #22d3ee;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+        }
 
-body {
-    margin: 0;
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    background-color: var(--bg);
-    background-image: 
-        radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.05) 0, transparent 50%),
-        radial-gradient(circle at 100% 100%, rgba(6, 182, 212, 0.05) 0, transparent 50%);
-    color: var(--text-main);
-    -webkit-font-smoothing: antialiased;
-}
+        body {
+            margin: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.05) 0, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(6, 182, 212, 0.05) 0, transparent 50%);
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+        }
 
-/* GLOBAL OFFLINE BANNER */
-.feed-offline-banner {
-    display: none;
-    width: 100%;
-    background: #7f1d1d;
-    color: #fca5a5;
-    text-align: center;
-    padding: 10px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    border-bottom: 1px solid #ef4444;
-    position: sticky;
-    top: 0;
-    z-index: 1100;
-    animation: slideDown 0.3s ease;
-}
+        /* --- NAVIGATION --- */
+        .nav {
+            background: rgba(2, 6, 23, 0.8);
+            backdrop-filter: blur(12px);
+            padding: 18px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+        }
 
-@keyframes slideDown { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .nav a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            letter-spacing: 0.5px;
+        }
 
-/* --- NAVIGATION --- */
-.nav {
-    background: rgba(2, 6, 23, 0.8);
-    backdrop-filter: blur(12px);
-    padding: 18px;
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    border-bottom: 1px solid var(--border);
-}
+        .nav a:hover {
+            color: var(--accent);
+            text-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
+        }
 
-.nav a {
-    color: var(--text-dim);
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.9rem;
-    transition: 0.3s;
-    letter-spacing: 0.5px;
-}
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
 
-.nav a:hover {
-    color: var(--accent);
-    text-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
-}
+        /* --- DYNAMIC GRID --- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
 
-.container {
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 0 20px;
-}
+        /* --- THE MAGIC CARD --- */
+        .card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s;
+            display: flex;
+            flex-direction: column;
+        }
 
-/* --- DYNAMIC GRID --- */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 25px;
-}
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border-color: rgba(34, 211, 238, 0.3);
+        }
 
-/* --- THE MAGIC CARD --- */
-.card {
-    background: var(--card-bg);
-    border-radius: 24px;
-    border: 1px solid var(--border);
-    overflow: hidden;
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s;
-    display: flex;
-    flex-direction: column;
-}
+        /* SMART MEDIA CONTAINER: La qabsanaya cabbir kasta */
+        .media-wrapper {
+            position: relative;
+            width: 100%;
+            min-height: 200px;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-.card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-    border-color: rgba(34, 211, 238, 0.3);
-}
+        .media-wrapper img, 
+        .media-wrapper video {
+            width: 100%;
+            height: auto;
+            max-height: 600px; /* Ka hortagga inuu aad u dheeraado */
+            object-fit: contain; /* Wuxuu ilaaliyaa qaabka sawirka (Taagan ama Jiifa) */
+            display: block;
+        }
 
-/* SMART MEDIA CONTAINER */
-.media-wrapper {
-    position: relative;
-    width: 100%;
-    min-height: 200px;
-    background: #000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+        .media-wrapper iframe {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border: none;
+        }
 
-.media-wrapper img, 
-.media-wrapper video {
-    width: 100%;
-    height: auto;
-    max-height: 600px;
-    object-fit: contain;
-    display: block;
-}
+        /* --- CONTENT INFO --- */
+        .card-body {
+            padding: 20px;
+        }
 
-.media-wrapper iframe {
-    width: 100%;
-    aspect-ratio: 16/9;
-    border: none;
-}
+        .title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-/* --- CONTENT INFO --- */
-.card-body {
-    padding: 20px;
-}
+        .description {
+            font-size: 0.92rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
 
-.title {
-    font-size: 1.25rem;
-    font-weight: 800;
-    margin-bottom: 10px;
-    background: linear-gradient(to right, #fff, #94a3b8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
+        /* --- ACTIONS --- */
+        .card-footer {
+            padding: 0 20px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
 
-.description {
-    font-size: 0.92rem;
-    color: var(--text-dim);
-    line-height: 1.5;
-    margin-bottom: 20px;
-}
+        .action-bar {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
 
-/* --- ACTIONS --- */
-.card-footer {
-    padding: 0 20px 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
+        .btn-like {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            padding: 10px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: 0.3s;
+        }
 
-.action-bar {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
+        .btn-like:hover {
+            background: #ef4444;
+            color: white;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+        }
 
-.btn-like {
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.2);
-    color: #ef4444;
-    padding: 10px 20px;
-    border-radius: 12px;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 0.85rem;
-    transition: 0.3s;
-}
+        /* --- SMART COMMENTS --- */
+        .comment-box {
+            background: var(--glass);
+            border-radius: 16px;
+            padding: 15px;
+            border: 1px solid var(--border);
+        }
 
-.btn-like:hover {
-    background: #ef4444;
-    color: white;
-    box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
-}
+        .comment-list {
+            max-height: 120px;
+            overflow-y: auto;
+            margin-bottom: 12px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+        }
 
-/* --- SMART COMMENTS --- */
-.comment-box {
-    background: var(--glass);
-    border-radius: 16px;
-    padding: 15px;
-    border: 1px solid var(--border);
-}
+        .comment-item {
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
 
-.comment-list {
-    max-height: 120px;
-    overflow-y: auto;
-    margin-bottom: 12px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
-}
+        .comment-user {
+            color: var(--accent);
+            font-weight: 700;
+            margin-right: 5px;
+        }
 
-.comment-item {
-    font-size: 0.85rem;
-    margin-bottom: 8px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid rgba(255,255,255,0.03);
-}
+        /* --- INPUT AREA --- */
+        .input-group {
+            display: flex;
+            gap: 8px;
+        }
 
-.comment-user {
-    color: var(--accent);
-    font-weight: 700;
-    margin-right: 5px;
-}
+        .comment-input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 15px;
+            color: white;
+            font-size: 0.85rem;
+            outline: none;
+            transition: 0.3s;
+        }
 
-/* --- INPUT AREA --- */
-.input-group {
-    display: flex;
-    gap: 8px;
-}
+        .comment-input:focus {
+            border-color: var(--accent);
+            background: rgba(0, 0, 0, 0.4);
+        }
 
-.comment-input {
-    flex: 1;
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 10px 15px;
-    color: white;
-    font-size: 0.85rem;
-    outline: none;
-    transition: 0.3s;
-}
+        .btn-send {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
 
-.comment-input:focus {
-    border-color: var(--accent);
-    background: rgba(0, 0, 0, 0.4);
-}
+        .btn-send:hover {
+            transform: rotate(15deg) scale(1.1);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
 
-.btn-send {
-    background: var(--primary);
-    color: white;
-    border: none;
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: 0.3s;
-}
-
-.btn-send:hover {
-    transform: rotate(15deg) scale(1.1);
-    box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
-}
-
-/* Offline Style Overrides */
-.app-offline-active .btn-like {
-    background: #334155 !important;
-    border-color: #475569 !important;
-    color: #94a3b8 !important;
-    cursor: not-allowed;
-    box-shadow: none !important;
-}
-.app-offline-active .btn-send {
-    background: #475569 !important;
-    cursor: not-allowed;
-    box-shadow: none !important;
-}
-
-/* Header Animation */
-.header-title {
-    text-align: center;
-    font-size: 2.5rem;
-    font-weight: 800;
-    margin-bottom: 40px;
-    background: linear-gradient(to bottom, #fff 30%, #3b82f6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-@media (max-width: 768px) {
-    .header-title { font-size: 1.8rem; margin-bottom: 25px; }
-    .nav { gap: 15px; padding: 12px; }
-    .container { margin: 20px auto; }
-}
-</style>
+        /* Header Animation */
+        .header-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 40px;
+            background: linear-gradient(to bottom, #fff 30%, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
 </head>
 <body>
 
-<div id="feedOfflineAlert" class="feed-offline-banner">
-    📡 Lifaaqa internet-kaaga waa go'an yahay. Like-ta iyo faallooyinka cusub lama diri karo ilaa aad dib uga xiriirto khadka.
-</div>
+    <div class="nav">
+        <a href="/">HOME</a>
+        <a href="/quiz/">QUIZ</a>
+        <a href="/poll/">POLLS</a>
+    </div>
 
-<div class="nav">
-    <a href="/">HOME</a>
-    <a href="/quiz/">QUIZ</a>
-    <a href="/poll/">POLLS</a>
-</div>
+    <div class="container">
+        <h1 class="header-title">Muuqaalada Mucjisada ah</h1>
 
-<div class="container">
-    <h1 class="header-title">Muuqaalada Mucjisada ah</h1>
-
-    <div class="grid" id="content-grid">
-        {% for item in all_contents %}
-        <div class="card">
-            
-            <div class="media-wrapper">
-                {% if item.image_file %}
-                    <img src="{{ item.image_file.url }}" loading="lazy">
-                {% elif item.image_url %}
-                    <img src="{{ item.image_url }}" loading="lazy">
-                {% elif item.video_file %}
-                    <video controls preload="metadata">
-                        <source src="{{ item.video_file.url }}" type="video/mp4">
-                    </video>
-                {% elif item.video_url %}
-                    <iframe src="{{ item.video_url }}" allowfullscreen></iframe>
-                {% endif %}
-            </div>
-
-            <div class="card-body">
-                <div class="title">{{ item.title }}</div>
-                {% if item.body_text %}
-                <div class="description">
-                    {{ item.body_text|truncatewords:25 }}
-                </div>
-                {% endif %}
-            </div>
-
-            <div class="card-footer">
-                <div class="action-bar">
-                    <a href="{% url 'like_content' item.id %}" class="btn-like network-action">
-                        ❤️ {{ item.total_likes }} Likes
-                    </a>
-                </div>
-
-                <div class="comment-box">
-                    <div class="comment-list">
-                        {% for comment in item.comments.all %}
-                        <div class="comment-item">
-                            <span class="comment-user">@{{ comment.user.username }}</span>
-                            {{ comment.text }}
-                        </div>
-                        {% empty %}
-                        <div style="font-size: 0.75rem; color: var(--text-dim); text-align: center;">No comments yet.</div>
-                        {% endfor %}
+        <div class="grid">
+            {% for item in all_contents %}
+                <div class="card">
+                    
+                    <!-- SMART MEDIA CONTAINER -->
+                    <div class="media-wrapper">
+                        {% if item.image_file %}
+                            <img src="{{ item.image_file.url }}" loading="lazy">
+                        {% elif item.image_url %}
+                            <img src="{{ item.image_url }}" loading="lazy">
+                        {% elif item.video_file %}
+                            <video controls preload="metadata">
+                                <source src="{{ item.video_file.url }}" type="video/mp4">
+                            </video>
+                        {% elif item.video_url %}
+                            <iframe src="{{ item.video_url }}" allowfullscreen></iframe>
+                        {% endif %}
                     </div>
 
-                    {% if user.is_authenticated %}
-                    <form action="{% url 'add_comment' item.id %}" method="POST" class="input-group comment-form">
-                        {% csrf_token %}
-                        <input type="text" name="comment_text" class="comment-input" placeholder="Aa..." required>
-                        <button type="submit" class="btn-send">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-                        </button>
-                    </form>
-                    {% endif %}
+                    <div class="card-body">
+                        <div class="title">{{ item.title }}</div>
+                        {% if item.body_text %}
+                            <div class="description">
+                                {{ item.body_text|truncatewords:25 }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="card-footer">
+                        <div class="action-bar">
+                            <a href="{% url 'like_content' item.id %}" class="btn-like">
+                                ❤️ {{ item.total_likes }} Likes
+                            </a>
+                        </div>
+
+                        <!-- SMART COMMENTS -->
+                        <div class="comment-box">
+                            <div class="comment-list">
+                                {% for comment in item.comments.all %}
+                                    <div class="comment-item">
+                                        <span class="comment-user">@{{ comment.user.username }}</span>
+                                        {{ comment.text }}
+                                    </div>
+                                {% empty %}
+                                    <div style="font-size: 0.75rem; color: var(--text-dim); text-align: center;">No comments yet.</div>
+                                {% endfor %}
+                            </div>
+
+                            {% if user.is_authenticated %}
+                                <form action="{% url 'add_comment' item.id %}" method="POST" class="input-group">
+                                    {% csrf_token %}
+                                    <input type="text" name="comment_text" class="comment-input" placeholder="Aa..." required>
+                                    <button type="submit" class="btn-send">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                        </svg>
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
-            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
-</div>
 
-<script>
-// NETWORK MANAGEMENT
-const offlineBanner = document.getElementById('feedOfflineAlert');
-const commentInputs = document.querySelectorAll('.comment-input');
-
-function handleNetworkChange() {
-    if (navigator.onLine) {
-        offlineBanner.style.display = 'none';
-        document.body.classList.remove('app-offline-active');
-        commentInputs.forEach(input => {
-            input.removeAttribute('disabled');
-            input.placeholder = "Aa...";
-        });
-    } else {
-        offlineBanner.style.display = 'block';
-        document.body.classList.add('app-offline-active');
-        commentInputs.forEach(input => {
-            input.setAttribute('disabled', 'true');
-            input.placeholder = "Offline...";
-        });
-    }
-}
-
-// Ka hortag foomamka comment-iga marka la offline yahay
-document.addEventListener('submit', function(e) {
-    if (!navigator.onLine && e.target.classList.contains('comment-form')) {
-        e.preventDefault();
-        alert("Ma ku dari kartid faallo cusub qaabka offline-ka. Fadlan dib u tijaabi marka aad internet hesho.");
-    }
-});
-
-// Ka hortag gujinta badhanka Like-ta marka la offline yahay
-document.addEventListener('click', function(e) {
-    if (!navigator.onLine && e.target.classList.contains('network-action')) {
-        e.preventDefault();
-        alert("Ma riixi kartid Like adigoo offline ah.");
-    }
-});
-
-window.addEventListener('online', handleNetworkChange);
-window.addEventListener('offline', handleNetworkChange);
-handleNetworkChange(); // Initial check
-
-// SERVICE WORKER REGISTRATION
-if ('serviceWorker' in navigator) {
-  window.addEventListener("load", function() {
-    navigator.serviceWorker.register('/static/sw.js')
-      .then(() => console.log("SW Registered Successfully"))
-      .catch(err => console.log("SW Error", err));
-  });
-}
-</script>
 </body>
 </html>

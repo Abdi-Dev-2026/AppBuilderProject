@@ -1,11 +1,10 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="so">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dayactir | Maxamed Samee App</title>
-    
+   
     <style>
         /* --- BACKGROUND DYNAMICS --- */
         body {
@@ -85,7 +84,7 @@
             margin-bottom: 25px;
         }
 
-        /* --- MEDIA CONTAINER STYLING --- */
+        /* --- MEDIA CONTAINER STYLING (Sawirada & Muuqaaladi Tooska Ah) --- */
         .media-wrapper {
             position: relative;
             width: 100%;
@@ -97,14 +96,14 @@
             margin-bottom: 20px;
         }
 
-        /* Naqshada Muuqaalka Jiifa (Landscape) */
+        /* Naqshada Muuqaalka Jiifa iyo Sawirada caadiga ah */
         .media-landscape {
             aspect-ratio: 16 / 9;
         }
 
-        /* Naqshada haddii uu yahay Muuqaal Taagan (Portrait) */
+        /* Naqshada haddii uu yahay Muuqaal Taagan (Portrait) - wuxuu si otomaatig ah u qaadanayaa cabirka ku habboon moobaylka */
         .media-portrait {
-            max-width: 300px;
+            max-width: 340px;
             aspect-ratio: 9 / 16;
             margin: 0 auto 20px auto;
         }
@@ -144,9 +143,10 @@
             .maintenance-card { padding: 25px; }
             h1 { font-size: 1.8rem; }
             p { font-size: 0.95rem; }
+            .media-portrait { max-width: 100%; }
         }
     </style>
-    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <link rel="manifest" href="/static/manifest.json">
     <meta name="theme-color" content="#020617">
 </head>
 <body>
@@ -158,39 +158,47 @@
 
     <div class="maintenance-card">
         <h1>🚧 Dayactir Ayaa Socda</h1>
-        <p>{{ setting.message|default:"Waxaan wadnaa cusboonaysiin muhiim ah. Fadlan dib ugu soo laabo xoogaa ka dib." }}</p>
+        <p>{{ setting.message }}</p>
 
+        <!-- 1. BANDHIGA MUUQALKA (VIDEO) -->
         {% if setting.video_file %}
-            <div class="media-wrapper {% if setting.is_portrait %}media-portrait{% else %}media-landscape{% endif %}">
-                <video controls autoplay muted loop playsinline>
+            <!-- Muuqaal Kombuyuutarka laga soo rarkay toos ah -->
+            <div class="media-wrapper media-landscape">
+                <video controls autoplay muted loop>
                     <source src="{{ setting.video_file.url }}" type="video/mp4">
                     Browser-kaagu ma taageerayo video-ga.
                 </video>
             </div>
         {% elif setting.video_url %}
+            <!-- Muuqaal Link ah (Sida YouTube) -->
             <div class="media-wrapper media-landscape">
-                <iframe id="ytPlayer" src="{{ setting.video_url }}" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                <iframe src="{{ setting.video_url }}" allow="autoplay; encrypted-media" allowfullscreen></iframe>
             </div>
-        {% elif setting.image_file %}
-            <div class="media-wrapper {% if setting.is_portrait %}media-portrait{% else %}media-landscape{% endif %}">
-                <img src="{{ setting.image_file.url }}" alt="Dayactir socda">
+        {% endif %}
+
+        <!-- 2. BANDHIGA SAWIRKA (IMAGE) -->
+        {% if setting.image_file %}
+            <!-- Sawir Kombuyuutarka laga soo rarkay -->
+            <div class="media-wrapper media-landscape">
+                <img src="{{ setting.image_file.url }}" alt="Dayactir">
             </div>
         {% elif setting.image_url %}
-            <div class="media-wrapper {% if setting.is_portrait %}media-portrait{% else %}media-landscape{% endif %}">
-                <img src="{{ setting.image_url }}" alt="Dayactir socda">
+            <!-- Sawir Link ah -->
+            <div class="media-wrapper media-landscape">
+                <img src="{{ setting.image_url }}" alt="Dayactir">
             </div>
         {% endif %}
 
         <div style="margin-top: 25px;">
             <div style="display: inline-block; width: 10px; height: 10px; background: #22c55e; border-radius: 50%; margin-right: 5px; box-shadow: 0 0 10px #22c55e;"></div>
-            <span style="font-size: 0.8rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">SAYLAC ENGINE LIVE UPDATE</span>
+            <span style="font-size: 0.8rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Update-ka waa toos</span>
         </div>
     </div>
 
     <script>
         // Star Generator Script
         const starsContainer = document.getElementById('stars');
-        const starCount = 80; // Lagu soo koobay 80 si loogu badbaadiyo performance-ka moobaylka
+        const starCount = 100;
 
         for (let i = 0; i < starCount; i++) {
             const star = document.createElement('div');
@@ -204,21 +212,11 @@
             starsContainer.appendChild(star);
         }
 
-        // YouTube URL Auto-Embed Fixer
-        const ytPlayer = document.getElementById('ytPlayer');
-        if (ytPlayer) {
-            let originalUrl = ytPlayer.src;
-            if (originalUrl.includes('watch?v=')) {
-                let videoId = originalUrl.split('v=')[1].split('&')[0];
-                ytPlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`;
-            }
-        }
-
         // Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener("load", function() {
                 navigator.serviceWorker.register('/static/sw.js')
-                    .then(() => console.log("PWA Active on Maintenance Page"))
+                    .then(() => console.log("SW Registered"))
                     .catch(err => console.log("SW Error", err));
             });
         }

@@ -62,6 +62,8 @@ class UserProfile(models.Model):
     father_name = models.CharField(max_length=100, null=True, blank=True)
     grandfather_name = models.CharField(max_length=100, null=True, blank=True)
     user_id_code = models.CharField(max_length=20, unique=True, blank=True)
+    
+    # Waxaan u sameynay db_table si looga fogaado ciladdii 'UserProfile_friends'
     friends = models.ManyToManyField(User, related_name='user_friends', blank=True, db_table='user_profile_friends_map')
 
     def save(self, *args, **kwargs):
@@ -81,7 +83,7 @@ class UserProfile(models.Model):
 
 
 # ---------------------------------------------------
-# CHAT SYSTEM MODELS (HAGAAGSAN)
+# CHAT & FRIENDSHIP MODELS
 # ---------------------------------------------------
 class FriendRequest(models.Model):
     sender = models.ForeignKey(User, related_name='sent_requests', on_delete=models.CASCADE)
@@ -100,46 +102,18 @@ class FriendRequest(models.Model):
         return f"{self.sender.username} -> {self.receiver.username} ({self.status})"
 
 
-class ChatSetting(models.Model):
-    BG_CHOICES = [
-        ('image', 'Sawir (Image)'),
-        ('video', 'Muuqaal (Video)'),
-    ]
-    title = models.CharField(max_length=100, default="MUCJISADA Chat Settings")
-    bg_type = models.CharField(max_length=10, choices=BG_CHOICES, default='image', verbose_name="Nooca Background-ka")
-    is_video_muted = models.BooleanField(default=True, verbose_name="Mute Muuqaalka")
-    
-    bg_image_file = models.ImageField(upload_to='chat_bg/', blank=True, null=True, verbose_name="Sawirka Gadaal (File)")
-    bg_image_url = models.URLField(blank=True, null=True, verbose_name="Sawirka Gadaal (URL Link)")
-    
-    bg_video_file = models.FileField(upload_to='chat_bg_videos/', blank=True, null=True, verbose_name="Muuqaalka Gadaal (File)")
-    bg_video_url = models.URLField(blank=True, null=True, verbose_name="Muuqaalka Gadaal (URL Link)")
-
-    class Meta:
-        verbose_name = "Habaynta Chat-ka"
-        verbose_name_plural = "Habaynta Chat-ka"
-
-    def __str__(self):
-        return self.title
-
-
 class ChatMessage(models.Model):
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages', verbose_name="Qofka Diray")
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages', verbose_name="Qofka Loo Diray")
-    message = models.TextField(blank=True, null=True, verbose_name="Fariinta")
-    image = models.ImageField(upload_to='chat/images/', blank=True, null=True, verbose_name="Sawirka la diray")
-    voice = models.FileField(upload_to='chat/voices/', blank=True, null=True, verbose_name="Codka la diray")
-    attachment = models.FileField(upload_to='chat/attachments/', blank=True, null=True, verbose_name="Faylka La Soo Raaciyay")
-    is_folder = models.BooleanField(default=False, verbose_name="Ma yahay Folder (Zip/Rar)?")
-    timestamp = models.DateTimeField(auto_now_add=True, verbose_name="Waqtiga La Diray")
-
-    class Meta:
-        verbose_name = "Fariinta Chat-ka"
-        verbose_name_plural = "Fariimaha Chat-ka"
-        ordering = ['timestamp']
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
+    message = models.TextField(blank=True, null=True)
+    image = models.ImageField(upload_to='chat/images/', blank=True, null=True)
+    voice = models.FileField(upload_to='chat/voices/', blank=True, null=True)
+    attachment = models.FileField(upload_to='chat/attachments/', blank=True, null=True)
+    is_folder = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"From {self.sender.username} to {self.receiver.username} at {self.timestamp.strftime('%H:%M')}"
+        return f"From {self.sender.username} to {self.receiver.username} at {self.timestamp}"
 
 
 # ---------------------------------------------------
@@ -301,8 +275,12 @@ class UserActivity(models.Model):
 class SiteSetting(models.Model):
     maintenance_mode = models.BooleanField(default=False)
     message = models.TextField(default="Horumarin ayaa socota...")
+    
+    # Qaybta Sawirka (Image) ee cusub
     image_file = models.ImageField(upload_to='settings/images/', blank=True, null=True, verbose_name="Soo geli Sawir (File)")
     image_url = models.URLField(max_length=500, blank=True, null=True, verbose_name="Sawir Link ah (URL)")
+    
+    # Qaybta Muuqaalka (Video)
     video_file = models.FileField(upload_to='settings/videos/', blank=True, null=True, verbose_name="Soo geli Muuqaal (File)")
     video_url = models.URLField(max_length=500, blank=True, null=True, verbose_name="Muuqaal Link ah (URL)")
 
@@ -323,6 +301,18 @@ class Quiz(models.Model):
 
     class Meta:
         verbose_name_plural = "Quizzes"
+
+    def __str__(self):
+        return self.question
+
+
+class Poll(models.Model):
+    question = models.CharField(max_length=255)
+    option1 = models.CharField(max_length=100)
+    option2 = models.CharField(max_length=100)
+    votes1 = models.IntegerField(default=0)
+    votes2 = models.IntegerField(default=0)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.question
@@ -351,11 +341,18 @@ class ContactMessage(models.Model):
 class GlobalNotice(models.Model):
     title = models.CharField(max_length=250, verbose_name="Ciwaanka Ogeysiiska/Xayeysiiska")
     description = models.TextField(blank=True, null=True, verbose_name="Faahfaahinta Qoraalka")
+   
+    # Qaybta Sawirada
     image_file = models.ImageField(upload_to='notices/images/', blank=True, null=True, verbose_name="Soo geli Sawir (File)")
     image_url = models.URLField(max_length=500, blank=True, null=True, verbose_name="Sawir Link ah (URL)")
+   
+    # Qaybta Muuqaalada
     video_file = models.FileField(upload_to='notices/videos/', blank=True, null=True, verbose_name="Soo geli Muuqaal (File)")
     video_url = models.URLField(max_length=500, blank=True, null=True, verbose_name="Muuqaal Link ah (URL - YouTube)")
+   
+    # Sifada Muuqaalka haddii uu taagan yahay (Portrait)
     is_portrait = models.BooleanField(default=False, verbose_name="Muuqaalku ma taagan yahay? (Shorts/TikTok size)")
+   
     is_active = models.BooleanField(default=True, verbose_name="Muu muuqanayaa App-ka? (Active)")
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -373,64 +370,66 @@ class GlobalNotice(models.Model):
 class TTSSetting(models.Model):
     title = models.CharField(max_length=100, default="TTS Global Settings")
     max_characters = models.PositiveIntegerField(default=1000, help_text="Tirada ugu badan ee xarfaha qofku qori karo hal mar.")
-    bg_image_file = models.ImageField(upload_to=get_upload_path, blank=True, null=True, verbose_name="Sawirka Gadaal (File)")
-    bg_image_url = models.URLField(blank=True, null=True, verbose_name="Sawirka Gadaal (URL Link)")
-    bg_video_file = models.FileField(upload_to=get_upload_path, blank=True, null=True, verbose_name="Muuqaalka Gadaal (File)")
-    bg_video_url = models.URLField(blank=True, null=True, verbose_name="Muuqaalka Gadaal (URL Link)")
     
-    faiza_avatar_image = models.ImageField(upload_to=get_upload_path, blank=True, null=True, verbose_name="Faiza Avatar (Sawir)")
-    faiza_avatar_video = models.FileField(upload_to=get_upload_path, blank=True, null=True, verbose_name="Faiza Avatar (Muuqaal Loop ah)")
-    
-    maxamed_avatar_image = models.ImageField(upload_to=get_upload_path, blank=True, null=True, verbose_name="Maxamed Avatar (Sawir)")
-    maxamed_avatar_video = models.FileField(upload_to=get_upload_path, blank=True, null=True, verbose_name="Maxamed Avatar (Muuqaal Loop ah)")
+    # --- 1. QAYBTA MUUQAALKA GADAASHA (BACKGROUND MEDIA) ---
+    bg_image_file = models.ImageField(
+        upload_to=get_upload_path, 
+        blank=True, 
+        null=True, 
+        verbose_name="Sawirka Gadaal (File)",
+        help_text="Soo geli sawirka gadaal uga muuqanaya interface-ka dhalada ah."
+    )
+    bg_image_url = models.URLField(
+        blank=True, 
+        null=True, 
+        verbose_name="Sawirka Gadaal (URL Link)",
+        help_text="Haddii aad sawirka ka keenayso internet-ka, halkan geli link-giisa."
+    )
+    bg_video_file = models.FileField(
+        upload_to=get_upload_path, 
+        blank=True, 
+        null=True, 
+        verbose_name="Muuqaalka Gadaal (File)",
+        help_text="Soo geli muuqaal (MP4) oo dhabar-ka gadaal uga dagi lahaa interface-ka."
+    )
+    bg_video_url = models.URLField(
+        blank=True, 
+        null=True, 
+        verbose_name="Muuqaalka Gadaal (URL Link)",
+        help_text="Haddii aad muuqaalka ka keenayso internet-ka, halkan geli link-giisa (MP4 format)."
+    )
 
-    class Meta:
-        verbose_name = "TTS Setting"
-        verbose_name_plural = "TTS Settings"
+    # --- 2. AVATAR-KA FAIZA (CODKA DUMARKA) ---
+    faiza_avatar_image = models.ImageField(
+        upload_to=get_upload_path, 
+        blank=True, 
+        null=True, 
+        verbose_name="Faiza Avatar (Sawir)",
+        help_text="Sawirka rasmiga ah ee goobada ugu muuqanaya Faiza."
+    )
+    faiza_avatar_video = models.FileField(
+        upload_to=get_upload_path, 
+        blank=True, 
+        null=True, 
+        verbose_name="Faiza Avatar (Muuqaal Loop ah)",
+        help_text="Haddii aad rabto muuqaal clip ah (MP4) oo goobada gudaheed dhex dhasha."
+    )
+
+    # --- 3. AVATAR-KA MAXAMED (CODKA RAGGA) ---
+    maxamed_avatar_image = models.ImageField(
+        upload_to=get_upload_path, 
+        blank=True, 
+        null=True, 
+        verbose_name="Maxamed Avatar (Sawir)",
+        help_text="Sawirka rasmiga ah ee goobada ugu muuqanaya Maxamed."
+    )
+    maxamed_avatar_video = models.FileField(
+        upload_to=get_upload_path, 
+        blank=True, 
+        null=True, 
+        verbose_name="Maxamed Avatar (Muuqaal Loop ah)",
+        help_text="Haddii aad rabto muuqaal clip ah (MP4) oo goobada gudaheed dhex dhasha."
+    )
 
     def __str__(self):
         return self.title
-
-
-# ---------------------------------------------------
-# MAINTENANCE SETTING
-# ---------------------------------------------------
-class MaintenanceSetting(models.Model):
-    message = models.TextField()
-    video_file = models.FileField(upload_to='maintenance/', blank=True, null=True)
-    video_url = models.URLField(blank=True, null=True)
-    image_file = models.ImageField(upload_to='maintenance/', blank=True, null=True)
-    image_url = models.URLField(blank=True, null=True)
-    is_portrait = models.BooleanField(default=False, help_text="Gali calaamad haddii sawirka/video-gu yahay mid taagan")
-
-    def __str__(self):
-        return f"Maintenance Mode: {self.message[:30]}..."
-
-
-# ---------------------------------------------------
-# POLL SYSTEM
-# ---------------------------------------------------
-class Poll(models.Model):
-    question = models.CharField(max_length=255)
-    option1 = models.CharField(max_length=100)
-    option2 = models.CharField(max_length=100)
-    votes1 = models.IntegerField(default=0)
-    votes2 = models.IntegerField(default=0)
-    is_active = models.BooleanField(default=True)
-
-    @property
-    def total_votes(self):
-        return self.votes1 + self.votes2
-
-    @property
-    def pct1(self):
-        total = self.total_votes
-        return round((self.votes1 / total) * 100) if total > 0 else 0
-
-    @property
-    def pct2(self):
-        total = self.total_votes
-        return round((self.votes2 / total) * 100) if total > 0 else 0
-
-    def __str__(self):
-        return self.question

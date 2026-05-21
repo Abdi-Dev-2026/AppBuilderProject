@@ -1,705 +1,722 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="so">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.0,user-scalable=no" />
-<title>Imtixaanaadka Banaadir — Tababar & Quiz</title>
-<link rel="manifest" href="/static/manifest.json">
-<meta name="theme-color" content="#0f172a">
-
-<style>
-  :root {
-    --primary: #007aff;
-    --glass: rgba(255, 255, 255, 0.95);
-    --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    --text-dark: #1d1d1f;
-    --success: #34c759;
-    --purple: #5856d6;
-  }
-
-  * { box-sizing: border-box; transition: all 0.2s ease; }
-
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    margin: 0;
-    background: var(--bg-gradient);
-    color: var(--text-dark);
-    min-height: 100vh;
-  }
-
-  .wrap { max-width: 900px; margin: 30px auto; padding: 20px; }
-
-  header {
-    background: white;
-    border-radius: 20px;
-    padding: 20px 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    margin-bottom: 20px;
-  }
-
-  h1 { margin: 0; font-size: 22px; color: var(--primary); }
-
-  /* Search Area Custom Style */
-  .search-wrapper {
-    background: white;
-    padding: 15px;
-    border-radius: 16px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-    margin-bottom: 30px;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-
-  .search-input {
-    flex: 1;
-    padding: 14px 20px;
-    border: 2px solid #e5e5ea;
-    border-radius: 12px;
-    font-size: 15px;
-    font-family: inherit;
-    outline: none;
-  }
-
-  .search-input:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
-  }
-
-  .card {
-    background: white;
-    border-radius: 24px;
-    padding: 25px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    margin-bottom: 20px;
-  }
-
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
-
-  .subject-card {
-    text-align: center;
-    cursor: pointer;
-    border: 2px solid transparent;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    margin-bottom: 0;
-  }
-  .subject-card:hover { border-color: var(--primary); transform: translateY(-5px); }
-
-  .btn {
-    padding: 12px 25px;
-    border-radius: 12px;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 14px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-  }
-
-  .btn-primary { background: var(--primary); color: white; width: 100%; margin-top: 15px; }
-  .btn-ghost { background: #f2f2f7; color: var(--text-dark); }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Imtixaanaadka Banaadir — Tababar & Quiz</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
   
-  /* TTS iyo Action Buttons-ka ku dhex jira Casharka */
-  .action-bar {
-    display: flex;
-    gap: 10px;
-    margin-top: 15px;
-    flex-wrap: wrap;
-  }
-  
-  .btn-tts { background: #e5f1ff; color: var(--primary); font-size: 13px; padding: 8px 16px; }
-  .btn-tts:hover { background: var(--primary); color: white; }
-  .btn-copy { background: #f2f2f7; color: #555; font-size: 13px; padding: 8px 16px; }
-  .btn-copy:hover { background: #e5e5ea; }
+  <style>
+    :root {
+      --primary: #007aff;
+      --glass: rgba(255, 255, 255, 0.95);
+      --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      --text-dark: #1d1d1f;
+      --success: #34c759;
+      --purple: #5856d6;
+    }
 
-  /* Audio Mini Player Box */
-  .tts-player-box {
-    margin-top: 12px;
-    background: #fff;
-    padding: 10px;
-    border-radius: 12px;
-    border: 1px solid #e5e5ea;
-    display: none;
-    align-items: center;
-    gap: 10px;
-    animation: fadeIn 0.3s ease;
-  }
-  
-  .tts-player-box audio { flex: 1; height: 32px; }
+    * { 
+      box-sizing: border-box; 
+      transition: all 0.2s ease; 
+    }
 
-  .year {
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 15px;
-    text-align: center;
-    cursor: pointer;
-    font-weight: bold;
-  }
-  .year:hover { background: var(--primary); color: white; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin: 0;
+      background: var(--bg-gradient);
+      color: var(--text-dark);
+      min-height: 100vh;
+    }
 
-  .quiz-choice {
-    padding: 18px;
-    border-radius: 12px;
-    background: #f2f2f7;
-    margin-bottom: 10px;
-    cursor: pointer;
-    border: 2px solid transparent;
-  }
-  .quiz-choice:hover { background: #e5e5ea; }
-  .quiz-choice.correct { background: var(--success); color: white; }
-  .quiz-choice.wrong { background: #ff3b30; color: white; }
+    .wrap { 
+      max-width: 900px; 
+      margin: 30px auto; 
+      padding: 20px; 
+    }
 
-  .screen { display: none; }
-  .screen.active { display: block; }
+    header {
+      background: white;
+      border-radius: 20px;
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+    }
 
-  #quizArea h3, #readArea h3 { margin-top: 0; color: var(--primary); }
-  
-  .btn-home {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 24px;
-    background: linear-gradient(135deg, #007aff, #0056b3);
-    color: white !important;
-    text-decoration: none;
-    border-radius: 14px;
-    font-weight: 700;
-    font-size: 15px;
-    box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
+    h1 { 
+      margin: 0; 
+      font-size: 22px; 
+      color: var(--primary); 
+    }
 
-  .btn-home:hover {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 8px 25px rgba(0, 122, 255, 0.5);
-    background: linear-gradient(135deg, #0086ff, #0066d6);
-  }
+    /* Search Area Custom Style */
+    .search-wrapper {
+      background: white;
+      padding: 15px;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+      margin-bottom: 30px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
 
-  .btn-home .icon {
-    font-size: 18px;
-    transition: transform 0.3s ease;
-  }
+    .search-input {
+      flex: 1;
+      padding: 14px 20px;
+      border: 2px solid #e5e5ea;
+      border-radius: 12px;
+      font-size: 15px;
+      font-family: inherit;
+      outline: none;
+    }
 
-  .btn-home:hover .icon { transform: rotate(-15deg); }
+    .search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+    }
 
-  .media-wrapper {
-    width: 100%;
-    max-width: 100%;
-    margin: 15px 0;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    background: #000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+    .card {
+      background: white;
+      border-radius: 24px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
 
-  .media-wrapper img {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-    display: block;
-    max-height: 450px;
-  }
+    .grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+      gap: 15px; 
+    }
 
-  .video-container {
-    position: relative;
-    width: 100%;
-    padding-bottom: 56.25%;
-    height: 0;
-    overflow: hidden;
-  }
+    .subject-card {
+      text-align: center;
+      cursor: pointer;
+      border: 2px solid transparent;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      margin-bottom: 0;
+    }
+    
+    .subject-card:hover { 
+      border-color: var(--primary); 
+      transform: translateY(-5px); 
+    }
 
-  .video-container.portrait {
-    padding-bottom: 177.78%;
-    max-width: 360px;
-    margin: 0 auto;
-  }
+    .btn {
+      padding: 12px 25px;
+      border-radius: 12px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 14px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
 
-  .video-container video,
-  .video-container iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: 0;
-    object-fit: cover;
-  }
+    .btn-primary { 
+      background: var(--primary); 
+      color: white; 
+      width: 100%; 
+      margin-top: 15px; 
+    }
+    
+    .btn-ghost { 
+      background: #f2f2f7; 
+      color: var(--text-dark); 
+    }
+    
+    /* TTS iyo Action Buttons-ka ku dhex jira Casharka */
+    .action-bar {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+    
+    .btn-tts { 
+      background: #e5f1ff; 
+      color: var(--primary); 
+      font-size: 13px; 
+      padding: 8px 16px; 
+    }
+    
+    .btn-tts:hover { 
+      background: var(--primary); 
+      color: white; 
+    }
+    
+    .btn-copy { 
+      background: #f2f2f7; 
+      color: #555; 
+      font-size: 13px; 
+      padding: 8px 16px; 
+    }
+    
+    .btn-copy:hover { 
+      background: #e5e5ea; 
+    }
 
-  .subject-media-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
-    object-fit: cover;
-    margin-bottom: 10px;
-  }
+    /* Audio Mini Player Box */
+    .tts-player-box {
+      margin-top: 12px;
+      background: #fff;
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid #e5e5ea;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .tts-player-box audio { 
+      flex: 1; 
+      height: 32px; 
+    }
 
-  .global-notice-section { margin-top: 30px; }
+    .year {
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 15px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    
+    .year:hover { 
+      background: var(--primary); 
+      color: white; 
+    }
 
-  /* --- OFFLINE ALERT BANNER --- */
-  .offline-banner {
-    display: none;
-    background: #ff3b30;
-    color: white;
-    text-align: center;
-    padding: 10px;
-    font-weight: bold;
-    font-size: 14px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 10px rgba(255, 59, 48, 0.2);
-    animation: fadeIn 0.3s ease;
-  }
+    .quiz-choice {
+      padding: 18px;
+      border-radius: 12px;
+      background: #f2f2f7;
+      margin-bottom: 10px;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+    
+    .quiz-choice:hover { 
+      background: #e5e5ea; 
+    }
+    
+    .quiz-choice.correct { 
+      background: var(--success); 
+      color: white; 
+    }
+    
+    .quiz-choice.wrong { 
+      background: #ff3b30; 
+      color: white; 
+    }
 
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    .screen { 
+      display: none; 
+    }
+    
+    .screen.active { 
+      display: block; 
+    }
 
-  @media (max-width: 600px) {
-    .btn-home { padding: 10px 18px; font-size: 14px; }
-    .wrap { padding: 10px; margin: 10px auto; }
-    header { padding: 15px; border-radius: 15px; }
-    .card { padding: 15px; border-radius: 18px; }
-  }
-</style>
+    #quizArea h3, #readArea h3 { 
+      margin-top: 0; 
+      color: var(--primary); 
+    }
+    
+    .btn-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #007aff, #0056b3);
+      color: white !important;
+      text-decoration: none;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 15px;
+      box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-home:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 8px 25px rgba(0, 122, 255, 0.5);
+      background: linear-gradient(135deg, #0086ff, #0066d6);
+    }
+
+    .btn-home .icon {
+      font-size: 18px;
+      transition: transform 0.3s ease;
+    }
+
+    .btn-home:hover .icon { 
+      transform: rotate(-15deg); 
+    }
+
+    .media-wrapper {
+      width: 100%;
+      max-width: 100%;
+      margin: 15px 0;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .media-wrapper img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      display: block;
+      max-height: 450px;
+    }
+
+    .video-container {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+    }
+
+    .video-container.portrait {
+      padding-bottom: 177.78%;
+      max-width: 360px;
+      margin: 0 auto;
+    }
+
+    .video-container video,
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      object-fit: cover;
+    }
+
+    .subject-media-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      object-fit: cover;
+      margin-bottom: 10px;
+    }
+
+    .global-notice-section { 
+      margin-top: 30px; 
+    }
+
+    @keyframes fadeIn { 
+      from { opacity: 0; transform: translateY(5px); } 
+      to { opacity: 1; transform: translateY(0); } 
+    }
+
+    @media (max-width: 600px) {
+      .btn-home { padding: 10px 18px; font-size: 14px; }
+      .wrap { padding: 10px; margin: 10px auto; }
+      header { padding: 15px; border-radius: 15px; }
+      .card { padding: 15px; border-radius: 18px; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="wrap">
-  <div id="offlineAlert" class="offline-banner">
-    ⚠️ Internet-ka waa uu go'an yahay! Waxaad ku jirtaa qaabka Offline-ka, casharada iyo ciyaarta gudaha ayaad sii isticmaali kartaa.
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Imtixaanka Qaranka</h1>
+        <small style="color: #666;">Tababar & Is-tijaabin</small>
+      </div>
+      <a href="/" class="btn btn-home">
+        <span class="icon">🏠</span>
+        <span class="text">Hoyga</span>
+      </a>
+    </header>
+
+    <!-- Qaybta Wax Raadinta (Search Bar) -->
+    <div class="search-wrapper">
+      <span style="font-size: 20px;">🔍</span>
+      <input type="text" class="search-input" id="mainSearchInput" placeholder="Halkan ku qor si aad u raadiso Maaddo, Sannad ama Cashar..." oninput="handleSearch(this.value)">
+    </div>
+
+    <section id="menu" class="screen active">
+      <div class="grid" id="subjectsGrid"></div>
+      <div class="global-notice-section" id="globalNoticeArea"></div>
+    </section>
+
+    <section id="subjectScreen" class="screen">
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+          <h2 id="subjectTitle" style="margin:0">Maaddo</h2>
+          <button class="btn btn-ghost" id="backToMenu">Dib u noqo</button>
+        </div>
+        <div class="grid" id="yearsList"></div>
+      </div>
+    </section>
+
+    <section id="yearScreen" class="screen">
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+          <h2 id="yearTitle" style="margin:0">Sannadka</h2>
+          <button class="btn btn-ghost" id="backToSubject">Dib u noqo</button>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+          <button class="btn btn-primary" id="readBtn">📖 Akhri</button>
+          <button class="btn btn-primary" id="quizBtn" style="background:var(--purple)">🧩 Is-tijaabi</button>
+        </div>
+        <div id="readArea" style="margin-top:20px;"></div>
+        <div id="quizArea" style="margin-top:20px;"></div>
+      </div>
+    </section>
   </div>
 
-  <header>
-    <div>
-      <h1>Imtixaanka Qaranka</h1>
-      <small style="color: #666;">Tababar & Is-tijaabin</small>
-    </div>
-    <a href="/" class="btn btn-home">
-      <span class="icon">🏠</span>
-      <span class="text">Hoyga</span>
-    </a>
-  </header>
+  <script>
+    // 1. Xogta Django ka imaanaysa
+    const SUBJECTS = {{ subjects_json|safe }};
+    const DATA = {{ data_json|safe }};
 
-  <div class="search-wrapper">
-    <span style="font-size: 20px;">🔍</span>
-    <input type="text" class="search-input" id="mainSearchInput" placeholder="Halkan ku qor si aad u raadiso Maaddo, Sannad ama Cashar..." oninput="handleSearch(this.value)">
-  </div>
+    // 2. State management
+    let currentSub = '', currentYr = '', currentQIdx = 0, score = 0;
 
-  <section id="menu" class="screen active">
-    <div class="grid" id="subjectsGrid"></div>
-    <div class="global-notice-section" id="globalNoticeArea"></div>
-  </section>
-
-  <section id="subjectScreen" class="screen">
-    <div class="card">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h2 id="subjectTitle" style="margin:0">Maaddo</h2>
-        <button class="btn btn-ghost" id="backToMenu">Dib u noqo</button>
-      </div>
-      <div class="grid" id="yearsList"></div>
-    </div>
-  </section>
-
-  <section id="yearScreen" class="screen">
-    <div class="card">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h2 id="yearTitle" style="margin:0">Sannadka</h2>
-        <button class="btn btn-ghost" id="backToSubject">Dib u noqo</button>
-      </div>
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-        <button class="btn btn-primary" id="readBtn">📖 Akhri</button>
-        <button class="btn btn-primary" id="quizBtn" style="background:var(--purple)">🧩 Is-tijaabi</button>
-      </div>
-      <div id="readArea" style="margin-top:20px;"></div>
-      <div id="quizArea" style="margin-top:20px;"></div>
-    </div>
-  </section>
-</div>
-
-<script>
-// 1. Xogta Django ka imaanaysa
-const SUBJECTS = {{ subjects_json|safe }};
-const DATA = {{ data_json|safe }};
-
-// 2. State management
-let currentSub = '', currentYr = '', currentQIdx = 0, score = 0;
-
-// CSRF Token Helper
-function getCSRFToken() {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, 10) === 'csrftoken=') {
-                cookieValue = decodeURIComponent(cookie.substring(10));
-                break;
+    // CSRF Token Helper for Django POST Requests
+    function getCSRFToken() {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, 10) === 'csrftoken=') {
+                    cookieValue = decodeURIComponent(cookie.substring(10));
+                    break;
+                }
             }
         }
+        return cookieValue || '{{ csrf_token }}';
     }
-    return cookieValue || '{{ csrf_token }}';
-}
 
-// Media Builder (Iyadoo la tixgelinayo dhacdooyinka Offline-ka)
-function generateMediaHTML(item) {
-    let html = '';
-    if (item.image_file || item.image_url) {
-        const imgSrc = item.image_file || item.image_url;
-        html += `<div class="media-wrapper"><img src="${imgSrc}" alt="${item.title || 'Image'}" loading="lazy" onerror="this.onerror=null; this.parentNode.innerHTML='<p style=\'padding:20px;color:#666;text-align:center;\'>🖼️ Sawirkan wuxuu u baahan yahay internet</p>';" /></div>`;
-    }
-    if (item.video_file || item.video_url) {
-        const vidSrc = item.video_file || item.video_url;
-        if (vidSrc.includes('youtube.com') || vidSrc.includes('youtu.be')) {
-            if (!navigator.onLine) {
-                return html + `<div class="media-wrapper" style="background:#222;padding:20px;color:#aaa;text-align:center;">📺 Muuqaalka YouTube-ka wuxuu u baahan yahay Internet.</div>`;
-            }
-            let embedUrl = vidSrc.replace('watch?v=', 'embed/');
-            if(vidSrc.includes('youtu.be/')) {
-                embedUrl = vidSrc.replace('youtu.be/', 'youtube.com/embed/');
-            }
-            html += `<div class="media-wrapper"><div class="video-container"><iframe src="${embedUrl}" allowfullscreen></iframe></div></div>`;
-        } else {
-            const isPortrait = item.is_portrait ? 'portrait' : '';
-            html += `<div class="media-wrapper"><div class="video-container ${isPortrait}"><video controls playsinline><source src="${vidSrc}" type="video/mp4"></video></div></div>`;
+    // Media Builder
+    function generateMediaHTML(item) {
+        let html = '';
+        if (item.image_file || item.image_url) {
+            const imgSrc = item.image_file || item.image_url;
+            html += `<div class="media-wrapper"><img src="${imgSrc}" alt="${item.title || 'Image'}" loading="lazy" /></div>`;
         }
-    }
-    return html;
-}
-
-// Render Maaddooyinka
-function renderSubjects(filteredSubjects = SUBJECTS) {
-    const grid = document.getElementById('subjectsGrid');
-    if (filteredSubjects.length === 0) {
-        grid.innerHTML = "<p style='grid-column:1/-1; text-align:center; color:#666;'>Maaddo u dhiganta raadintaada lama helin.</p>";
-        return;
-    }
-    
-    grid.innerHTML = filteredSubjects.map(s => {
-        let iconHTML = `<div style="font-size: 40px; margin-bottom: 10px;">📚</div>`;
-        if (s.icon_image_file || s.icon_image_url) {
-            iconHTML = `<img src="${s.icon_image_file || s.icon_image_url}" class="subject-media-icon" alt="${s.name}"/>`;
-        } else if (s.icon_video_file || s.icon_video_url) {
-            iconHTML = `<div class="subject-media-icon" style="overflow:hidden; background:#000;"><video autoplay loop muted playsinline style="width:100%; height:100%; object-fit:cover;"><source src="${s.icon_video_file || s.icon_video_url}" type="video/mp4"></video></div>`;
-        } else if (s.icon_emoji) {
-            iconHTML = `<div style="font-size: 40px; margin-bottom: 10px;">${s.icon_emoji}</div>`;
+        if (item.video_file || item.video_url) {
+            const vidSrc = item.video_file || item.video_url;
+            if (vidSrc.includes('youtube.com') || vidSrc.includes('youtu.be')) {
+                let embedUrl = vidSrc.replace('watch?v=', 'embed/');
+                if(vidSrc.includes('youtu.be/')) {
+                    embedUrl = vidSrc.replace('youtu.be/', 'youtube.com/embed/');
+                }
+                html += `<div class="media-wrapper"><div class="video-container"><iframe src="${embedUrl}" allowfullscreen></iframe></div></div>`;
+            } else {
+                const isPortrait = item.is_portrait ? 'portrait' : '';
+                html += `<div class="media-wrapper"><div class="video-container ${isPortrait}"><video controls playsinline><source src="${vidSrc}" type="video/mp4"></video></div></div>`;
+            }
         }
-
-        return `
-            <div class="card subject-card" onclick="openSubject('${s.name}')">
-                ${iconHTML}
-                <h3>${s.name}</h3>
-                <p style="font-size:12px; color:#666;">Guji si aad u bilowdo</p>
-            </div>
-        `;
-    }).join('');
-}
-
-// Render Ogeysiisyada Guud
-function renderGlobalNotices() {
-    const noticeArea = document.getElementById('globalNoticeArea');
-    if (DATA.global_ads && DATA.global_ads.length > 0) {
-        noticeArea.innerHTML = DATA.global_ads.map(ad => `
-            <div class="card" style="text-align:left; border-top: 4px solid var(--primary);">
-                <h2>${ad.title}</h2>
-                ${ad.description ? `<p style="line-height:1.6; color:#444;">${ad.description}</p>` : ''}
-                ${generateMediaHTML(ad)}
-            </div>
-        `).join('');
-    }
-}
-
-// Mishiinka Raadinta (Search Engine)
-function handleSearch(query) {
-    query = query.toLowerCase().trim();
-    showScreen('menu');
-    
-    if(!query) {
-        renderSubjects(SUBJECTS);
-        renderGlobalNotices();
-        return;
+        return html;
     }
 
-    const filteredSubs = SUBJECTS.filter(s => s.name.toLowerCase().includes(query));
-    renderSubjects(filteredSubs);
-
-    const noticeArea = document.getElementById('globalNoticeArea');
-    if (DATA.global_ads) {
-        const filteredAds = DATA.global_ads.filter(ad => 
-            ad.title.toLowerCase().includes(query) || 
-            (ad.description && ad.description.toLowerCase().includes(query))
-        );
+    // Render Maaddooyinka
+    function renderSubjects(filteredSubjects = SUBJECTS) {
+        const grid = document.getElementById('subjectsGrid');
+        if (filteredSubjects.length === 0) {
+            grid.innerHTML = "<p style='grid-column:1/-1; text-align:center; color:#666;'>Maaddo u dhiganta raadintaada lama helin.</p>";
+            return;
+        }
         
-        if(filteredAds.length > 0) {
-            noticeArea.innerHTML = `<h3 style="color:var(--primary); margin-top:20px;">Natiijada Wararka/Maqaalada:</h3>` + filteredAds.map(ad => `
+        grid.innerHTML = filteredSubjects.map(s => {
+            let iconHTML = `<div style="font-size: 40px; margin-bottom: 10px;">📚</div>`;
+            if (s.icon_image_file || s.icon_image_url) {
+                iconHTML = `<img src="${s.icon_image_file || s.icon_image_url}" class="subject-media-icon" alt="${s.name}"/>`;
+            } else if (s.icon_video_file || s.icon_video_url) {
+                iconHTML = `<div class="subject-media-icon" style="overflow:hidden; background:#000;"><video autoplay loop muted playsinline style="width:100%; height:100%; object-fit:cover;"><source src="${s.icon_video_file || s.icon_video_url}" type="video/mp4"></video></div>`;
+            } else if (s.icon_emoji) {
+                iconHTML = `<div style="font-size: 40px; margin-bottom: 10px;">${s.icon_emoji}</div>`;
+            }
+
+            return `
+                <div class="card subject-card" onclick="openSubject('${s.name}')">
+                    ${iconHTML}
+                    <h3>${s.name}</h3>
+                    <p style="font-size:12px; color:#666;">Guji si aad u bilowdo</p>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // Render Xayeysiiska / Ogeysiisyada Guud
+    function renderGlobalNotices() {
+        const noticeArea = document.getElementById('globalNoticeArea');
+        if (DATA.global_ads && DATA.global_ads.length > 0) {
+            noticeArea.innerHTML = DATA.global_ads.map(ad => `
                 <div class="card" style="text-align:left; border-top: 4px solid var(--primary);">
                     <h2>${ad.title}</h2>
                     ${ad.description ? `<p style="line-height:1.6; color:#444;">${ad.description}</p>` : ''}
                     ${generateMediaHTML(ad)}
                 </div>
             `).join('');
-        } else {
-            noticeArea.innerHTML = '';
         }
     }
-}
 
-// Fur Maaddada
-function openSubject(s) {
-    currentSub = s;
-    document.getElementById('subjectTitle').textContent = s;
-    const list = document.getElementById('yearsList');
-   
-    const availableYears = Object.keys(DATA[s] || {}).sort((a, b) => b - a);
-   
-    if (availableYears.length === 0) {
-        list.innerHTML = "<p style='grid-column: 1/-1; text-align:center;'>Weli sannado lama gelin maaddadan.</p>";
-    } else {
-        list.innerHTML = availableYears.map(y => `
-            <div class="year" onclick="openYear('${y}')">${y}</div>
-        `).join('');
-    }
-    showScreen('subjectScreen');
-}
+    // Mishiinka Raadinta Casriga ah (Search Engine)
+    function handleSearch(query) {
+        query = query.toLowerCase().trim();
+        showScreen('menu'); // Marka wax la raadinayo had iyo jeer menu-ka geey
+        
+        if(!query) {
+            renderSubjects(SUBJECTS);
+            renderGlobalNotices();
+            return;
+        }
 
-// Fur Sannadka
-function openYear(y) {
-    currentYr = y;
-    document.getElementById('yearTitle').textContent = `${currentSub} • ${y}`;
-    document.getElementById('readArea').innerHTML = '';
-    document.getElementById('quizArea').innerHTML = '';
-    showScreen('yearScreen');
-}
+        // Filter garee maaddooyinka magac ahaan
+        const filteredSubs = SUBJECTS.filter(s => s.name.toLowerCase().includes(query));
+        renderSubjects(filteredSubs);
 
-// Qaybta Akhriska
-document.getElementById('readBtn').onclick = () => {
-    document.getElementById('quizArea').innerHTML = '';
-    const pool = DATA[currentSub][currentYr].read;
-    const area = document.getElementById('readArea');
-   
-    if(!pool || pool.length === 0) {
-        area.innerHTML = `<div class="card" style="text-align:center; color:#999;">⚠️ Weli xog akhris lama gelin sannadkan.</div>`;
-        return;
+        // Filter garee ogeysiisyada guud
+        const noticeArea = document.getElementById('globalNoticeArea');
+        if (DATA.global_ads) {
+            const filteredAds = DATA.global_ads.filter(ad => 
+                ad.title.toLowerCase().includes(query) || 
+                (ad.description && ad.description.toLowerCase().includes(query))
+            );
+            
+            if(filteredAds.length > 0) {
+                noticeArea.innerHTML = `<h3 style="color:var(--primary); margin-top:20px;">Natiijada Wararka/Maqaalada:</h3>` + filteredAds.map(ad => `
+                    <div class="card" style="text-align:left; border-top: 4px solid var(--primary);">
+                        <h2>${ad.title}</h2>
+                        ${ad.description ? `<p style="line-height:1.6; color:#444;">${ad.description}</p>` : ''}
+                        ${generateMediaHTML(ad)}
+                    </div>
+                `).join('');
+            } else {
+                noticeArea.innerHTML = '';
+            }
+        }
     }
 
-    area.innerHTML = pool.map((item, idx) => {
-        const cleanContent = item.content.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ');
-        return `
-            <div class="card" style="background:#f0f7ff; border-left: 5px solid var(--primary); text-align:left;">
-                <h3 style="color:var(--primary);">${item.title}</h3>
-                ${generateMediaHTML(item)}
-                <div id="text-content-${idx}" style="line-height:1.6; color:#333; margin-top:10px;">${item.content}</div>
-                
-                <div class="action-bar">
-                    <button class="btn btn-tts" onclick="speakText(this, '${cleanContent}', ${idx})">
-                        <span>🔊</span> <span class="btn-text">Dhegayso Codka</span>
-                    </button>
-                    <button class="btn btn-copy" onclick="copyText(this, ${idx})">
-                        <span>📋</span> <span>Nuqul ka qaad</span>
-                    </button>
+    // Fur Maaddada
+    function openSubject(s) {
+        currentSub = s;
+        document.getElementById('subjectTitle').textContent = s;
+        const list = document.getElementById('yearsList');
+       
+        const availableYears = Object.keys(DATA[s] || {}).sort((a, b) => b - a);
+       
+        if (availableYears.length === 0) {
+            list.innerHTML = "<p style='grid-column: 1/-1; text-align:center;'>Weli sannado lama gelin maaddadan.</p>";
+        } else {
+            list.innerHTML = availableYears.map(y => `
+                <div class="year" onclick="openYear('${y}')">${y}</div>
+            `).join('');
+        }
+        showScreen('subjectScreen');
+    }
+
+    // Fur Sannadka
+    function openYear(y) {
+        currentYr = y;
+        document.getElementById('yearTitle').textContent = `${currentSub} • ${y}`;
+        document.getElementById('readArea').innerHTML = '';
+        document.getElementById('quizArea').innerHTML = '';
+        showScreen('yearScreen');
+    }
+
+    // Qaybta Akhriska + TTS iyo Nuqul batoonka cusub
+    document.getElementById('readBtn').onclick = () => {
+        document.getElementById('quizArea').innerHTML = '';
+        const pool = DATA[currentSub][currentYr].read;
+        const area = document.getElementById('readArea');
+       
+        if(!pool || pool.length === 0) {
+            area.innerHTML = `<div class="card" style="text-align:center; color:#999;">⚠️ Weli xog akhris lama gelin sannadkan.</div>`;
+            return;
+        }
+
+        area.innerHTML = pool.map((item, idx) => {
+            // Safe-garee qoraalka casharka si loogu diro batoonada sahal ahaan
+            const cleanContent = item.content.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ');
+            return `
+                <div class="card" style="background:#f0f7ff; border-left: 5px solid var(--primary); text-align:left;">
+                    <h3 style="color:var(--primary);">${item.title}</h3>
+                    ${generateMediaHTML(item)}
+                    <div id="text-content-${idx}" style="line-height:1.6; color:#333; margin-top:10px;">${item.content}</div>
+                    
+                    <!-- Action Buttons: TTS iyo Copy -->
+                    <div class="action-bar">
+                        <button class="btn btn-tts" onclick="speakText(this, '${cleanContent}', ${idx})">
+                            <span>🔊</span> <span class="btn-text">Dhegayso Codka</span>
+                        </button>
+                        <button class="btn btn-copy" onclick="copyText(this, ${idx})">
+                            <span>📋</span> <span>Nuqul ka qaad</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Meesha uu Mini Player-ku ka dhex dhalanayo -->
+                    <div class="tts-player-box" id="player-box-${idx}">
+                        <span style="font-size:12px; color:#666;">Codka:</span>
+                        <audio id="audio-element-${idx}" controls></audio>
+                    </div>
                 </div>
-                
-                <div class="tts-player-box" id="player-box-${idx}">
-                    <span style="font-size:12px; color:#666;">Codka:</span>
-                    <audio id="audio-element-${idx}" controls></audio>
+            `;
+        }).join('');
+    };
+
+    // Shaftada Text to Speech (Toos ugu xiran Views-gii Django)
+    function speakText(button, textToSpeak, idx) {
+        const playerBox = document.getElementById(`player-box-${idx}`);
+        const audioElement = document.getElementById(`audio-element-${idx}`);
+        const btnText = button.querySelector('.btn-text');
+        
+        btnText.innerText = "Yeeleysaa...";
+        button.style.opacity = "0.6";
+
+        // Samee FormData si loogu gudbiyo views.py
+        let formData = new FormData();
+        formData.append('text', textToSpeak);
+        formData.append('voice', 'maxamed'); // Waxaad u beddeli kartaa 'ubax' haddii loo baahdo
+
+        fetch('/tts/', {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            button.style.opacity = "1";
+            btnText.innerText = "Dhegayso Codka";
+            
+            if (data.status === 'success') {
+                audioElement.src = data.audio_url;
+                playerBox.style.display = "flex";
+                audioElement.play();
+            } else {
+                alert("Khalad: " + data.message);
+            }
+        })
+        .catch(error => {
+            button.style.opacity = "1";
+            btnText.innerText = "Dhegayso Codka";
+            console.error('Error:', error);
+            alert("Xiriirka tts-ka waa go'ay ama koodhka ayaa cillad leh.");
+        });
+    }
+
+    // Shaftada Nuqul ka qaadista (Copy Function)
+    function copyText(button, idx) {
+        const textToCopy = document.getElementById(`text-content-${idx}`).innerText;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            const originalHTML = button.innerHTML;
+            button.innerHTML = "<span>✅</span> <span>Waa la koobiyey!</span>";
+            button.style.background = "#e5fbe5";
+            setTimeout(() => {
+                button.innerHTML = originalHTML;
+                button.style.background = "#f2f2f7";
+            }, 2000);
+        }).catch(err => {
+            alert("Aaladdaan ma saamaxayso Copy-ga tooska ah.");
+        });
+    }
+
+    // Qaybta Quiz-ka (Quiz Section)
+    document.getElementById('quizBtn').onclick = () => {
+        document.getElementById('readArea').innerHTML = '';
+        currentQIdx = 0;
+        score = 0;
+        loadQuestion();
+    };
+
+    function loadQuestion() {
+        const pool = DATA[currentSub][currentYr].quiz;
+        const area = document.getElementById('quizArea');
+       
+        if(!pool || pool.length === 0) {
+            area.innerHTML = `<div class="card" style="text-align:center; color:#999;">⚠️ Weli su'aalo lama gelin sannadkan.</div>`;
+            return;
+        }
+
+        if(currentQIdx >= pool.length) {
+            area.innerHTML = `
+                <div class="card" style="text-align:center; padding:40px; border: 2px solid var(--primary);">
+                    <div style="font-size: 50px;">🏆</div>
+                    <h2>Natiijadaada: ${score} / ${pool.length}</h2>
+                    <p>${(score/pool.length * 100).toFixed(0)}% ayaad saxday.</p>
+                    <button class="btn btn-primary" onclick="currentQIdx=0; score=0; loadQuestion()">Mar kale isku day</button>
+                </div>`;
+            return;
+        }
+
+        const q = pool[currentQIdx];
+        area.innerHTML = `
+            <div class="card" style="background:#f9f9fb; text-align:left;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                    <span style="font-weight:bold; color:var(--primary);">Su'aasha ${currentQIdx + 1}/${pool.length}</span>
+                    <span style="color:#666;">Dhibcaha: ${score}</span>
                 </div>
+                <h3 style="margin-bottom:20px;">${q.q}</h3>
+                ${generateMediaHTML(q)}
+                <div id="optionsContainer" style="margin-top:15px;">
+                    ${q.choices.map((c, i) => `
+                        <div class="quiz-choice" onclick="handleAnswer(this, ${i}, ${q.answer})">${c}</div>
+                    `).join('')}
+                </div>
+                <div id="nextBtnArea" style="margin-top:20px;"></div>
             </div>
         `;
-    }).join('');
-};
-
-// Text to Speech (Iyadoo leh Dynamic Offline Native Backup)
-function speakText(button, textToSpeak, idx) {
-    const playerBox = document.getElementById(`player-box-${idx}`);
-    const audioElement = document.getElementById(`audio-element-${idx}`);
-    const btnText = button.querySelector('.btn-text');
-    
-    // HADDII UU OFFLINE YAHAY - Adeegso Browser-ka Gudaha (Native SpeechSynthesis)
-    if (!navigator.onLine) {
-        btnText.innerText = "Akhrinaya (Offline)...";
-        button.style.opacity = "0.7";
-        
-        // Jooji wixii hore u socday
-        window.speechSynthesis.cancel();
-        
-        const utterance = new SpeechSynthesisUtterance(textToSpeak);
-        utterance.lang = 'so'; // Waxaad u beddeli kartaa afka imtixaanka uu ku qoran yahay
-        utterance.onend = function() {
-            button.style.opacity = "1";
-            btnText.innerText = "Dhegayso Codka";
-        };
-        utterance.onerror = function() {
-            button.style.opacity = "1";
-            btnText.innerText = "Dhegayso Codka";
-        };
-        window.speechSynthesis.speak(utterance);
-        return;
     }
 
-    // HADDII UU ONLINE YAHAY - U dir Server-ka Django TTS API-giisa
-    btnText.innerText = "Yeeleysaa...";
-    button.style.opacity = "0.6";
+    function handleAnswer(el, picked, correct) {
+        const choices = document.querySelectorAll('.quiz-choice');
+        choices.forEach(c => c.style.pointerEvents = 'none');
 
-    let formData = new FormData();
-    formData.append('text', textToSpeak);
-    formData.append('voice', 'maxamed');
-
-    fetch('/tts/', {
-        method: 'POST',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'X-CSRFToken': getCSRFToken()
-        },
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-        button.style.opacity = "1";
-        btnText.innerText = "Dhegayso Codka";
-        
-        if (data.status === 'success') {
-            audioElement.src = data.audio_url;
-            playerBox.style.display = "flex";
-            audioElement.play();
+        if(picked === correct) {
+            el.classList.add('correct');
+            score++;
         } else {
-            alert("Khalad: " + data.message);
+            el.classList.add('wrong');
+            choices[correct].classList.add('correct');
         }
-    })
-    .catch(error => {
-        button.style.opacity = "1";
-        btnText.innerText = "Dhegayso Codka";
-        console.error('Error:', error);
-        alert("Xiriirka internetka ayaa go'ay. Laakiin waad maqli kartaa haddii aad internet-ka damiso.");
-    });
-}
 
-// Copy Function
-function copyText(button, idx) {
-    const textToCopy = document.getElementById(`text-content-${idx}`).innerText;
-    navigator.clipboard.writeText(textToCopy).then(() => {
-        const originalHTML = button.innerHTML;
-        button.innerHTML = "<span>✅</span> <span>Waa la koobiyey!</span>";
-        button.style.background = "#e5fbe5";
-        setTimeout(() => {
-            button.innerHTML = originalHTML;
-            button.style.background = "#f2f2f7";
-        }, 2000);
-    }).catch(err => {
-        alert("Aaladdaan ma saamaxayso Copy-ga tooska ah.");
-    });
-}
-
-// Qaybta Quiz-ka
-document.getElementById('quizBtn').onclick = () => {
-    document.getElementById('readArea').innerHTML = '';
-    currentQIdx = 0;
-    score = 0;
-    loadQuestion();
-};
-
-function loadQuestion() {
-    const pool = DATA[currentSub][currentYr].quiz;
-    const area = document.getElementById('quizArea');
-   
-    if(!pool || pool.length === 0) {
-        area.innerHTML = `<div class="card" style="text-align:center; color:#999;">⚠️ Weli su'aalo lama gelin sannadkan.</div>`;
-        return;
+        document.getElementById('nextBtnArea').innerHTML = `
+            <button class="btn btn-primary" style="background:var(--success)" onclick="currentQIdx++; loadQuestion()">Su'aasha Xigta ➔</button>
+        `;
     }
 
-    if(currentQIdx >= pool.length) {
-        area.innerHTML = `
-            <div class="card" style="text-align:center; padding:40px; border: 2px solid var(--primary);">
-                <div style="font-size: 50px;">🏆</div>
-                <h2>Natiijadaada: ${score} / ${pool.length}</h2>
-                <p>${(score/pool.length * 100).toFixed(0)}% ayaad saxday.</p>
-                <button class="btn btn-primary" onclick="currentQIdx=0; score=0; loadQuestion()">Mar kale isku day</button>
-            </div>`;
-        return;
+    // Screen Switcher
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        window.scrollTo(0,0);
     }
 
-    const q = pool[currentQIdx];
-    area.innerHTML = `
-        <div class="card" style="background:#f9f9fb; text-align:left;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                <span style="font-weight:bold; color:var(--primary);">Su'aasha ${currentQIdx + 1}/${pool.length}</span>
-                <span style="color:#666;">Dhibcaha: ${score}</span>
-            </div>
-            <h3 style="margin-bottom:20px;">${q.q}</h3>
-            ${generateMediaHTML(q)}
-            <div id="optionsContainer" style="margin-top:15px;">
-                ${q.choices.map((c, i) => `
-                    <div class="quiz-choice" onclick="handleAnswer(this, ${i}, ${q.answer})">${c}</div>
-                `).join('')}
-            </div>
-            <div id="nextBtnArea" style="margin-top:20px;"></div>
-        </div>
-    `;
-}
+    document.getElementById('backToMenu').onclick = () => showScreen('menu');
+    document.getElementById('backToSubject').onclick = () => showScreen('subjectScreen');
 
-function handleAnswer(el, picked, correct) {
-    const choices = document.querySelectorAll('.quiz-choice');
-    choices.forEach(c => c.style.pointerEvents = 'none');
-
-    if(picked === correct) {
-        el.classList.add('correct');
-        score++;
-    } else {
-        el.classList.add('wrong');
-        choices[correct].classList.add('correct');
-    }
-
-    document.getElementById('nextBtnArea').innerHTML = `
-        <button class="btn btn-primary" style="background:var(--success)" onclick="currentQIdx++; loadQuestion()">Su'aasha Xigta ➔</button>
-    `;
-}
-
-// Screen Switcher
-function showScreen(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    window.scrollTo(0,0);
-}
-
-document.getElementById('backToMenu').onclick = () => showScreen('menu');
-document.getElementById('backToSubject').onclick = () => showScreen('subjectScreen');
-
-// Network Observer (Hubinta Internet-ka)
-function checkNetworkStatus() {
-    const offlineAlert = document.getElementById('offlineAlert');
-    if (navigator.onLine) {
-        offlineAlert.style.display = 'none';
-    } else {
-        offlineAlert.style.display = 'block';
-    }
-}
-
-window.addEventListener('online', checkNetworkStatus);
-window.addEventListener('offline', checkNetworkStatus);
-
-// Service Worker Registration
-if ('serviceWorker' in navigator) {
-    window.addEventListener("load", function() {
-        navigator.serviceWorker.register('/static/sw.js')
-            .then(() => console.log("SW Registered"))
-            .catch(err => console.log("SW Error", err));
-    });
-}
-
-// Kici bilowga hore
-checkNetworkStatus();
-renderSubjects();
-renderGlobalNotices();
-</script>
+    // Kici dhalashada koowaad
+    renderSubjects();
+    renderGlobalNotices();
+  </script>
 </body>
 </html>
