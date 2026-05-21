@@ -2,146 +2,258 @@
 <html lang="so">
 <head>
     <meta charset="UTF-8">
-    <title>Dhiso App Cusub</title>
+    <title>Dhiso App Cusub | Maxamed Samee App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+
     <style>
         :root {
-    --primary-gradient: linear-gradient(135deg, #6366f1, #a855f7);
-    --body-bg: #f8fafc;
-    --input-focus: #6366f1;
-    --text-main: #1e293b;
-}
+            --bg: #020617;
+            --card-bg: rgba(15, 23, 42, 0.6);
+            --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            --accent: #22d3ee;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+            --input-focus: #3b82f6;
+        }
 
-body { 
-    font-family: 'Inter', -apple-system, sans-serif; 
-    background-color: var(--body-bg); 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    margin: 0;
-    padding: 20px;
-}
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: var(--bg); 
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.05) 0, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(6, 182, 212, 0.05) 0, transparent 50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+        }
 
-.form-container { 
-    background: #ffffff; 
-    padding: 40px; 
-    border-radius: 24px; 
-    width: 100%;
-    max-width: 500px; 
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    animation: slideUp 0.5s ease-out;
-}
+        /* GLOBAL OFFLINE BANNER */
+        .builder-offline-banner {
+            display: none;
+            width: 100%;
+            background: #7f1d1d;
+            color: #fca5a5;
+            text-align: center;
+            padding: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-bottom: 1px solid #ef4444;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1100;
+            animation: slideDown 0.3s ease;
+        }
 
-@keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+        @keyframes slideDown { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-h2 { 
-    color: var(--text-main); 
-    text-align: center; 
-    font-weight: 800;
-    margin-bottom: 30px;
-    font-size: 1.8rem;
-}
+        .form-container { 
+            background: var(--card-bg); 
+            padding: 40px; 
+            border-radius: 24px; 
+            width: 100%;
+            max-width: 500px; 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(20px);
+            animation: slideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-top: 40px;
+        }
 
-/* Django Form Styling */
-form p { 
-    margin-bottom: 20px; 
-    display: flex;
-    flex-direction: column;
-}
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-label {
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: #475569;
-    font-size: 0.95rem;
-}
+        h2 { 
+            text-align: center; 
+            font-weight: 800;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-input, select, textarea { 
-    width: 100%; 
-    padding: 12px 16px; 
-    border: 2px solid #e2e8f0; 
-    border-radius: 12px; 
-    transition: all 0.3s ease;
-    font-size: 1rem;
-    background-color: #fcfcfc;
-}
+        /* Django Form Styling Override */
+        form p { 
+            margin-bottom: 20px; 
+            display: flex;
+            flex-direction: column;
+        }
 
-input:focus, select:focus, textarea:focus { 
-    outline: none; 
-    border-color: var(--input-focus); 
-    background-color: #fff;
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-}
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
 
-.btn-submit { 
-    width: 100%; 
-    background: var(--primary-gradient); 
-    color: white; 
-    padding: 14px; 
-    border: none; 
-    border-radius: 14px; 
-    cursor: pointer; 
-    font-size: 16px; 
-    font-weight: 700;
-    margin-top: 15px; 
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-}
+        input, select, textarea { 
+            width: 100%; 
+            padding: 12px 16px; 
+            border: 1px solid var(--border); 
+            border-radius: 12px; 
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            background-color: rgba(0, 0, 0, 0.2);
+            color: white;
+            outline: none;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
 
-.btn-submit:hover { 
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
-    filter: brightness(1.1);
-}
+        input:focus, select:focus, textarea:focus { 
+            border-color: var(--input-focus); 
+            background-color: rgba(0, 0, 0, 0.4);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+        }
 
-.back-link { 
-    display: block; 
-    text-align: center; 
-    margin-top: 25px; 
-    text-decoration: none; 
-    color: #64748b; 
-    font-weight: 600;
-    transition: 0.3s;
-}
+        /* Styling for Django choice fields / selects */
+        select option {
+            background: #0f172a;
+            color: white;
+        }
 
-.back-link:hover { 
-    color: var(--input-focus); 
-}
+        .btn-submit { 
+            width: 100%; 
+            background: var(--primary-gradient); 
+            color: white; 
+            padding: 14px; 
+            border: none; 
+            border-radius: 14px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-weight: 700;
+            margin-top: 15px; 
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(59, 130, 241, 0.3);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
 
-/* Mobile Responsive */
-@media (max-width: 480px) {
-    .form-container {
-        padding: 25px;
-        border-radius: 20px;
-    }
-    
-    h2 { font-size: 1.5rem; }
-    
-    .btn-submit { padding: 12px; }
-}
+        .btn-submit:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 241, 0.5);
+        }
+
+        /* Offline Styles */
+        .app-offline-active .btn-submit {
+            background: #475569 !important;
+            color: #94a3b8 !important;
+            cursor: not-allowed;
+            box-shadow: none !important;
+            transform: none !important;
+        }
+        .app-offline-active input, 
+        .app-offline-active select, 
+        .app-offline-active textarea {
+            background-color: rgba(255, 255, 255, 0.01) !important;
+            border-color: rgba(255, 255, 255, 0.03) !important;
+            color: #64748b !important;
+            cursor: not-allowed;
+        }
+
+        .back-link { 
+            display: block; 
+            text-align: center; 
+            margin-top: 25px; 
+            text-decoration: none; 
+            color: var(--text-dim); 
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+        .back-link:hover { 
+            color: var(--accent); 
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 480px) {
+            .form-container {
+                padding: 25px;
+                border-radius: 20px;
+            }
+            h2 { font-size: 1.5rem; }
+            .btn-submit { padding: 12px; }
+        }
     </style>
-     <link rel="manifest" href="/static/manifest.json">
-<meta name="theme-color" content="#0f172a">
 </head>
 <body>
 
+    <div id="builderOfflineAlert" class="builder-offline-banner">
+        📡 Qaabka Offline: Ma dhisi kartid app cusub mana soo rari kartid faylal ilaa aad internet-ka dib ugu xiranto.
+    </div>
+
     <div class="form-container">
         <h2>Dhiso App Cusub 🚀</h2>
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data" id="app-builder-form">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" class="btn-submit">Dhis App-ka</button>
+            <button type="submit" class="btn-submit" id="builder-submit-btn">Dhis App-ka</button>
         </form>
         <a href="{% url 'dashboard' %}" class="back-link">← Ku laabo Dashboard-ka</a>
     </div>
+
 <script>
+// NETWORK STATE MANAGEMENT
+const offlineBanner = document.getElementById('builderOfflineAlert');
+const builderForm = document.getElementById('app-builder-form');
+const submitBtn = document.getElementById('builder-submit-btn');
+
+// Soo qaado dhammaan form inputs-ka si dynamic ah
+const formInputs = builderForm.querySelectorAll('input, select, textarea');
+
+function handleNetworkChange() {
+    if (navigator.onLine) {
+        offlineBanner.style.display = 'none';
+        document.body.classList.remove('app-offline-active');
+        submitBtn.removeAttribute('disabled');
+        submitBtn.innerText = "Dhis App-ka";
+        
+        formInputs.forEach(input => {
+            input.removeAttribute('disabled');
+        });
+    } else {
+        offlineBanner.style.display = 'block';
+        document.body.classList.add('app-offline-active');
+        submitBtn.setAttribute('disabled', 'true');
+        submitBtn.innerText = "Lama dhisi karo (Offline)";
+        
+        formInputs.forEach(input => {
+            input.setAttribute('disabled', 'true');
+        });
+    }
+}
+
+// Ka hortag in form-ka la yabyabo haddii internet-ka la la'yahay
+builderForm.addEventListener('submit', function(e) {
+    if (!navigator.onLine) {
+        e.preventDefault();
+        alert("Ficilkan ma fuli karo adoo offline ah. Fadlan xiriirka internet-ka hubi.");
+    }
+});
+
+window.addEventListener('online', handleNetworkChange);
+window.addEventListener('offline', handleNetworkChange);
+handleNetworkChange(); // Initial check
+
+// SERVICE WORKER REGISTRATION
 if ('serviceWorker' in navigator) {
   window.addEventListener("load", function() {
     navigator.serviceWorker.register('/static/sw.js')
-      .then(() => console.log("SW Registered"))
+      .then(() => console.log("SW Registered Successfully"))
       .catch(err => console.log("SW Error", err));
   });
 }

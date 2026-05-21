@@ -32,13 +32,46 @@
             position: relative;
         }
 
+        /* --- OFFLINE ALERT OVERLAY --- */
+        .offline-notification {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            z-index: 99999;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .offline-notification.show {
+            top: 20px;
+        }
+        .offline-notification .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
         /* --- DHEX-GELINTA CSS-KA USER-KA (Laga ma taaban) --- */
         {{ app.css_code|safe }}
     </style>
-     <link rel="manifest" href="/static/manifest.json">
-<meta name="theme-color" content="#0f172a">
+    <link rel="manifest" href="/static/manifest.json">
 </head>
 <body>
+
+    <div id="appStatusAlert" class="offline-notification">
+        <div id="statusDot" class="status-dot"></div>
+        <span id="statusMessage">Xaaladda App-ka...</span>
+    </div>
 
     <div id="user-app-content">
         {{ app.html_code|safe }}
@@ -52,15 +85,74 @@
         window.addEventListener('load', function() {
             window.scrollTo(0, 1);
         });
+
+        // 1. SERVICE WORKER REGISTRATION
+        if ('serviceWorker' in navigator) {
+            window.addEventListener("load", function() {
+                navigator.serviceWorker.register('/static/sw.js')
+                    .then(() => console.log("SW Registered"))
+                    .catch(err => console.log("SW Error", err));
+            });
+        }
+
+        // 2. BACKUP & OFFLINE ENGINE (LocalStorage Fallback)
+        const appKeyHtml = "app_backup_html_{{ app.id }}";
         
-if ('serviceWorker' in navigator) {
-  window.addEventListener("load", function() {
-    navigator.serviceWorker.register('/static/sw.js')
-      .then(() => console.log("SW Registered"))
-      .catch(err => console.log("SW Error", err));
-  });
-}
-</script>
+        // Haddii uu online yahay, kaydi koodka ugu dambeeyey
+        if (navigator.onLine) {
+            const currentHtml = document.getElementById('user-app-content').innerHTML;
+            if (currentHtml.trim() !== "") {
+                localStorage.setItem(appKeyHtml, currentHtml);
+            }
+        } else {
+            // Haddii uu offline yahay, oo uu jiro kood hore u kaydsanaa, soo rux!
+            const savedHtml = localStorage.getItem(appKeyHtml);
+            if (savedHtml && document.getElementById('user-app-content').innerHTML.trim() === "") {
+                document.getElementById('user-app-content').innerHTML = savedHtml;
+            }
+        }
+
+        // 3. OFFLINE & ONLINE NOTIFICATION ALERTS
+        const alertBox = document.getElementById('appStatusAlert');
+        const statusDot = document.getElementById('statusDot');
+        const statusMessage = document.getElementById('statusMessage');
+
+        function showAlert(type, message) {
+            statusMessage.innerText = message;
+            if (type === 'online') {
+                statusDot.style.backgroundColor = '#10b981'; /* Green */
+                alertBox.style.borderLeft = '4px solid #10b981';
+            } else {
+                statusDot.style.backgroundColor = '#ef4444'; /* Red */
+                alertBox.style.borderLeft = '4px solid #ef4444';
+            }
+            
+            alertBox.classList.add('show');
+            
+            // Iska qari 4 ilbiriqsi ka dib haddii uu online yahay
+            if (type === 'online') {
+                setTimeout(() => {
+                    alertBox.classList.remove('show');
+                }, 4000);
+            }
+        }
+
+        window.addEventListener('online', function() {
+            showAlert('online', 'App-ku wuxuu ku soo laabtay khadka (Online) ⚡');
+            // Cusboonaysii kaydka mar kale mar haddii Internet la helay
+            const currentHtml = document.getElementById('user-app-content').innerHTML;
+            localStorage.setItem(appKeyHtml, currentHtml);
+        });
+
+        window.addEventListener('offline', function() {
+            showAlert('offline', 'Internet-ka ayaa go’an! Waxaad ku jirtaa qaabka Offline-ka 📱');
+        });
+
+        // Hubinta koowaad marka app-ku furmo
+        if (!navigator.onLine) {
+            showAlert('offline', 'Waxaad app-kan ku furatay qaab offline ah 🖥️');
+        }
+    </script>
 
 </body>
 </html>

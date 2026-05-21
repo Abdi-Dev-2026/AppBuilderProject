@@ -1,174 +1,323 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="so">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diiwaangeli - Register</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Diiwaangeli - Register | Maxamed Samee App</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
+        :root {
+            --bg: #030712;
+            --card: rgba(30, 41, 59, 0.45);
+            --primary: #6c5ce7;
+            --primary-hover: #a29bfe;
+            --text: #f8fafc;
+            --muted: #a29bfe;
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --error-color: #ff6b6b;
+        }
+
         body {
             background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-family: 'Segoe UI', sans-serif;
-            color: white;
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            color: var(--text);
             padding: 20px;
+            margin: 0;
+        }
+
+        /* OFFLINE BANNER */
+        .auth-offline-banner {
+            display: none;
+            width: 100%;
+            max-width: 500px;
+            background: rgba(239, 68, 68, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid #ef4444;
+            color: #fca5a5;
+            text-align: center;
+            padding: 12px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            animation: fadeIn 0.4s ease;
         }
 
         .auth-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
+            background: var(--card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             padding: 40px;
             border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid var(--glass-border);
             width: 100%;
             max-width: 500px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
         h2 {
             text-align: center;
             font-weight: 800;
-            margin-bottom: 25px;
+            margin-bottom: 5px;
+            background: linear-gradient(135deg, #fff 40%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
         }
 
         label {
-            margin-top: 10px;
-            font-weight: bold;
-            color: #a29bfe;
-            font-size: 0.9rem;
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: var(--muted);
+            font-size: 0.85rem;
+            letter-spacing: 0.3px;
         }
 
-        input {
+        /* Qabsashada Django Automatic Rendered Inputs */
+        input[type="text"], 
+        input[type="password"], 
+        input[type="email"],
+        .auth-card input {
             width: 100%;
-            padding: 12px;
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.3);
-            background: rgba(255,255,255,0.05);
+            padding: 12px 16px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.04);
             color: white;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            outline: none;
         }
 
         input:focus {
-            border-color: #6c5ce7;
-            background: rgba(255,255,255,0.1);
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 15px rgba(108, 92, 231, 0.25);
         }
 
         .btn-register {
-            background: #6c5ce7;
+            background: linear-gradient(135deg, #6c5ce7, #4834d4);
+            color: white;
             width: 100%;
-            padding: 15px;
-            border-radius: 12px;
-            font-weight: bold;
-            margin-top: 20px;
+            padding: 14px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-top: 25px;
             border: none;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .btn-register:hover {
-            background: #a29bfe;
+            background: linear-gradient(135deg, #8b5cf6, #6c5ce7);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(108, 92, 231, 0.4);
+        }
+
+        .btn-register:disabled {
+            background: #334155 !important;
+            color: #64748b !important;
+            box-shadow: none !important;
+            cursor: not-allowed !important;
+            pointer-events: none;
         }
 
         .errorlist {
-            color: #ff6b6b;
+            color: var(--error-color);
             font-size: 0.85rem;
             list-style: none;
-            padding: 0;
-            margin-bottom: 5px;
+            padding: 10px 15px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 10px;
+            border-left: 3px solid var(--error-color);
         }
 
         .helptext {
             font-size: 0.8rem;
-            color: #bbb;
+            color: #94a3b8;
+            margin-top: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .helptext ul {
+            margin: 5px 0 0 0;
+            padding-left: 20px;
+            color: #cbd5e1;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 576px) {
+            .auth-card { padding: 25px 20px; border-radius: 24px; }
         }
     </style>
 
-    <link rel="manifest" href="/static/manifest.json">
+    <link rel="manifest" href="{% static 'manifest.json' %}">
     <meta name="theme-color" content="#0f172a">
 </head>
 
 <body>
 
-<div class="auth-card shadow-lg">
-    <h2>Abuur Koonto Cusub 🚀</h2>
-
-    <form method="post">
-        {% csrf_token %}
-
-        <!-- GLOBAL ERRORS -->
-        {% if form.non_field_errors %}
-            <div class="errorlist">
-                {{ form.non_field_errors }}
-            </div>
-        {% endif %}
-
-        <!-- USERNAME -->
-        {{ form.username.label_tag }}
-        {{ form.username }}
-        {{ form.username.errors }}
-
-        <!-- EMAIL -->
-        {{ form.email.label_tag }}
-        {{ form.email }}
-        {{ form.email.errors }}
-
-        <!-- FIRST NAME -->
-        {{ form.first_name.label_tag }}
-        {{ form.first_name }}
-        {{ form.first_name.errors }}
-
-        <!-- FATHER NAME -->
-        {{ form.father_name.label_tag }}
-        {{ form.father_name }}
-        {{ form.father_name.errors }}
-
-        <!-- GRANDFATHER -->
-        {{ form.grandfather_name.label_tag }}
-        {{ form.grandfather_name }}
-        {{ form.grandfather_name.errors }}
-
-        <!-- PASSWORD -->
-        {{ form.password1.label_tag }}
-        {{ form.password1 }}
-        {{ form.password1.errors }}
-
-        <div class="helptext">
-            Password-ku waa inuu:
-            <ul>
-                <li>Ka badan yahay 8 xaraf</li>
-                <li>Uusan sahlanayn</li>
-                <li>Uusan noqon tiro kaliya</li>
-            </ul>
-        </div>
-
-        <!-- CONFIRM PASSWORD -->
-        {{ form.password2.label_tag }}
-        {{ form.password2 }}
-        {{ form.password2.errors }}
-
-        <button type="submit" class="btn-register">
-            Register (Diiwaangeli)
-        </button>
-    </form>
-
-    <div class="text-center mt-4">
-        <p>
-            Horey ma u leedahay koonto?
-            <a href="{% url 'login' %}" class="text-info fw-bold text-decoration-none">
-                Login
-            </a>
-        </p>
+    <div id="authOfflineBanner" class="auth-offline-banner">
+        ⚠️ Internet ma jiro. Ma abuuri kartid koonto cusub ilaa aad khadka dib ugu soo laabato.
     </div>
-</div>
 
-<script>
-if ('serviceWorker' in navigator) {
-    window.addEventListener("load", function() {
-        navigator.serviceWorker.register('/static/sw.js');
-    });
-}
-</script>
+    <div class="auth-card shadow-lg">
+        <h2>Abuur Koonto Cusub 🚀</h2>
+        <div class="subtitle">Ku biir platform-ka si aad u dhisato apps iyo websites</div>
+
+        <form method="post" id="registerForm">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="errorlist">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div>
+                {{ form.username.label_tag }}
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="errorlist">{{ form.username.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div>
+                {{ form.email.label_tag }}
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="errorlist">{{ form.email.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div>
+                {{ form.first_name.label_tag }}
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                    <div class="errorlist">{{ form.first_name.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div>
+                {{ form.father_name.label_tag }}
+                {{ form.father_name }}
+                {% if form.father_name.errors %}
+                    <div class="errorlist">{{ form.father_name.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div>
+                {{ form.grandfather_name.label_tag }}
+                {{ form.grandfather_name }}
+                {% if form.grandfather_name.errors %}
+                    <div class="errorlist">{{ form.grandfather_name.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div>
+                {{ form.password1.label_tag }}
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                    <div class="errorlist">{{ form.password1.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="helptext">
+                Password-ka nidaamka wuxuu rabaa:
+                <ul>
+                    <li>Inuu ka koobnaado ugu yaraan 8 xaraf</li>
+                    <li>Uusan noqon mid si fudud loo qiyaasi karo</li>
+                    <li>Uusan noqon tiro kaliya ah</li>
+                </ul>
+            </div>
+
+            <div>
+                {{ form.password2.label_tag }}
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                    <div class="errorlist">{{ form.password2.errors }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn-register" id="regSubmitBtn">
+                Diiwaangeli (Register)
+            </button>
+        </form>
+
+        <div class="text-center mt-4">
+            <p class="mb-0" style="font-size: 0.9rem; color: #94a3b8;">
+                Horey ma u leedahay koonto? 
+                <a href="{% url 'login' %}" class="text-info fw-bold text-decoration-none" style="color: #5856d6 !important;">
+                    Gali (Login)
+                </a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // NETWORK GUARDIAN (OFFLINE SYSTEM)
+        const offlineBanner = document.getElementById('authOfflineBanner');
+        const submitBtn = document.getElementById('regSubmitBtn');
+        const registerForm = document.getElementById('registerForm');
+
+        function checkNetworkStatus() {
+            if (navigator.onLine) {
+                offlineBanner.style.display = 'none';
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Diiwaangeli (Register)";
+            } else {
+                offlineBanner.style.display = 'block';
+                submitBtn.disabled = true;
+                submitBtn.innerText = "Internet La'aan...";
+            }
+        }
+
+        window.addEventListener('online', checkNetworkStatus);
+        window.addEventListener('offline', checkNetworkStatus);
+
+        // Ka hortag dheeraad ah haddii la isku dayo in la submit gareeyo
+        registerForm.addEventListener('submit', function(e) {
+            if (!navigator.onLine) {
+                e.preventDefault();
+                alert("Ma diri kartid foomka diiwaangelinta adoo offline ah!");
+            }
+        });
+
+        // SERVICE WORKER
+        if ('serviceWorker' in navigator) {
+            window.addEventListener("load", function() {
+                navigator.serviceWorker.register('/static/sw.js')
+                .then(() => console.log("SW Active on Register Page"));
+            });
+        }
+
+        // Hubi network-ka marka boggu uu kiciyo kowaad
+        checkNetworkStatus();
+    </script>
 
 </body>
 </html>

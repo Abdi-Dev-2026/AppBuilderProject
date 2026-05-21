@@ -1,22 +1,167 @@
 {% extends 'core/homepage.html' %}
+{% load static %}
 
 {% block content %}
-<div class="container" style="text-align: center; padding: 50px;">
-    <div class="card" style="max-width: 500px; margin: auto; padding: 30px; background: #1e293b; border-radius: 15px; color: white;">
-        <h2 style="color: #60a5fa;">Natiijada Quiz-ka 🧠</h2>
-        <hr style="border-color: #334155;">
+<style>
+    :root {
+        --glass-card: rgba(30, 41, 59, 0.45);
+        --glass-border: rgba(255, 255, 255, 0.12);
+        --text-light: #f8fafc;
+        --muted-text: #94a3b8;
+    }
+
+    .result-container {
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+    }
+
+    .result-card {
+        background: var(--glass-card);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 28px;
+        padding: 45px 35px;
+        width: 100%;
+        max-width: 480px;
+        text-align: center;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        animation: scaleUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        transition: box-shadow 0.3s ease;
+    }
+
+    /* Dynamic Border Glows based on result status */
+    .result-card.status-correct {
+        border-color: rgba(16, 185, 129, 0.4);
+        box-shadow: 0 20px 40px -10px rgba(16, 185, 129, 0.15);
+    }
+
+    .result-card.status-wrong {
+        border-color: rgba(239, 68, 68, 0.4);
+        box-shadow: 0 20px 40px -10px rgba(239, 68, 68, 0.15);
+    }
+
+    .result-title {
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        background: linear-gradient(135deg, #fff 40%, #a29bfe 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 15px;
+    }
+
+    .result-divider {
+        border-color: rgba(255, 255, 255, 0.08);
+        margin: 20px 0;
+    }
+
+    .result-msg {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #cbd5e1;
+        line-height: 1.6;
+        margin: 25px 0;
+    }
+
+    /* Icon Animation Showcase */
+    .result-icon {
+        font-size: 75px;
+        margin: 25px 0;
+        display: inline-block;
+    }
+
+    .status-correct .result-icon {
+        animation: popCheck 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s both;
+        filter: drop-shadow(0 0 15px rgba(16, 185, 129, 0.6));
+    }
+
+    .status-wrong .result-icon {
+        animation: shakeX 0.4s ease-in-out 0.2s both;
+        filter: drop-shadow(0 0 15px rgba(239, 68, 68, 0.6));
+    }
+
+    .btn-home {
+        background: linear-gradient(135deg, #6c5ce7, #4834d4);
+        color: white !important;
+        padding: 14px 30px;
+        border-radius: 14px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        width: 100%;
+        justify-content: center;
+        box-shadow: 0 8px 20px rgba(108, 92, 231, 0.25);
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+    .btn-home:hover {
+        background: linear-gradient(135deg, #8b5cf6, #6c5ce7);
+        transform: translateY(-2px);
+        box-shadow: 0 12px 25px rgba(108, 92, 231, 0.35);
+    }
+
+    /* KEYFRAMES ANIMATIONS */
+    @keyframes scaleUp {
+        from { transform: scale(0.92); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes popCheck {
+        0% { transform: scale(0); opacity: 0; }
+        70% { transform: scale(1.2); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes shakeX {
+        0%, 100% { transform: translateX(0); }
+        20%, 60% { transform: translateX(-6px); }
+        40%, 80% { transform: translateX(6px); }
+    }
+
+    @media (max-width: 576px) {
+        .result-card { padding: 35px 20px; border-radius: 24px; }
+        .result-msg { font-size: 1rem; }
+        .result-icon { font-size: 65px; }
+    }
+</style>
+
+<div class="result-container">
+    <div class="result-card shadow-lg {% if status == 'correct' %}status-correct{% else %}status-wrong{% endif %}">
         
-        <p style="font-size: 1.2rem; margin: 20px 0;">{{ msg }}</p>
+        <h2 class="result-title">Natiijada Quiz-ka 🧠</h2>
+        <hr class="result-divider">
+        
+        <p class="result-msg">{{ msg }}</p>
         
         {% if status == 'correct' %}
-            <div style="font-size: 70px; margin: 20px 0;">✅</div>
+            <div class="result-icon">✅</div>
         {% else %}
-            <div style="font-size: 70px; margin: 20px 0;">❌</div>
+            <div class="result-icon">❌</div>
         {% endif %}
 
-        <a href="/" class="btn" style="background: #2563eb; color: white; padding: 10px 25px; border-radius: 10px; text-decoration: none; display: inline-block; margin-top: 10px;">
-            Ku laabo Guriga
-        </a>
+        <div class="mt-3">
+            <a href="/" class="btn-home">
+                <i class="fas fa-home"></i> Ku laabo Guriga
+            </a>
+        </div>
+        
     </div>
 </div>
+
+<script>
+    // PWA ACTIVE MONITOR
+    if ('serviceWorker' in navigator) {
+        window.addEventListener("load", function() {
+            navigator.serviceWorker.register('/static/sw.js')
+            .then(() => console.log("PWA Active on Result Page"));
+        });
+    }
+</script>
 {% endblock %}

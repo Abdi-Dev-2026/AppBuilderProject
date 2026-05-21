@@ -1,110 +1,250 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="so">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quiz Casri Ah</title>
-<style>
-    :root {
-        --bg: #020617;
-        --card: #0f172a;
-        --primary: #2563eb;
-        --text: #f8fafc;
-    }
-    body { margin: 0; font-family: sans-serif; background: var(--bg); color: var(--text); }
-    .nav { background: var(--card); padding: 15px; text-align: center; border-bottom: 1px solid #1e293b; }
-    .nav a { color: white; margin: 0 15px; text-decoration: none; font-weight: 500; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quiz Casri Ah | Maxamed Samee App</title>
     
-    .container { max-width: 600px; margin: 40px auto; padding: 20px; }
-    .quiz-card { background: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-    
-    .option-label {
-        display: block;
-        background: #1e293b;
-        padding: 15px;
-        margin-bottom: 12px;
-        border-radius: 12px;
-        cursor: pointer;
-        transition: 0.3s;
-        border: 1px solid transparent;
-    }
-    .option-label:hover { background: #334155; border-color: var(--primary); }
-    .option-label input { margin-right: 15px; transform: scale(1.2); }
-    
-    .btn {
-        width: 100%; padding: 15px; background: var(--primary);
-        color: white; border: none; border-radius: 12px;
-        font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 10px;
-    }
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-    /* Mobile Responsive */
-    @media (max-width: 768px) {
-        .container { margin: 20px auto; padding: 15px; }
-        .quiz-card { padding: 20px; }
-    }
-</style>
- <link rel="manifest" href="/static/manifest.json">
-<meta name="theme-color" content="#0f172a">
+    <style>
+        :root {
+            --bg: #030712;
+            --card: rgba(30, 41, 59, 0.45);
+            --nav-bg: rgba(17, 24, 39, 0.6);
+            --primary: #6c5ce7;
+            --primary-hover: #8b5cf6;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --glass-border: rgba(255, 255, 255, 0.12);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f0c29, #24243e, #0f172a);
+            color: var(--text);
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            padding-bottom: 40px;
+        }
+
+        /* NAVIGATION BAR */
+        .nav {
+            background: var(--nav-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 18px;
+            text-align: center;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nav a {
+            color: var(--muted);
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav a:hover, .nav a.active {
+            color: var(--text);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 650px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* QUIZ CARD */
+        .quiz-card {
+            background: var(--card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 35px;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.4s ease;
+        }
+
+        /* OPTIONS STYLING */
+        .option-label {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 16px 20px;
+            margin-bottom: 14px;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            font-size: 0.95rem;
+            color: #cbd5e1;
+        }
+
+        .option-label:hover {
+            background: rgba(108, 92, 231, 0.08);
+            border-color: rgba(108, 92, 231, 0.4);
+            color: var(--text);
+            transform: translateX(4px);
+        }
+
+        .option-label input[type="radio"] {
+            margin-right: 15px;
+            accent-color: var(--primary);
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+
+        /* CUSTOM BUTTON */
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #6c5ce7, #4834d4);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 15px;
+            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.25);
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            background: linear-gradient(135deg, #8b5cf6, #6c5ce7);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(108, 92, 231, 0.35);
+        }
+
+        /* ALERTS */
+        .alert-box {
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            border-radius: 14px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: none;
+        }
+
+        .alert-success-custom {
+            background: rgba(16, 185, 129, 0.15);
+            color: #a7f3d0;
+            border-left: 5px solid #10b981;
+        }
+
+        .alert-danger-custom {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            border-left: 5px solid #ef4444;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 576px) {
+            .container { margin: 25px auto; }
+            .quiz-card { padding: 25px 20px; border-radius: 20px; }
+            .option-label { padding: 14px 16px; font-size: 0.9rem; }
+        }
+    </style>
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <meta name="theme-color" content="#0f172a">
 </head>
 <body>
 
-<div class="nav">
-    <a href="/">Home</a>
-    <a href="/quiz/">Dhammaan Quiz-yada</a>
-</div>
-
-<div class="container">
-    <div style="text-align: right; margin-bottom: 10px; color: #60a5fa;">
-        <b>Dhibcahaaga: {{ score }} / {{ total }}</b>
+    <div class="nav shadow-sm">
+        <a href="/">Home</a>
+        <a href="/quiz/" class="active">Dhammaan Quiz-yada</a>
     </div>
 
-    {% if messages %}
-        {% for message in messages %}
-            <div style="padding: 15px; margin-bottom: 20px; border-radius: 10px; background: #1e293b; color: white; border-left: 5px solid {% if 'success' in message.tags %}#22c55e{% else %}#ef4444{% endif %};">
-                {{ message }}
+    <div class="container">
+        
+        <div class="d-flex justify-content-between align-items-center mb-3 px-1">
+            <span class="text-muted small" style="font-weight: 600; letter-spacing: 0.5px;">SAYLAC APP CHALLENGE</span>
+            <div style="color: #60a5fa; font-weight: 700; background: rgba(96, 165, 250, 0.1); padding: 6px 14px; border-radius: 30px; border: 1px solid rgba(96, 165, 250, 0.2);">
+                <i class="fas fa-trophy me-1"></i> Dhibcaha: {{ score }} / {{ total }}
             </div>
-        {% endfor %}
-    {% endif %}
-
-    {% if quiz %}
-    <div class="quiz-card">
-        <h2 style="color: var(--primary);">🧠 Challenge-ka Maanta</h2>
-        <p style="font-size: 1.2rem; margin-bottom: 25px;"><b>{{ quiz.question }}</b></p>
-
-        <form method="POST" action="{% url 'submit_quiz' %}">
-            {% csrf_token %}
-            
-            <label class="option-label">
-                <input type="radio" name="answer" value="{{ quiz.option1 }}" required> {{ quiz.option1 }}
-            </label>
-
-            <label class="option-label">
-                <input type="radio" name="answer" value="{{ quiz.option2 }}"> {{ quiz.option2 }}
-            </label>
-
-            <label class="option-label">
-                <input type="radio" name="answer" value="{{ quiz.option3 }}"> {{ quiz.option3 }}
-            </label>
-
-            <label class="option-label">
-                <input type="radio" name="answer" value="{{ quiz.option4 }}"> {{ quiz.option4 }}
-            </label>
-
-            <input type="hidden" name="correct" value="{{ quiz.correct_answer }}">
-            <button type="submit" class="btn">Gudbi & Tan Xigta ➔</button>
-        </form>
-    </div>
-    {% else %}
-        <div class="quiz-card" style="text-align: center;">
-            <p>Ma jiro quiz firfircoon hadda. Iska hubi mar kale hadhow!</p>
-            <a href="/" style="color: var(--primary); text-decoration: none;">Ku laabo Home-ka</a>
         </div>
-    {% endif %}
 
-    <div style="text-align: center; margin-top: 20px;">
-        <a href="{% url 'reset_quiz' %}" style="color: #94a3b8; text-decoration: none; font-size: 0.8rem;">Eber ka billow Quiz-ka</a>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert-box {% if 'success' in message.tags %}alert-success-custom{% else %}alert-danger-custom{% endif %} shadow-sm">
+                    <i class="fas {% if 'success' in message.tags %}fa-check-circle{% else %}fa-times-circle{% endif %}"></i>
+                    <div>{{ message }}</div>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if quiz %}
+        <div class="quiz-card shadow-lg">
+            <h4 style="color: #a29bfe; font-weight: 800; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.5px;" class="mb-2">🧠 Challenge-ka Maanta</h4>
+            <p style="font-size: 1.2rem; margin-bottom: 25px; color: #f1f5f9; font-weight: 600; line-height: 1.5;">{{ quiz.question }}</p>
+
+            <form method="POST" action="{% url 'submit_quiz' %}">
+                {% csrf_token %}
+                
+                <input type="hidden" name="quiz_id" value="{{ quiz.id }}">
+
+                <label class="option-label">
+                    <input type="radio" name="answer" value="{{ quiz.option1 }}" required>
+                    <span>{{ quiz.option1 }}</span>
+                </label>
+
+                <label class="option-label">
+                    <input type="radio" name="answer" value="{{ quiz.option2 }}">
+                    <span>{{ quiz.option2 }}</span>
+                </label>
+
+                <label class="option-label">
+                    <input type="radio" name="answer" value="{{ quiz.option3 }}">
+                    <span>{{ quiz.option3 }}</span>
+                </label>
+
+                <label class="option-label">
+                    <input type="radio" name="answer" value="{{ quiz.option4 }}">
+                    <span>{{ quiz.option4 }}</span>
+                </label>
+
+                <button type="submit" class="btn-submit">
+                    Gudbi & Tan Xigta <i class="fas fa-arrow-right ms-1"></i>
+                </button>
+            </form>
+        </div>
+        {% else %}
+            <div class="quiz-card text-center shadow-lg">
+                <p style="font-size: 3rem; margin-bottom: 10px;">🎉</p>
+                <p class="mb-4 text-muted">Waad dhammaysay dhammaan su'aalaha firfircoon ee maanta!</p>
+                <a href="/" class="btn-submit text-decoration-none d-inline-block" style="width: auto; padding: 12px 30px;">
+                    <i class="fas fa-home me-1"></i> Ku laabo Home-ka
+                </a>
+            </div>
+        {% endif %}
+
+        <div class="text-center mt-4">
+            <a href="{% url 'reset_quiz' %}" class="text-decoration-none" style="color: var(--muted); font-size: 0.85rem; font-weight: 600; letter-spacing: 0.3px;">
+                <i class="fas fa-redo-alt me-1"></i> Eber ka billow Quiz-ka
+            </a>
+        </div>
     </div>
-</div>
 
+    <script>
+        // PWA SERVICE WORKER
+        if ('serviceWorker' in navigator) {
+            window.addEventListener("load", function() {
+                navigator.serviceWorker.register('/static/sw.js')
+                .then(() => console.log("PWA Active on Quiz Page"));
+            });
+        }
+    </script>
 </body>
 </html>

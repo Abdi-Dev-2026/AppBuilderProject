@@ -2,9 +2,11 @@
 <html lang="so">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.0,user-scalable=no" />
 <title>Imtixaanaadka Banaadir — Tababar & Quiz</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#0f172a">
+
 <style>
   :root {
     --primary: #007aff;
@@ -18,7 +20,7 @@
   * { box-sizing: border-box; transition: all 0.2s ease; }
 
   body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     margin: 0;
     background: var(--bg-gradient);
     color: var(--text-dark);
@@ -247,6 +249,21 @@
 
   .global-notice-section { margin-top: 30px; }
 
+  /* --- OFFLINE ALERT BANNER --- */
+  .offline-banner {
+    display: none;
+    background: #ff3b30;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(255, 59, 48, 0.2);
+    animation: fadeIn 0.3s ease;
+  }
+
   @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
   @media (max-width: 600px) {
@@ -260,6 +277,10 @@
 <body>
 
 <div class="wrap">
+  <div id="offlineAlert" class="offline-banner">
+    ⚠️ Internet-ka waa uu go'an yahay! Waxaad ku jirtaa qaabka Offline-ka, casharada iyo ciyaarta gudaha ayaad sii isticmaali kartaa.
+  </div>
+
   <header>
     <div>
       <h1>Imtixaanka Qaranka</h1>
@@ -271,7 +292,6 @@
     </a>
   </header>
 
-  <!-- Qaybta Wax Raadinta (Search Bar) - Kaasoo laga dhex helayo wax kasta -->
   <div class="search-wrapper">
     <span style="font-size: 20px;">🔍</span>
     <input type="text" class="search-input" id="mainSearchInput" placeholder="Halkan ku qor si aad u raadiso Maaddo, Sannad ama Cashar..." oninput="handleSearch(this.value)">
@@ -316,7 +336,7 @@ const DATA = {{ data_json|safe }};
 // 2. State management
 let currentSub = '', currentYr = '', currentQIdx = 0, score = 0;
 
-// CSRF Token Helper for Django POST Requests
+// CSRF Token Helper
 function getCSRFToken() {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -332,16 +352,19 @@ function getCSRFToken() {
     return cookieValue || '{{ csrf_token }}';
 }
 
-// Media Builder
+// Media Builder (Iyadoo la tixgelinayo dhacdooyinka Offline-ka)
 function generateMediaHTML(item) {
     let html = '';
     if (item.image_file || item.image_url) {
         const imgSrc = item.image_file || item.image_url;
-        html += `<div class="media-wrapper"><img src="${imgSrc}" alt="${item.title || 'Image'}" loading="lazy" /></div>`;
+        html += `<div class="media-wrapper"><img src="${imgSrc}" alt="${item.title || 'Image'}" loading="lazy" onerror="this.onerror=null; this.parentNode.innerHTML='<p style=\'padding:20px;color:#666;text-align:center;\'>🖼️ Sawirkan wuxuu u baahan yahay internet</p>';" /></div>`;
     }
     if (item.video_file || item.video_url) {
         const vidSrc = item.video_file || item.video_url;
         if (vidSrc.includes('youtube.com') || vidSrc.includes('youtu.be')) {
+            if (!navigator.onLine) {
+                return html + `<div class="media-wrapper" style="background:#222;padding:20px;color:#aaa;text-align:center;">📺 Muuqaalka YouTube-ka wuxuu u baahan yahay Internet.</div>`;
+            }
             let embedUrl = vidSrc.replace('watch?v=', 'embed/');
             if(vidSrc.includes('youtu.be/')) {
                 embedUrl = vidSrc.replace('youtu.be/', 'youtube.com/embed/');
@@ -383,7 +406,7 @@ function renderSubjects(filteredSubjects = SUBJECTS) {
     }).join('');
 }
 
-// Render Xayeysiiska / Ogeysiisyada Guud
+// Render Ogeysiisyada Guud
 function renderGlobalNotices() {
     const noticeArea = document.getElementById('globalNoticeArea');
     if (DATA.global_ads && DATA.global_ads.length > 0) {
@@ -397,10 +420,10 @@ function renderGlobalNotices() {
     }
 }
 
-// Mishiinka Raadinta Casriga ah (Search Engine)
+// Mishiinka Raadinta (Search Engine)
 function handleSearch(query) {
     query = query.toLowerCase().trim();
-    showScreen('menu'); // Marka wax la raadinayo had iyo jeer menu-ka geey
+    showScreen('menu');
     
     if(!query) {
         renderSubjects(SUBJECTS);
@@ -408,11 +431,9 @@ function handleSearch(query) {
         return;
     }
 
-    // Filter garee maaddooyinka magac ahaan
     const filteredSubs = SUBJECTS.filter(s => s.name.toLowerCase().includes(query));
     renderSubjects(filteredSubs);
 
-    // Filter garee ogeysiisyada guud
     const noticeArea = document.getElementById('globalNoticeArea');
     if (DATA.global_ads) {
         const filteredAds = DATA.global_ads.filter(ad => 
@@ -461,7 +482,7 @@ function openYear(y) {
     showScreen('yearScreen');
 }
 
-// Qaybta Akhriska + TTS iyo Nuqul batoonka cusub
+// Qaybta Akhriska
 document.getElementById('readBtn').onclick = () => {
     document.getElementById('quizArea').innerHTML = '';
     const pool = DATA[currentSub][currentYr].read;
@@ -473,7 +494,6 @@ document.getElementById('readBtn').onclick = () => {
     }
 
     area.innerHTML = pool.map((item, idx) => {
-        // Safe-garee qoraalka casharka si loogu diro batoonada sahal ahaan
         const cleanContent = item.content.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ');
         return `
             <div class="card" style="background:#f0f7ff; border-left: 5px solid var(--primary); text-align:left;">
@@ -481,7 +501,6 @@ document.getElementById('readBtn').onclick = () => {
                 ${generateMediaHTML(item)}
                 <div id="text-content-${idx}" style="line-height:1.6; color:#333; margin-top:10px;">${item.content}</div>
                 
-                <!-- Action Buttons: TTS iyo Copy -->
                 <div class="action-bar">
                     <button class="btn btn-tts" onclick="speakText(this, '${cleanContent}', ${idx})">
                         <span>🔊</span> <span class="btn-text">Dhegayso Codka</span>
@@ -491,7 +510,6 @@ document.getElementById('readBtn').onclick = () => {
                     </button>
                 </div>
                 
-                <!-- Meesha uu Mini Player-ku ka dhex dhalanayo -->
                 <div class="tts-player-box" id="player-box-${idx}">
                     <span style="font-size:12px; color:#666;">Codka:</span>
                     <audio id="audio-element-${idx}" controls></audio>
@@ -501,19 +519,41 @@ document.getElementById('readBtn').onclick = () => {
     }).join('');
 };
 
-// Shaftada Text to Speech (Toos ugu xiran Views-gii Django)
+// Text to Speech (Iyadoo leh Dynamic Offline Native Backup)
 function speakText(button, textToSpeak, idx) {
     const playerBox = document.getElementById(`player-box-${idx}`);
     const audioElement = document.getElementById(`audio-element-${idx}`);
     const btnText = button.querySelector('.btn-text');
     
+    // HADDII UU OFFLINE YAHAY - Adeegso Browser-ka Gudaha (Native SpeechSynthesis)
+    if (!navigator.onLine) {
+        btnText.innerText = "Akhrinaya (Offline)...";
+        button.style.opacity = "0.7";
+        
+        // Jooji wixii hore u socday
+        window.speechSynthesis.cancel();
+        
+        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+        utterance.lang = 'so'; // Waxaad u beddeli kartaa afka imtixaanka uu ku qoran yahay
+        utterance.onend = function() {
+            button.style.opacity = "1";
+            btnText.innerText = "Dhegayso Codka";
+        };
+        utterance.onerror = function() {
+            button.style.opacity = "1";
+            btnText.innerText = "Dhegayso Codka";
+        };
+        window.speechSynthesis.speak(utterance);
+        return;
+    }
+
+    // HADDII UU ONLINE YAHAY - U dir Server-ka Django TTS API-giisa
     btnText.innerText = "Yeeleysaa...";
     button.style.opacity = "0.6";
 
-    // Samee FormData si loogu gudbiyo views.py
     let formData = new FormData();
     formData.append('text', textToSpeak);
-    formData.append('voice', 'maxamed'); // Waxaad u beddeli kartaa 'ubax' haddii loo baahdo
+    formData.append('voice', 'maxamed');
 
     fetch('/tts/', {
         method: 'POST',
@@ -540,11 +580,11 @@ function speakText(button, textToSpeak, idx) {
         button.style.opacity = "1";
         btnText.innerText = "Dhegayso Codka";
         console.error('Error:', error);
-        alert("Xiriirka tts-ka waa go'ay ama koodhka ayaa cillad leh.");
+        alert("Xiriirka internetka ayaa go'ay. Laakiin waad maqli kartaa haddii aad internet-ka damiso.");
     });
 }
 
-// Shaftada Nuqul ka qaadista (Copy Function)
+// Copy Function
 function copyText(button, idx) {
     const textToCopy = document.getElementById(`text-content-${idx}`).innerText;
     navigator.clipboard.writeText(textToCopy).then(() => {
@@ -560,7 +600,7 @@ function copyText(button, idx) {
     });
 }
 
-// Qaybta Quiz-ka (Quiz Section)
+// Qaybta Quiz-ka
 document.getElementById('quizBtn').onclick = () => {
     document.getElementById('readArea').innerHTML = '';
     currentQIdx = 0;
@@ -634,7 +674,30 @@ function showScreen(id) {
 document.getElementById('backToMenu').onclick = () => showScreen('menu');
 document.getElementById('backToSubject').onclick = () => showScreen('subjectScreen');
 
-// Kici dhalashada koowaad
+// Network Observer (Hubinta Internet-ka)
+function checkNetworkStatus() {
+    const offlineAlert = document.getElementById('offlineAlert');
+    if (navigator.onLine) {
+        offlineAlert.style.display = 'none';
+    } else {
+        offlineAlert.style.display = 'block';
+    }
+}
+
+window.addEventListener('online', checkNetworkStatus);
+window.addEventListener('offline', checkNetworkStatus);
+
+// Service Worker Registration
+if ('serviceWorker' in navigator) {
+    window.addEventListener("load", function() {
+        navigator.serviceWorker.register('/static/sw.js')
+            .then(() => console.log("SW Registered"))
+            .catch(err => console.log("SW Error", err));
+    });
+}
+
+// Kici bilowga hore
+checkNetworkStatus();
 renderSubjects();
 renderGlobalNotices();
 </script>

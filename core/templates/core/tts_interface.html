@@ -6,82 +6,114 @@
     <title>Qoraalka u Beddel Cod - TTS System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
     <style>
         /* Dynamic Background Blur & Animation Effect */
         .glass-card {
-            background: rgba(255, 255, 255, 0.82);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
         .voice-card-selected {
             border-color: #2563eb !important;
-            background: rgba(37, 99, 235, 0.08) !important;
-            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.1), 0 4px 6px -2px rgba(37, 99, 235, 0.05);
+            background: rgba(37, 99, 235, 0.06) !important;
+            box-shadow: 0 12px 20px -3px rgba(37, 99, 235, 0.15), 0 4px 6px -2px rgba(37, 99, 235, 0.05);
+        }
+
+        /* Background Pulse Effect inta uu Loading-ku jiro */
+        .bg-processing {
+            animation: bgPulse 2.5s ease-in-out infinite;
+        }
+
+        @keyframes bgPulse {
+            0%, 100% { transform: scale(1); opacity: 0.35; }
+            50% { transform: scale(1.04); opacity: 0.55; filter: blur(2px); }
+        }
+
+        /* Error & Loading Modal Stylings */
+        .custom-modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .custom-modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .custom-modal-card {
+            background: white;
+            padding: 28px;
+            border-radius: 24px;
+            max-width: 480px;
+            width: 92%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            text-align: center;
+            transform: scale(0.92);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid #fee2e2;
+        }
+        .custom-modal-overlay.active .custom-modal-card {
+            transform: scale(1);
         }
     </style>
 </head>
-<body class="relative min-h-screen flex items-center justify-center p-3 sm:p-6 overflow-x-hidden font-sans select-none text-right">
+<body class="relative min-h-screen flex items-center justify-center p-4 sm:p-6 overflow-x-hidden font-sans select-none bg-slate-950">
 
-    <!-- ---------------------------------------------------
-         QAYBTA MEDIA-HA GADAASHA (BACKGROUND MEDIA) - HAGAAJYSAN
-         --------------------------------------------------- -->
-    <div class="absolute inset-0 z-0 w-full h-full overflow-hidden bg-slate-950">
+    <div id="bgLayer" class="absolute inset-0 z-0 w-full h-full overflow-hidden transition-all duration-700">
         {% if tts_setting.bg_video_file or tts_setting.bg_video_url %}
-            <!-- Haddii uu Admin-ku soo geliyey Muuqaal Gadaal u noqda System-ka -->
-            <video autoplay loop muted playsinline class="w-full h-full object-cover opacity-40">
+            <video autoplay loop muted playsinline class="w-full h-full object-cover opacity-35">
                 <source src="{% if tts_setting.bg_video_file %}{{ tts_setting.bg_video_file.url }}{% else %}{{ tts_setting.bg_video_url }}{% endif %}" type="video/mp4">
             </video>
         {% elif tts_setting.bg_image_file or tts_setting.bg_image_url %}
-            <!-- Haddii uu Admin-ku soo geliyey Sawir Gadaal u noqda System-ka -->
-            <img src="{% if tts_setting.bg_image_file %}{{ tts_setting.bg_image_file.url }}{% else %}{{ tts_setting.bg_image_url }}{% endif %}" class="w-full h-full object-cover opacity-40" alt="Background">
+            <img src="{% if tts_setting.bg_image_file %}{{ tts_setting.bg_image_file.url }}{% else %}{{ tts_setting.bg_image_url }}{% endif %}" class="w-full h-full object-cover opacity-35" alt="Background">
         {% else %}
-            <!-- Default Background haddii aan waxba laga soo dhex gelin Admin-ka -->
             <div class="w-full h-full bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 opacity-95"></div>
         {% endif %}
     </div>
 
-    <!-- MAIN CONTAINER (Mishiinka TTS rasmiga ah) -->
-    <div class="glass-card relative z-10 w-full max-w-3xl p-5 sm:p-8 md:p-10 rounded-3xl shadow-2xl border transition-all duration-300 my-4">
+    <div class="glass-card relative z-10 w-full max-w-3xl p-6 sm:p-8 md:p-10 rounded-3xl shadow-2xl transition-all duration-300 my-4">
         
-        <!-- Madaxa Interface-ka -->
         <div class="text-center mb-6 md:mb-8">
-            <h2 class="text-2xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 mb-3 tracking-tight drop-shadow-sm">
-               <span class="text-blue-600">  Af-Soomaali</span>
+            <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 mb-3 tracking-tight">
+               <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">Af-Soomaali TTS</span>
             </h2>
-            <p class="text-slate-600 font-medium text-xs sm:text-sm md:text-base max-w-xl mx-auto px-2">
-                Ku qor qoraal kasta, dooro qofka kuu akhrinaya, kadibna soo degso codkaaga fasiixa ah.
+            <p class="text-slate-600 font-medium text-xs sm:text-sm md:text-base max-w-xl mx-auto px-2 leading-relaxed">
+               Ku qor qoraal kasta, dooro qofka kuu akhrinaya, kadibna soo degso codkaaga fasiixa ah.
             </p>
         </div>
 
-        <!-- Form-ka TTS -->
         <form id="ttsForm" method="POST" class="space-y-5 md:space-y-6">
             {% csrf_token %}
             
-            <!-- Meesha Qoraalka (Textarea) -->
             <div>
-                <label class="block text-sm font-bold text-slate-800 mb-2 text-left">Qoraalkaaga halkan ku qor:</label>
-                <div class="relative rounded-2xl overflow-hidden shadow-inner border-2 border-slate-200 focus-within:border-blue-500 bg-white/95 transition-all">
+                <label class="block text-sm font-bold text-slate-700 mb-2 text-left">Qoraalkaaga halkan ku qor:</label>
+                <div class="relative rounded-2xl overflow-hidden shadow-sm border border-slate-200 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 bg-white transition-all">
                     <textarea id="ttsText" name="text" maxlength="{{ max_chars }}" rows="5" 
                         class="w-full p-4 sm:p-5 text-slate-800 font-medium bg-transparent outline-none resize-none text-left text-base sm:text-lg leading-relaxed placeholder:text-slate-400" 
                         placeholder="Ku qor halkaan qoraalka aad rabto in loo akhriyo..."></textarea>
                 </div>
-                <div class="flex justify-between items-center mt-2 text-xs font-semibold px-1">
+                <div class="flex justify-between items-center mt-2.5 text-xs font-semibold px-1">
                     <div class="text-slate-500">Xadka xarfaha: <span class="text-slate-700 font-bold">{{ max_chars }}</span></div>
                     <div class="text-slate-500"><span id="charCount" class="text-blue-600 font-bold text-sm">0</span> xaraf ayaa qoran</div>
                 </div>
             </div>
 
-            <!-- Doorashada Codka (Voice Selection Box) -->
             <div>
-                <label class="block text-sm font-bold text-slate-800 mb-3 text-left">Dooro qofka kuu akhrinaya:</label>
+                <label class="block text-sm font-bold text-slate-700 mb-3 text-left">Dooro qofka kuu akhrinaya:</label>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     
-                    <!-- Codka Gabadha (Faiza Card) -->
-                    <label class="voice-option relative border-2 border-slate-200 bg-white/90 p-3 sm:p-4 rounded-2xl flex items-center justify-between cursor-pointer hover:border-blue-400 hover:bg-white transition-all duration-200 shadow-sm select-none">
+                    <label class="voice-option relative border-2 border-slate-200 bg-white/90 p-3 sm:p-4 rounded-2xl flex items-center justify-between cursor-pointer hover:border-slate-300 hover:bg-white transition-all duration-200 shadow-sm select-none">
                         <div class="flex items-center space-x-3 sm:space-x-4">
-                            <!-- Dynamic Icon/Media ee Faiza -->
-                            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden bg-pink-100 flex-shrink-0 border border-slate-200 shadow-inner flex items-center justify-center">
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden bg-pink-50 flex-shrink-0 border border-pink-100 shadow-inner flex items-center justify-center">
                                 {% if tts_setting.faiza_avatar_video %}
                                     <video autoplay loop muted playsinline class="w-full h-full object-cover">
                                         <source src="{{ tts_setting.faiza_avatar_video.url }}" type="video/mp4">
@@ -100,11 +132,9 @@
                         <input type="radio" name="voice" value="faiza" checked class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 border-slate-300 focus:ring-blue-500 ml-2">
                     </label>
 
-                    <!-- Codka Wiilka (Maxamed Card) -->
-                    <label class="voice-option relative border-2 border-slate-200 bg-white/90 p-3 sm:p-4 rounded-2xl flex items-center justify-between cursor-pointer hover:border-blue-400 hover:bg-white transition-all duration-200 shadow-sm select-none">
+                    <label class="voice-option relative border-2 border-slate-200 bg-white/90 p-3 sm:p-4 rounded-2xl flex items-center justify-between cursor-pointer hover:border-slate-300 hover:bg-white transition-all duration-200 shadow-sm select-none">
                         <div class="flex items-center space-x-3 sm:space-x-4">
-                            <!-- Dynamic Icon/Media ee Maxamed -->
-                            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden bg-blue-100 flex-shrink-0 border border-slate-200 shadow-inner flex items-center justify-center">
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden bg-blue-50 flex-shrink-0 border border-blue-100 shadow-inner flex items-center justify-center">
                                 {% if tts_setting.maxamed_avatar_video %}
                                     <video autoplay loop muted playsinline class="w-full h-full object-cover">
                                         <source src="{{ tts_setting.maxamed_avatar_video.url }}" type="video/mp4">
@@ -126,21 +156,51 @@
                 </div>
             </div>
 
-            <!-- Batoonka Bedelaada (Generate Button) -->
-            <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 sm:py-4 px-6 rounded-2xl transition shadow-lg shadow-blue-600/20 flex items-center justify-center text-base sm:text-lg active:scale-[0.99]">
+            <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-2xl transition-all duration-150 shadow-lg shadow-blue-600/20 flex items-center justify-center text-base sm:text-lg active:scale-[0.98]">
                 <span id="btnText">U Beddel Cod</span>
             </button>
         </form>
 
-        <!-- Meesha Natiijada (Player & Download Section) -->
-        <div id="resultContainer" class="mt-6 pt-5 border-t border-slate-200 hidden">
+        <div id="loadingContainer" class="mt-6 pt-5 border-t border-slate-200/80 hidden">
+            <div class="flex flex-col items-center justify-center p-6 bg-blue-50/50 rounded-2xl border border-blue-100/70 shadow-inner space-y-3">
+                <div class="relative w-12 h-12">
+                    <div class="absolute inset-0 rounded-full border-4 border-blue-200 animate-pulse"></div>
+                    <div class="absolute inset-0 rounded-full border-4 border-blue-600 border-t-transparent animate-spin"></div>
+                </div>
+                <div class="text-center">
+                    <p id="loadingStatusText" class="text-blue-800 font-bold text-base tracking-wide">Nidaamku wuxuu diyaarinayaa codkaaga...</p>
+                    <p class="text-xs text-blue-500 mt-1 font-medium">Fadlan sug daqiiqad, hawshu waxay u socotaa si habsmooth ah.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="resultContainer" class="mt-6 pt-5 border-t border-slate-200/80 hidden">
             <h3 class="text-sm font-bold text-slate-800 mb-3 text-left">Codbixintaadu waa diyaar:</h3>
-            <div class="flex flex-col md:flex-row items-center justify-between gap-4 bg-white/95 p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4 bg-white/80 p-3 sm:p-4 rounded-2xl border border-slate-200/60 shadow-inner">
                 <audio id="audioPlayer" controls class="w-full md:w-2/3"></audio>
-                <a id="downloadBtn" href="#" download class="w-full md:w-auto text-center bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 sm:py-3 px-6 rounded-xl transition shadow-md shadow-emerald-600/10 text-sm sm:text-base">
+                <a id="downloadBtn" href="#" download class="w-full md:w-auto text-center bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-xl transition shadow-md shadow-emerald-600/10 text-sm sm:text-base whitespace-nowrap">
                     Soo Degso (.MP3)
                 </a>
             </div>
+        </div>
+    </div>
+
+    <div id="errorModal" class="custom-modal-overlay">
+        <div class="custom-modal-card">
+            <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-100 shadow-sm">
+                <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+            </div>
+            <h3 id="errorUserTitle" class="text-lg font-extrabold text-slate-900 mb-2 text-center tracking-tight"></h3>
+            
+            <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 mb-5 max-h-36 overflow-y-auto text-left">
+                <p id="errorDetails" class="text-xs text-slate-600 font-mono leading-relaxed break-words"></p>
+            </div>
+
+            <button id="closeModalBtn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl transition-colors duration-150 text-sm shadow-sm outline-none">
+                Waa gartay
+            </button>
         </div>
     </div>
 
@@ -150,7 +210,7 @@
             $('#charCount').text($(this).val().length);
         });
 
-        // Qurxinta doorashada kaararka (Visual Feedback for Voice Selection)
+        // Qurxinta doorashada kaararka dabiiciga ah
         function updateVoiceCards() {
             $('.voice-option').each(function() {
                 if ($(this).find('input[type="radio"]').is(':checked')) {
@@ -161,13 +221,55 @@
             });
         }
         
-        // Marka la click-gareeyo raadiyaha ama kaarka
         $('.voice-option').on('click', function() {
-            // Ka ilaali isku dhex dhac dhanka gujinta ah ee input-ka dhexdiisa
             $(this).find('input[type="radio"]').prop('checked', true);
             updateVoiceCards();
         });
-        updateVoiceCards(); // Kici marka uu boggu bilowdo
+        updateVoiceCards();
+
+        // Muuji Error Modal-ka oo habaysan
+        function showErrorModal(voiceName, rawError) {
+            let formattedName = voiceName.charAt(0).toUpperCase() + voiceName.slice(1);
+            $('#errorUserTitle').text(`Nidaamka ${formattedName} waxbaa ka khaldan!`);
+            $('#errorDetails').text(rawError);
+            $('#errorModal').addClass('active');
+        }
+
+        // Xir Modal-ka
+        $('#closeModalBtn').on('click', function() {
+            $('#errorModal').removeClass('active');
+        });
+
+        // Diyaarinta fariimaha dhiirigelinta ah (Maaweelo Text Rotator)
+        let phrases = [
+            "Nidaamku wuxuu diyaarinayaa codkaaga...",
+            "Qoraalka waxaa loo beddelayaa cod fasiix ah...",
+            "Waxyar sug, codka hadda waxaa lagu dhex darayaa nidaamka...",
+            "Ku dhowaad waa diyaar, nidaamka ayaa soo xiraya..."
+        ];
+        let phraseIndex = 0;
+        let phraseInterval;
+
+        function startLoadingAnimation() {
+            phraseIndex = 0;
+            $('#loadingStatusText').text(phrases[phraseIndex]);
+            $('#loadingContainer').removeClass('hidden');
+            $('#resultContainer').addClass('hidden'); // Qari natiijadii hore haday jirtay
+            $('#bgLayer').addClass('bg-processing'); // Daar boodboodka background-ka
+
+            phraseInterval = setInterval(function() {
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+                $('#loadingStatusText').fadeOut(300, function() {
+                    $(this).text(phrases[phraseIndex]).fadeIn(300);
+                });
+            }, 3000); // 3-dii ilbiriqsiba mar qoraalka beddel
+        }
+
+        function stopLoadingAnimation() {
+            clearInterval(phraseInterval);
+            $('#loadingContainer').addClass('hidden');
+            $('#bgLayer').removeClass('bg-processing'); // Demi boodboodka background-ka
+        }
 
         // AJAX POST Request
         $('#ttsForm').on('submit', function(e) {
@@ -175,9 +277,13 @@
             
             let submitBtn = $('#submitBtn');
             let btnText = $('#btnText');
+            let selectedVoice = $('input[name="voice"]:checked').val();
             
             submitBtn.prop('disabled', true).addClass('opacity-60 cursor-not-allowed');
-            btnText.text('Waa la dhalinayaa codka... sug daqiiqad');
+            btnText.text('Waa la dhalinayaa...');
+
+            // Bilow Maaweelada hoose iyo animation-ka background-ka
+            startLoadingAnimation();
 
             $.ajax({
                 url: "{% url 'tts_interface' %}", 
@@ -185,6 +291,7 @@
                 data: $(this).serialize(),
                 headers: { 'X-Requested-With': 'XMLHttpRequest' },
                 success: function(response) {
+                    stopLoadingAnimation();
                     submitBtn.prop('disabled', false).removeClass('opacity-60 cursor-not-allowed');
                     btnText.text('U Beddel Cod');
                     
@@ -192,16 +299,16 @@
                         $('#audioPlayer').attr('src', response.audio_url);
                         $('#downloadBtn').attr('href', response.audio_url);
                         $('#resultContainer').removeClass('hidden');
-                        
-                        // Si toos ah u daar audio-ga
                         document.getElementById('audioPlayer').play();
                     }
                 },
                 error: function(xhr) {
+                    stopLoadingAnimation();
                     submitBtn.prop('disabled', false).removeClass('opacity-60 cursor-not-allowed');
                     btnText.text('U Beddel Cod');
-                    let msg = xhr.responseJSON ? xhr.responseJSON.message : 'Waxaa dhacay khalad aan la garanayn!';
-                    alert(msg);
+                    
+                    let msg = xhr.responseJSON ? xhr.responseJSON.message : 'Cannot connect to host speech.platform.bing.com:443 [getaddrinfo failed]';
+                    showErrorModal(selectedVoice, msg);
                 }
             });
         });

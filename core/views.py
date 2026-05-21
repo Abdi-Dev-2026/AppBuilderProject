@@ -29,7 +29,8 @@ from .models import (
     App, SiteSetting, HomepageContent,
     Quiz, Poll, Content, Like, Comment,
     ContactMessage, UserProfile,
-    FriendRequest, ChatMessage, Subject, GlobalNotice, TTSSetting
+    FriendRequest, ChatMessage, Subject, GlobalNotice, TTSSetting,
+    ChatSetting  
 )
 
 
@@ -46,7 +47,6 @@ def home(request):
     all_contents = Content.objects.all().order_by('-created_at')
 
     quizzes = Quiz.objects.filter(is_active=True)
-    # Sugidda badbaadada random-ka si looga fogaado IndexError
     quiz = random.choice(list(quizzes)) if quizzes.exists() else None
 
     poll = Poll.objects.filter(is_active=True).last()
@@ -135,16 +135,13 @@ def login_view(request):
             return redirect('login')
 
         user_obj = None
-        # 1. Isku day Username
         user_obj = authenticate(request, username=identifier, password=password)
 
-        # 2. Isku day Email haddii username lagu waayo
         if user_obj is None:
             user_by_email = User.objects.filter(email=identifier).first()
             if user_by_email:
                 user_obj = authenticate(request, username=user_by_email.username, password=password)
 
-        # 3. Isku day User ID Code
         if user_obj is None:
             try:
                 profile_obj = UserProfile.objects.get(user_id_code=identifier)
@@ -155,7 +152,6 @@ def login_view(request):
         if user_obj:
             auth_login(request, user_obj)
             
-            # --- HAGAAJINTA I XASUUSO ---
             if remember_me:
                 request.session.set_expiry(request.session.get_expiry_age())
             else:
@@ -215,23 +211,39 @@ def download_id_card(request):
 # -----------------------------------------------------------
 @login_required
 def chats_page(request):
-    search_query = request.GET.get('search_id')
-    search_result = None
-    if search_query:
-        search_result = UserProfile.objects.filter(user_id_code=search_query).first()
-
+    """
+    Shaqada maamusha bogga guud ee chat-ka, saaxiibada, 
+    codsiyada furan, raadinta ID-ga, iyo soo qaadashada ChatSetting.
+    """
+    # 🚀 SOO QAADASHADA XOGTA BACKGROUND-KA ADMIN-KA
+    chat_settings = ChatSetting.objects.first()
+    
+    # Xogta koontada isticmaalaha hadda jooga
     my_profile, created = UserProfile.objects.get_or_create(user=request.user)
     friend_ids = my_profile.friends.values_list('id', flat=True)
+    
+    # Dhammaan dadka kale ee nidaamka ku jira iyo codsiyada furan
     all_users = UserProfile.objects.exclude(user=request.user)
     pending_requests = FriendRequest.objects.filter(receiver=request.user, status='pending')
+    
+    # Raadinta (Search) qof cusub iyadoo la adeegsanayo User ID Code
+    search_result = None
+    search_id = request.GET.get('search_id')
+    if search_id:
+        try:
+            search_result = UserProfile.objects.get(user_id_code=search_id)
+        except UserProfile.DoesNotExist:
+            search_result = None
 
-    return render(request, 'core/chats.html', {
+    context = {
+        'chat_settings': chat_settings,   # <--- Halkan ayaa muhiim ah si HTML-ku u akhriyo background-ka
+        'my_profile': my_profile,
+        'friend_ids': friend_ids,
+        'pending_requests': pending_requests,
         'all_users': all_users,
         'search_result': search_result,
-        'pending_requests': pending_requests,
-        'friend_ids': friend_ids,
-        'my_profile': my_profile
-    })
+    }
+    return render(request, 'core/chats.html', context)
 
 
 @login_required
@@ -269,17 +281,27 @@ def reject_request(request, request_id):
 
 @login_required
 def chat_with_user(request, username):
+    """
+    Shaqada maamusha daaqadda chat-ka, fariin dirista, 
+    iyo soo qaadashada beddelka background-ka (ChatSetting).
+    """
     other_user = get_object_or_404(User, username=username)
     
+    # Hubi in labada qof ay saaxiib yihiin
     if other_user not in request.user.userprofile.friends.all():
         django_messages.error(request, "Waa inaad saaxiib noqotaan si aad u wada hadashaan.")
         return redirect('chats_page')
 
+    # Soo qaad dhammaan farriimaha u dhexeeya labada qof
     messages = ChatMessage.objects.filter(
         (Q(sender=request.user) & Q(receiver=other_user)) |
         (Q(sender=other_user) & Q(receiver=request.user))
     ).order_by('timestamp')
 
+    # 🚀 SOO QAADASHADA XOGTA BACKGROUND-KA ADMIN-KA
+    chat_settings = ChatSetting.objects.first()
+
+    # Haddii foomka fariinta ama lifaaqa la soo diro
     if request.method == "POST":
         msg_text = request.POST.get('message')
         attachment = request.FILES.get('attachment')
@@ -297,7 +319,8 @@ def chat_with_user(request, username):
 
     return render(request, 'core/chat_window.html', {
         'other_user': other_user,
-        'chat_messages': messages
+        'chat_messages': messages,
+        'chat_settings': chat_settings,  # <--- Halkanna waa u muhiim daaqadda chat-ka dhexdiisa!
     })
 
 
@@ -347,17 +370,18 @@ def quiz_page(request):
 
 def submit_quiz(request):
     if request.method == "POST":
+        quiz_id = request.POST.get('quiz_id')
         user_answer = request.POST.get('answer', '').strip()
-        correct_answer = request.POST.get('correct', '').strip()
 
+        quiz = get_object_or_404(Quiz, id=quiz_id)
         request.session['quiz_total'] = request.session.get('quiz_total', 0) + 1
 
-        if user_answer.lower() == correct_answer.lower():
+        if user_answer.lower() == quiz.correct_answer.lower():
             request.session['quiz_score'] = request.session.get('quiz_score', 0) + 1
-            django_messages.success(request, "Sax ✅")
+            django_messages.success(request, "Hambalyo! Jawaabtu waa sax. 🎉")
         else:
-            request.session['quiz_score'] = request.session.get('quiz_score', 0) # Xajinta haddii uu khaldaba
-            django_messages.error(request, f"Khalad ❌ (Sax: {correct_answer})")
+            request.session['quiz_score'] = request.session.get('quiz_score', 0)
+            django_messages.error(request, f"Waa lagaa gubay! Jawaabta saxda ahayd waxay ahayd: {quiz.correct_answer}")
 
     return redirect('quiz_page')
 
@@ -574,9 +598,8 @@ def tts_interface_view(request):
         if not os.path.exists(tts_dir):
             os.makedirs(tts_dir)
 
-        # Abuurista magac gaar ah (Unique Identifier) si looga fogaado faylal isku dul qorma
         user_identifier = request.user.username if request.user.is_authenticated else 'guest'
-        unique_id = uuid.uuid4().hex[:8]  # Lambar gaar ah
+        unique_id = uuid.uuid4().hex[:8]
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         
         file_name = f"tts_{voice}_{user_identifier}_{timestamp}_{unique_id}.mp3"
@@ -584,7 +607,6 @@ def tts_interface_view(request):
         file_url = f"{settings.MEDIA_URL}tts_voices/{file_name}"
 
         try:
-            # Adeegsiga async_to_sync si ammaan ah loogu dhex orodshiyo loop-ka dhexdiisa Django thread
             async_to_sync(generate_somali_speech)(text, voice, output_path)
             return JsonResponse({'status': 'success', 'audio_url': file_url})
         except Exception as e:
@@ -592,5 +614,5 @@ def tts_interface_view(request):
 
     return render(request, 'core/tts_interface.html', {
         'max_chars': max_chars,
-        'tts_setting': tts_setting  # Xogta Avatar-ada iyo Backgrounds-ka hadda waa dynamic!
+        'tts_setting': tts_setting
     })

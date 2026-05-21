@@ -3,7 +3,8 @@ from import_export.admin import ImportExportModelAdmin
 from .models import (
     App, UserActivity, SiteSetting, HomepageContent, TTSSetting,
     Quiz, Poll, Content, Like, Comment, ContactMessage, UserProfile,
-    Subject, ExamYear, ReadingMaterial, QuizQuestion, GlobalNotice
+    Subject, ExamYear, ReadingMaterial, QuizQuestion, GlobalNotice,
+    ChatSetting, ChatMessage, FriendRequest  # Moodallada halkan ayaa lagu soo daray
 )
 # Soo dhoofinta resources-ka loogu talagalay Excel Import
 from .resources import QuizQuestionResource, ReadingMaterialResource
@@ -87,13 +88,19 @@ class TTSSettingAdmin(admin.ModelAdmin):
     )
 
 # ---------------------------------------------------
-# 1. USER PROFILE ADMIN
+# 1. USER PROFILE & FRIEND REQUESTS
 # ---------------------------------------------------
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'user_id_code', 'first_name', 'father_name')
     search_fields = ('user__username', 'user_id_code', 'first_name')
     readonly_fields = ('user_id_code',)
+
+@admin.register(FriendRequest)
+class FriendRequestAdmin(admin.ModelAdmin):
+    list_display = ('sender', 'receiver', 'status', 'created_at')
+    list_filter = ('status', 'created_at')
+    search_fields = ('sender__username', 'receiver__username')
 
 # ---------------------------------------------------
 # 2. APP ADMIN
@@ -206,7 +213,7 @@ class CommentAdmin(admin.ModelAdmin):
 # 8. QUIZ & POLL ADMIN
 # ---------------------------------------------------
 @admin.register(Quiz)
-class QuizAdmin(ImportExportModelAdmin):
+class QuizAdmin(admin.ModelAdmin):
     list_display = ('question', 'correct_answer', 'is_active', 'created_at')
     list_filter = ('is_active', 'created_at')
     search_fields = ('question',)
@@ -258,3 +265,52 @@ class GlobalNoticeAdmin(admin.ModelAdmin):
             'fields': ('video_file', 'video_url', 'is_portrait')
         }),
     )
+
+# ---------------------------------------------------
+# 11. CHAT SETTING ADMIN (MAAMULISTA BACKGROUND-KA IYO CODKA)
+# ---------------------------------------------------
+@admin.register(ChatSetting)
+class ChatSettingAdmin(admin.ModelAdmin):
+    list_display = ('title', 'bg_type', 'is_video_muted') # Halkan waxaa lagu daray bg_type
+    
+    fieldsets = (
+        ('Warbixinta Guud', {
+            'fields': ('title', 'bg_type', 'is_video_muted') # Halkan waxaa lagu daray bg_type
+        }),
+        ('Muuqaalka Gadaal (Background Image)', {
+            'description': 'Dooro midkood: Ka soo geli computer-ka ama geli Link/URL',
+            'fields': ('bg_image_file', 'bg_image_url')
+        }),
+        ('Muuqaalka Gadaal (Background Video)', {
+            'description': 'Dooro midkood: Ka soo geli computer-ka ama geli Link/URL',
+            'fields': ('bg_video_file', 'bg_video_url')
+        }),
+    )
+
+# ---------------------------------------------------
+# 12. CHAT MESSAGE ADMIN (LA SOCASHADA FARIIMAHA DADKA)
+# ---------------------------------------------------
+@admin.register(ChatMessage)
+class ChatMessageAdmin(admin.ModelAdmin):
+    list_display = ('sender', 'receiver', 'short_message', 'has_media', 'timestamp')
+    list_filter = ('timestamp', 'sender', 'receiver')
+    search_fields = ('message', 'sender__username', 'receiver__username')
+    readonly_fields = ('timestamp',)
+
+    # Function si kooban u tusaya fariinta haddii ay dheer tahay
+    def short_message(self, obj):
+        if obj.message:
+            return obj.message[:50] + "..." if len(obj.message) > 50 else obj.message
+        return "[Media Only / Fayl oo kaliya]"
+    short_message.short_description = 'Fariinta'
+
+    # Hubinta nooca faylasha la soo raaciyay maadaama koodhka la isku daray
+    def has_media(self, obj):
+        status = []
+        if obj.image: status.append("📷 Sawir")
+        if obj.voice: status.append("🎤 Cod")
+        if obj.attachment: 
+            status.append("📁 Folder" if obj.is_folder else "📄 Fayl")
+        
+        return ", ".join(status) if status else "❌ Maya"
+    has_media.short_description = 'Fayl / Media'

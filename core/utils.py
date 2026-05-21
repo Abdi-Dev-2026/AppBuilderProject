@@ -1,5 +1,5 @@
-import qrcode
 import base64
+import qrcode  # Hubi in library-ga rasmiga ah ee qrcode uu halkan ku jiro
 from io import BytesIO
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
@@ -45,13 +45,18 @@ def generate_id_card_pdf(user_profile, password=None):
     y = height - 350
 
     # 1. Background-ka Kaarka (Midab Madow oo Buluug xiga)
+    p.setStrokeColor(HexColor("#1a1a2e")) # Stroke-ka iyo Fill-ka midab isku mid ah si uu u qurux bado
     p.setFillColor(HexColor("#1a1a2e")) 
-    p.roundRect(x, y, card_width, card_height, 15, fill=1)
+    p.roundRect(x, y, card_width, card_height, 15, fill=1, stroke=1)
 
     # 2. Header-ka Sare (Guduud/Purple mix)
+    p.setStrokeColor(HexColor("#4834d4"))
     p.setFillColor(HexColor("#4834d4")) 
-    p.roundRect(x, y + card_height - 50, card_width, 50, 15, fill=1)
+    p.roundRect(x, y + card_height - 50, card_width, 50, 15, fill=1, stroke=1)
     
+    # Koorneyaasha hoose ee Header-ka si aysan u soo bixin (Optional square cover for sharp header edges inside round card)
+    p.rect(x, y + card_height - 50, card_width, 20, fill=1, stroke=0)
+
     p.setFillColor(white)
     p.setFont("Helvetica-Bold", 18)
     p.drawCentredString(x + card_width/2, y + card_height - 35, "KAARKA AQOONSIGA")
@@ -79,7 +84,6 @@ def generate_id_card_pdf(user_profile, password=None):
     p.drawString(text_x, y_start - 75, f"{user_profile.user_id_code}")
 
     # 4. QAYBTA PASSWORD-KA (PLAN B)
-    # Wuxuu soo baxayaa kaliya haddii password-ka la soo geliyo
     if password and password != "Lama hayo":
         p.setFillColor(HexColor("#ff7979")) # Midab casaan khafif ah
         p.setFont("Helvetica-Bold", 11)
@@ -89,14 +93,14 @@ def generate_id_card_pdf(user_profile, password=None):
         p.setFont("Courier-Bold", 14) 
         p.drawString(text_x, y_start - 130, f"{password}")
 
-    # 5. QR Code-ka (Dhex-galka PDF)
+    # 5. QR Code-ka (Halkan waxaa loo saxay isticmaalka rasmiga ah ee qrcode)
     qr_img = qrcode.make(user_profile.user_id_code)
     qr_buffer = BytesIO()
     qr_img.save(qr_buffer, format="PNG")
     qr_buffer.seek(0)
     
     qr_reader = ImageReader(qr_buffer)
-    p.drawImage(qr_reader, x + card_width - 100, y + 25, width=80, height=80)
+    p.drawImage(qr_reader, x + card_width - 110, y + 25, width=80, height=80)
 
     # 6. Footer Note
     p.setFillColor(HexColor("#95afc0"))

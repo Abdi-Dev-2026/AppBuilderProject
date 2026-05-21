@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="so">
 <head>
 <meta charset="UTF-8">
 <title>Content | Premium Experience</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="manifest" href="/static/manifest.json">
+<meta name="theme-color" content="#0f172a">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
 
 <style>
@@ -28,6 +30,25 @@ body {
     color: var(--text-main);
     -webkit-font-smoothing: antialiased;
 }
+
+/* GLOBAL OFFLINE BANNER */
+.feed-offline-banner {
+    display: none;
+    width: 100%;
+    background: #7f1d1d;
+    color: #fca5a5;
+    text-align: center;
+    padding: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-bottom: 1px solid #ef4444;
+    position: sticky;
+    top: 0;
+    z-index: 1100;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
 /* --- NAVIGATION --- */
 .nav {
@@ -87,7 +108,7 @@ body {
     border-color: rgba(34, 211, 238, 0.3);
 }
 
-/* SMART MEDIA CONTAINER: La qabsanaya cabbir kasta */
+/* SMART MEDIA CONTAINER */
 .media-wrapper {
     position: relative;
     width: 100%;
@@ -102,8 +123,8 @@ body {
 .media-wrapper video {
     width: 100%;
     height: auto;
-    max-height: 600px; /* Ka hortagga inuu aad u dheeraado */
-    object-fit: contain; /* Wuxuu ilaaliyaa qaabka sawirka (Taagan ama Jiifa) */
+    max-height: 600px;
+    object-fit: contain;
     display: block;
 }
 
@@ -237,6 +258,20 @@ body {
     box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
 }
 
+/* Offline Style Overrides */
+.app-offline-active .btn-like {
+    background: #334155 !important;
+    border-color: #475569 !important;
+    color: #94a3b8 !important;
+    cursor: not-allowed;
+    box-shadow: none !important;
+}
+.app-offline-active .btn-send {
+    background: #475569 !important;
+    cursor: not-allowed;
+    box-shadow: none !important;
+}
+
 /* Header Animation */
 .header-title {
     text-align: center;
@@ -247,9 +282,19 @@ body {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
+@media (max-width: 768px) {
+    .header-title { font-size: 1.8rem; margin-bottom: 25px; }
+    .nav { gap: 15px; padding: 12px; }
+    .container { margin: 20px auto; }
+}
 </style>
 </head>
 <body>
+
+<div id="feedOfflineAlert" class="feed-offline-banner">
+    📡 Lifaaqa internet-kaaga waa go'an yahay. Like-ta iyo faallooyinka cusub lama diri karo ilaa aad dib uga xiriirto khadka.
+</div>
 
 <div class="nav">
     <a href="/">HOME</a>
@@ -260,11 +305,10 @@ body {
 <div class="container">
     <h1 class="header-title">Muuqaalada Mucjisada ah</h1>
 
-    <div class="grid">
+    <div class="grid" id="content-grid">
         {% for item in all_contents %}
         <div class="card">
             
-            <!-- SMART MEDIA CONTAINER -->
             <div class="media-wrapper">
                 {% if item.image_file %}
                     <img src="{{ item.image_file.url }}" loading="lazy">
@@ -290,12 +334,11 @@ body {
 
             <div class="card-footer">
                 <div class="action-bar">
-                    <a href="{% url 'like_content' item.id %}" class="btn-like">
+                    <a href="{% url 'like_content' item.id %}" class="btn-like network-action">
                         ❤️ {{ item.total_likes }} Likes
                     </a>
                 </div>
 
-                <!-- SMART COMMENTS -->
                 <div class="comment-box">
                     <div class="comment-list">
                         {% for comment in item.comments.all %}
@@ -309,7 +352,7 @@ body {
                     </div>
 
                     {% if user.is_authenticated %}
-                    <form action="{% url 'add_comment' item.id %}" method="POST" class="input-group">
+                    <form action="{% url 'add_comment' item.id %}" method="POST" class="input-group comment-form">
                         {% csrf_token %}
                         <input type="text" name="comment_text" class="comment-input" placeholder="Aa..." required>
                         <button type="submit" class="btn-send">
@@ -324,5 +367,57 @@ body {
     </div>
 </div>
 
+<script>
+// NETWORK MANAGEMENT
+const offlineBanner = document.getElementById('feedOfflineAlert');
+const commentInputs = document.querySelectorAll('.comment-input');
+
+function handleNetworkChange() {
+    if (navigator.onLine) {
+        offlineBanner.style.display = 'none';
+        document.body.classList.remove('app-offline-active');
+        commentInputs.forEach(input => {
+            input.removeAttribute('disabled');
+            input.placeholder = "Aa...";
+        });
+    } else {
+        offlineBanner.style.display = 'block';
+        document.body.classList.add('app-offline-active');
+        commentInputs.forEach(input => {
+            input.setAttribute('disabled', 'true');
+            input.placeholder = "Offline...";
+        });
+    }
+}
+
+// Ka hortag foomamka comment-iga marka la offline yahay
+document.addEventListener('submit', function(e) {
+    if (!navigator.onLine && e.target.classList.contains('comment-form')) {
+        e.preventDefault();
+        alert("Ma ku dari kartid faallo cusub qaabka offline-ka. Fadlan dib u tijaabi marka aad internet hesho.");
+    }
+});
+
+// Ka hortag gujinta badhanka Like-ta marka la offline yahay
+document.addEventListener('click', function(e) {
+    if (!navigator.onLine && e.target.classList.contains('network-action')) {
+        e.preventDefault();
+        alert("Ma riixi kartid Like adigoo offline ah.");
+    }
+});
+
+window.addEventListener('online', handleNetworkChange);
+window.addEventListener('offline', handleNetworkChange);
+handleNetworkChange(); // Initial check
+
+// SERVICE WORKER REGISTRATION
+if ('serviceWorker' in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register('/static/sw.js')
+      .then(() => console.log("SW Registered Successfully"))
+      .catch(err => console.log("SW Error", err));
+  });
+}
+</script>
 </body>
 </html>
