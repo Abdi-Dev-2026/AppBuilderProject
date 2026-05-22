@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard-ka Maamulka - {{ school.school_name }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
         body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         .sidebar-brand { background-color: #1a365d; color: white; padding: 15px; border-radius: 10px; }
         .card-stat { border: none; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .subject-field { transition: all 0.3s ease; }
     </style>
 </head>
 <body>
@@ -50,9 +52,12 @@
                 </div>
                 <div class="col-lg-4 col-md-6 mb-2">
                     <form method="GET" action="" class="d-flex">
+                        {% if request.GET.batch_filter %}
+                            <input type="hidden" name="batch_filter" value="{{ request.GET.batch_filter }}">
+                        {% endif %}
                         <input type="text" name="search_query" class="form-control form-control-sm me-2" placeholder="Ku raadi Magac ama Roll Number..." value="{{ request.GET.search_query }}">
                         <button type="submit" class="btn btn-sm btn-primary fw-bold">🔍 Raadi</button>
-                        {% if request.GET.search_query %}
+                        {% if request.GET.search_query or request.GET.batch_filter %}
                             <a href="?" class="btn btn-sm btn-secondary ms-1">X</a>
                         {% endif %}
                     </form>
@@ -67,6 +72,9 @@
                 <div class="row align-items-center">
                     <div class="col-md-6">
                         <form method="GET" action="" class="d-flex align-items-center">
+                            {% if request.GET.search_query %}
+                                <input type="hidden" name="search_query" value="{{ request.GET.search_query }}">
+                            {% endif %}
                             <label class="small fw-bold text-muted me-2 text-nowrap">Dufcaddaha (Batches):</label>
                             <select name="batch_filter" class="form-select form-select-sm me-2" onchange="this.form.submit()">
                                 <option value="">--- Dhammaan Xogta ---</option>
@@ -99,7 +107,7 @@
                     </button>
 
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle">
+                        <table class="table table-hover align-middle" style="font-size: 14px;">
                             <thead class="table-light">
                                 <tr>
                                     <th><input type="checkbox" id="selectAll" class="form-check-input"></th>
@@ -115,7 +123,7 @@
                                     <th>Teknooloji</th>
                                     <th>Celcelis</th>
                                     <th>Go'aan</th>
-                                    <th>Ficil</th>
+                                    <th class="text-center">Ficil</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -148,14 +156,15 @@
                                             {% endif %}
                                         </td>
                                         <td>
-                                            <div class="d-flex gap-1">
-                                                <a href="{% url 'edit_student_result' student.id %}" class="btn btn-sm btn-warning">✏️ Edit</a>
+                                            <div class="d-flex gap-1 justify-content-center">
+                                                <a href="{% url 'edit_student_result' student.id %}" class="btn btn-sm btn-warning" title="Wax ka badal">✏️</a>
+                                                <a href="{% url 'delete_student' student.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Ma hubtaa inaad tirtirto ardayga: {{ student.full_name }}?');" title="Tirtir">🗑️</a>
                                             </div>
                                         </td>
                                     </tr>
                                 {% empty %}
                                     <tr>
-                                        <td colspan="14" class="text-center text-muted py-4">Weli wax arday ah laga ma helin nidaamka saaxiib.</td>
+                                        <td colspan="15" class="text-center text-muted py-4">Weli wax arday ah laga ma helin nidaamka saaxiib.</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -168,8 +177,7 @@
 </div>
 
 <div class="modal fade" id="addStudentModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
+    <div class="modal-dialog modal-lg"> <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title fw-bold">Ku Dar Natiijo Cusub</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -177,36 +185,53 @@
             <form method="POST" action="{% url 'add_student_manual' %}">
                 {% csrf_token %}
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Magaca Ardayga oo Saddexan</label>
-                        <input type="text" name="full_name" class="form-control" placeholder="E.g. Axmed Cali Maxamed" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold">Roll Number (Toos ayuu u dhashay)</label>
-                        <input type="text" name="roll_number" class="form-control fw-bold text-danger bg-light" value="{{ next_roll_number }}" readonly>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Magaca Ardayga oo Saddexan *</label>
+                            <input type="text" name="full_name" class="form-control" placeholder="E.g. Axmed Cali Maxamed" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Roll Number (Toos ayuu u dhashay)</label>
+                            <input type="text" name="roll_number" class="form-control fw-bold text-danger bg-light" value="{{ next_roll_number }}" readonly>
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold small">Ciwaanka Dufcada / Batch Name (Optional)</label>
-                        <input type="text" name="batch_name" class="form-control form-control-sm" placeholder="E.g. Dufcadda 2026, Kooxda B">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold small">Ciwaanka Dufcada / Batch Name (Optional)</label>
+                            <input type="text" name="batch_name" class="form-control" placeholder="E.g. Dufcadda 2026, Kooxda B">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold text-primary">Dooro Heerka Natiijada (8 ama 12 Maado)</label>
+                            <select id="manual_school_level" name="school_level" class="form-select fw-bold border-primary" onchange="toggleSubjects()">
+                                <option value="dhexe">Dugsi Dhexe (8 Maado)</option>
+                                <option value="sare">Dugsi Sare (12 Maado)</option>
+                            </select>
+                        </div>
                     </div>
                     
                     <h6 class="fw-bold text-primary mt-4 mb-2">Darajooyinka Maadooyinka</h6>
                     <div class="row">
-                        <div class="col-6 mb-2"><label class="small fw-bold">Tarbiyo</label><input type="text" name="tarbiyo" class="form-control form-control-sm" value="D-"></div>
-                        <div class="col-6 mb-2"><label class="small fw-bold">Carabi</label><input type="text" name="carabi" class="form-control form-control-sm" value="D-"></div>
-                        <div class="col-6 mb-2"><label class="small fw-bold">Af Soomaali</label><input type="text" name="af_soomaali" class="form-control form-control-sm" value="D-"></div>
-                        <div class="col-6 mb-2"><label class="small fw-bold">Xisaab</label><input type="text" name="xisaab" class="form-control form-control-sm" value="D-"></div>
-                        <div class="col-6 mb-2"><label class="small fw-bold">Cilmi Bulsho</label><input type="text" name="cilmi_bulsho" class="form-control form-control-sm" value="D-"></div>
-                        <div class="col-6 mb-2"><label class="small fw-bold">Saynis</label><input type="text" name="saynis" class="form-control form-control-sm" value="D-"></div>
-                        <div class="col-6 mb-2"><label class="small fw-bold">Ingiriisi</label><input type="text" name="ingiriisi" class="form-control form-control-sm" value="D-"></div>
-                        <div class="col-6 mb-2"><label class="small fw-bold">Teknooloji</label><input type="text" name="teknooloji" class="form-control form-control-sm" value="D-"></div>
+                        <div class="col-md-3 col-6 mb-2"><label class="small fw-bold">Tarbiyo</label><input type="text" name="tarbiyo" class="form-control form-control-sm" value="D-"></div>
+                        <div class="col-md-3 col-6 mb-2"><label class="small fw-bold">Carabi</label><input type="text" name="carabi" class="form-control form-control-sm" value="D-"></div>
+                        <div class="col-md-3 col-6 mb-2"><label class="small fw-bold">Af Soomaali</label><input type="text" name="af_soomaali" class="form-control form-control-sm" value="D-"></div>
+                        <div class="col-md-3 col-6 mb-2"><label class="small fw-bold">Xisaab</label><input type="text" name="xisaab" class="form-control form-control-sm" value="D-"></div>
+                        <div class="col-md-3 col-6 mb-2"><label class="small fw-bold">Cilmi Bulsho</label><input type="text" name="cilmi_bulsho" class="form-control form-control-sm" value="D-"></div>
+                        <div class="col-md-3 col-6 mb-2"><label class="small fw-bold">Saynis</label><input type="text" name="saynis" class="form-control form-control-sm" value="D-"></div>
+                        <div class="col-md-3 col-6 mb-2"><label class="small fw-bold">Ingiriisi</label><input type="text" name="ingiriisi" class="form-control form-control-sm" value="D-"></div>
+                        <div class="col-md-3 col-6 mb-2"><label class="small fw-bold">Teknooloji</label><input type="text" name="teknooloji" class="form-control form-control-sm" value="D-"></div>
+                        
+                        <div class="col-md-3 col-6 mb-2 high-school-subject subject-field d-none"><label class="small fw-bold text-success">Chemistry</label><input type="text" name="chemistry" class="form-control form-control-sm" value="D-"></div>
+                        <div class="col-md-3 col-6 mb-2 high-school-subject subject-field d-none"><label class="small fw-bold text-success">Physics</label><input type="text" name="physics" class="form-control form-control-sm" value="D-"></div>
+                        <div class="col-md-3 col-6 mb-2 high-school-subject subject-field d-none"><label class="small fw-bold text-success">Biology</label><input type="text" name="biology" class="form-control form-control-sm" value="D-"></div>
+                        <div class="col-md-3 col-6 mb-2 high-school-subject subject-field d-none"><label class="small fw-bold text-success">Juqraafi</label><input type="text" name="juqraafi" class="form-control form-control-sm" value="D-"></div>
+                        <div class="col-md-3 col-6 mb-2 high-school-subject subject-field d-none"><label class="small fw-bold text-success">Taariikh</label><input type="text" name="taariikh" class="form-control form-control-sm" value="D-"></div>
+                        <div class="col-md-3 col-6 mb-2 high-school-subject subject-field d-none"><label class="small fw-bold text-success">Business</label><input type="text" name="business" class="form-control form-control-sm" value="D-"></div>
                     </div>
                     
                     <div class="row mt-3">
                         <div class="col-6">
-                            <label class="form-label small fw-bold">Celceliska</label>
+                            <label class="form-label small fw-bold">Celceliska (GPA/Grade)</label>
                             <input type="text" name="celceliska" class="form-control text-primary fw-bold" value="D-">
                         </div>
                         <div class="col-6">
@@ -278,6 +303,20 @@ document.getElementById('selectAll').onclick = function() {
     for (let checkbox of checkboxes) {
         checkbox.checked = this.checked;
     }
+}
+
+// Dynamic Maado Show/Hide Script oo loogu talagalay 12-ka Maado
+function toggleSubjects() {
+    let level = document.getElementById('manual_school_level').value;
+    let highSchoolSubjects = document.querySelectorAll('.high-school-subject');
+    
+    highSchoolSubjects.forEach(function(subject) {
+        if (level === 'sare') {
+            subject.classList.remove('d-none');
+        } else {
+            subject.classList.add('d-none');
+        }
+    });
 }
 </script>
 </body>

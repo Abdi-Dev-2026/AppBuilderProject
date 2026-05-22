@@ -147,41 +147,48 @@
                                         </div>
                                     </div>
 
-                                    <div class="table-responsive">
-                                        <table class="table table-sm table-bordered text-center align-middle">
-                                            <tbody class="small">
-                                                <tr>
-                                                    <td class="bg-light fw-bold text-start">Tarbiyo</td>
-                                                    <td class="fw-bold">{{ student_result.tarbiyo }}</td>
-                                                    <td class="bg-light fw-bold text-start">Cilmi Bulsho</td>
-                                                    <td class="fw-bold">{{ student_result.cilmi_bulsho }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="bg-light fw-bold text-start">Carabi</td>
-                                                    <td class="fw-bold">{{ student_result.carabi }}</td>
-                                                    <td class="bg-light fw-bold text-start">Saynis</td>
-
-                                                    <td class="fw-bold">{{ student_result.saynis }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="bg-light fw-bold text-start">Af-Soomaali</td>
-
-                                                    <td class="fw-bold">{{ student_result.af_soomaali }}</td>
-                                                    <td class="bg-light fw-bold text-start">Ingiriisi</td>
-
-                                                    <td class="fw-bold">{{ student_result.ingiriisi }}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="bg-light fw-bold text-start">Xisaab</td>
-
-                                                    <td class="fw-bold">{{ student_result.xisaab }}</td>
-                                                    <td class="bg-light fw-bold text-start">Teknooloji</td>
-
-                                                    <td class="fw-bold">{{ student_result.teknooloji }}</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                   <div class="table-responsive">
+    <table class="table table-sm table-bordered text-center align-middle">
+        <tbody class="small">
+            <tr>
+                <td class="bg-light fw-bold text-start" style="width: 30%;">Tarbiyo</td>
+                <td class="fw-bold" style="width: 20%;">{{ student_result.tarbiyo|default:"-" }}</td>
+                <td class="bg-light fw-bold text-start" style="width: 30%;">Biology</td>
+                <td class="fw-bold" style="width: 20%;">{{ student_result.biology|default:"-" }}</td>
+            </tr>
+            <tr>
+                <td class="bg-light fw-bold text-start">Carabi</td>
+                <td class="fw-bold">{{ student_result.carabi|default:"-" }}</td>
+                <td class="bg-light fw-bold text-start">Chemistry</td>
+                <td class="fw-bold">{{ student_result.chemistry|default:"-" }}</td>
+            </tr>
+            <tr>
+                <td class="bg-light fw-bold text-start">Af-Soomaali</td>
+                <td class="fw-bold">{{ student_result.af_soomaali|default:"-" }}</td>
+                <td class="bg-light fw-bold text-start">Physics</td>
+                <td class="fw-bold">{{ student_result.physics|default:"-" }}</td>
+            </tr>
+            <tr>
+                <td class="bg-light fw-bold text-start">Xisaab</td>
+                <td class="fw-bold">{{ student_result.xisaab|default:"-" }}</td>
+                <td class="bg-light fw-bold text-start">Juqraafi</td>
+                <td class="fw-bold">{{ student_result.juqraafi|default:"-" }}</td>
+            </tr>
+            <tr>
+                <td class="bg-light fw-bold text-start">Ingiriisi</td>
+                <td class="fw-bold">{{ student_result.ingiriisi|default:"-" }}</td>
+                <td class="bg-light fw-bold text-start">Taariikh</td>
+                <td class="fw-bold">{{ student_result.taariikh|default:"-" }}</td>
+            </tr>
+            <tr>
+                <td class="bg-light fw-bold text-start">Teknooloji</td>
+                <td class="fw-bold">{{ student_result.teknooloji|default:"-" }}</td>
+                <td class="bg-light fw-bold text-start">Business</td>
+                <td class="fw-bold">{{ student_result.business|default:"-" }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
                                     
                                     <div class="text-center mt-3 no-print">
                                         <button onclick="printResultCard();" class="btn btn-danger fw-bold px-4">🖨️ Soo Saar Kaarka (Print/PDF)</button>

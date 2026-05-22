@@ -4,6 +4,7 @@ import random
 import openpyxl  # Hubi in aad 'pip install openpyxl' horta samaysay saaxiib
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.db import connection
 from .models import SchoolProfile, StudentResult
 from django.utils import timezone
 
@@ -157,16 +158,32 @@ def payment_page(request, school_id):
 
 
 def school_dashboard(request):
-    """Bogga 3aad: Dashboard-ka rasmiga ah oo dhalinaya Auto Roll Number"""
+    """Bogga 3aad: Dashboard-ka rasmiga ah oo leh Shaandheyn, Raadin iyo Auto Roll Number"""
     school_id = request.session.get('managed_school_id')
     if not school_id:
         messages.error(request, "Fadlan horta fure sireedkaaga ku gasho saaxiib!")
         return redirect('landing_page')
         
     school = get_object_or_404(SchoolProfile, id=school_id)
+    
+    # Ka soo qaado ardayda iskuulkaan oo kaliya korna u soo qaad kuwii u dambeeyay
     students = StudentResult.objects.filter(school=school).order_by('-created_at')
     
-    # Auto-Generate Roll Number cusub
+    # ⚙️ 1. KAXAYNTA SHAANDHEYNTA DUFCADDA/HEERKA (Batch/Level Filter)
+    batch_filter = request.GET.get('batch_filter')
+    if batch_filter:
+        students = students.filter(school_level=batch_filter)
+
+    # ⚙️ 2. KAXAYNTA RAADINTA LUGTA LEH (Search Query)
+    search_query = request.GET.get('search_query')
+    if search_query:
+        students = students.filter(
+            full_name__icontains=search_query
+        ) | students.filter(
+            roll_number__icontains=search_query
+        )
+    
+    # Auto-Generate Roll Number cusub ee foomka gacanta
     while True:
         random_digits = random.randint(100000, 999999)
         generated_roll = f"B25{random_digits}"
@@ -177,6 +194,8 @@ def school_dashboard(request):
         'school': school,
         'students': students,
         'next_roll_number': generated_roll,
+        'batch_filter': batch_filter,
+        'search_query': search_query,
     }
     return render(request, 'exam_app/school_dashboard.html', context)
 
@@ -278,7 +297,7 @@ def edit_student_result(request, student_id):
 
 
 def import_excel_results(request):
-    """Nidaamka Bulk Import-ka ee isku dhex raddaya Dugsi Dhexe iyo Dugsi Sare (Excel)"""
+    """Nidaamka Bulk Import-ka ee Excel"""
     school_id = request.session.get('managed_school_id')
     if not school_id:
         messages.error(request, "Fadlan horta system-ka soo gal saaxiib!")
@@ -301,7 +320,6 @@ def import_excel_results(request):
                     
                 full_name = str(row[0]).strip()
                 
-                # Wadaagga maadooyinka
                 tarbiyo      = str(row[1]).strip().upper() if row[1] else 'D-'
                 carabi       = str(row[2]).strip().upper() if row[2] else 'D-'
                 af_soomaali  = str(row[3]).strip().upper() if row[3] else 'D-'
@@ -341,7 +359,7 @@ def import_excel_results(request):
                 )
                 success_count += 1
                 
-            messages.success(request, f"Guul saaxiib! {success_count} arday ({level.upper()}) si toos ah ayaa loo xisaabiyay loona shubay!")
+            messages.success(request, f"Guul saaxiib! {success_count} arday si toos ah ayaa loo xisaabiyay loona shubay!")
         except Exception as e:
             messages.error(request, f"Cillad baa dhacday: {str(e)}")
             
@@ -349,14 +367,14 @@ def import_excel_results(request):
 
 
 def import_students_csv(request):
-    """Shaqada akhrinta faylka CSV, xisaabinta darajooyinka & u keydinta database-ka"""
+    """Shaqada akhrinta faylka CSV"""
     school_id = request.session.get('managed_school_id')
     if not school_id:
         messages.error(request, "Fadlan marka hore iskuul soo dooro saaxiib!")
         return redirect('landing_page')
 
     school = get_object_or_404(SchoolProfile, id=school_id)
-    level = request.POST.get('school_level', 'sare')  # Wuxuu ka imaanayaa foomka HTML
+    level = request.POST.get('school_level', 'sare')
 
     if request.method == 'POST' and request.FILES.get('csv_file'):
         csv_file = request.FILES['csv_file']
@@ -368,7 +386,7 @@ def import_students_csv(request):
         try:
             data_set = csv_file.read().decode('UTF-8')
             io_string = io.StringIO(data_set)
-            next(io_string)  # Ka bood tiirarka sare (Headers-ka)
+            next(io_string) # Ka bood Headers-ka
 
             saas_loo_galiyay = 0
             for row in csv.reader(io_string, delimiter=','):
@@ -377,7 +395,6 @@ def import_students_csv(request):
                 
                 full_name = row[0].strip()
                 
-                # Sida faylkaaga CSV-ga ah u qoran yahay darajooyinka waxay ka bilaawdaan row[1]
                 tarbiyo      = row[1].strip().upper() if len(row) > 1 and row[1] else 'D-'
                 carabi       = row[2].strip().upper() if len(row) > 2 and row[2] else 'D-'
                 af_soomaali  = row[3].strip().upper() if len(row) > 3 and row[3] else 'D-'
@@ -401,38 +418,19 @@ def import_students_csv(request):
                     all_grades = [tarbiyo, carabi, af_soomaali, xisaab, ingiriisi, teknooloji, 
                                   biology, chemistry, physics, juqraafi, taariikh, business]
 
-                # Xisaabi Celceliska Xarfaha (GPA) iyo Go'aanka si toos ah
                 celcelis_grade, goaan_student = calculate_gpa_and_status(all_grades)
 
-                # Dhal weji Roll Number cusub haddii uusan lahayn faylka dhexdiisa
                 while True:
                     random_digits = random.randint(100000, 999999)
                     generated_roll = f"B25{random_digits}"
                     if not StudentResult.objects.filter(roll_number=generated_roll).exists():
                         break
 
-                # Ku kaydi database-ka PostgreSQL
                 StudentResult.objects.create(
-                    school=school,
-                    full_name=full_name,
-                    roll_number=generated_roll,
-                    school_level=level,
-                    tarbiyo=tarbiyo,
-                    carabi=carabi,
-                    af_soomaali=af_soomaali,
-                    xisaab=xisaab,
-                    ingiriisi=ingiriisi,
-                    teknooloji=teknooloji,
-                    cilmi_bulsho=cilmi_bulsho,
-                    saynis=saynis,
-                    biology=biology,
-                    chemistry=chemistry,
-                    physics=physics,
-                    juqraafi=juqraafi,
-                    taariikh=taariikh,
-                    business=business,
-                    celceliska=celcelis_grade,
-                    goaan=goaan_student
+                    school=school, full_name=full_name, roll_number=generated_roll, school_level=level,
+                    tarbiyo=tarbiyo, carabi=carabi, af_soomaali=af_soomaali, xisaab=xisaab, ingiriisi=ingiriisi, teknooloji=teknooloji,
+                    cilmi_bulsho=cilmi_bulsho, saynis=saynis, biology=biology, chemistry=chemistry, physics=physics,
+                    juqraafi=juqraafi, taariikh=taariikh, business=business, celceliska=celcelis_grade, goaan=goaan_student
                 )
                 saas_loo_galiyay += 1
 
@@ -444,21 +442,91 @@ def import_students_csv(request):
 
 
 def print_selected_students(request):
-    """Cilladda 3aad fixed: Soo saarista hal bog oo ay ku wada jiraan ardayda la doortay (Bulk Slip)"""
+    """Soo saarista hal bog oo ay ku wada jiraan ardayda la doortay (Bulk Slip)"""
     school_id = request.session.get('managed_school_id')
     if not school_id:
+        messages.error(request, "Fadlan marka hore fure sireedkaaga ku gasho saaxiib!")
         return redirect('landing_page')
         
-    student_ids = request.POST.getlist('selected_students')
-    if not student_ids:
-        messages.warning(request, "Fadlan horta dooro ugu yaraan hal arday saaxiib!")
-        return redirect('school_dashboard')
-        
-    students = StudentResult.objects.filter(id__in=student_ids, school_id=school_id)
     school = get_object_or_404(SchoolProfile, id=school_id)
     
-    context = {
-        'students': students,
-        'school': school,
-    }
-    return render(request, 'exam_app/print_selected.html', context)
+    if request.method == 'POST':
+        student_ids = request.POST.getlist('selected_students')
+        
+        if not student_ids:
+            messages.warning(request, "Fadlan horta dooro ugu yaraan hal arday saaxiib!")
+            return redirect('school_dashboard')
+            
+        students = StudentResult.objects.filter(id__in=student_ids, school=school)
+        
+        if not students.exists():
+            messages.error(request, "Ardayda aad dooratay laguma helin nidaamka!")
+            return redirect('school_dashboard')
+            
+        context = {
+            'students': students,
+            'school': school,
+            'current_date': timezone.now(),
+        }
+        return render(request, 'exam_app/print_selected.html', context)
+        
+    return redirect('school_dashboard')
+
+
+# ========================================================================
+# HAWLAHA RE-SETTING ID-GA & TIRTIRISTA BADAN (BULK DELETE + RESET AUTO_INC)
+# ========================================================================
+
+def delete_student(request, student_id):
+    """Khadkaan wuxuu tirtirayaa hal arday wuxuuna dib u hagaajinayaa xisaabiyaha ID-ga"""
+    school_id = request.session.get('managed_school_id')
+    if not school_id:
+        messages.error(request, "Fadlan marka hore fure sireedkaaga ku gasho saaxiib!")
+        return redirect('landing_page')
+        
+    student = get_object_or_404(StudentResult, id=student_id, school_id=school_id)
+    student_name = student.full_name
+    student.delete()
+    
+    # 🔥 TRICK-KA DIB-U-ISTICMAALKA ID-GA EE DATABASE-KA:
+    with connection.cursor() as cursor:
+        if connection.vendor == 'sqlite':
+            cursor.execute("UPDATE sqlite_sequence SET seq = (SELECT COALESCE(MAX(id), 0) FROM exam_app_studentresult) WHERE name='exam_app_studentresult';")
+        elif connection.vendor == 'postgresql':
+            cursor.execute("SELECT setval(pg_get_serial_sequence('exam_app_studentresult', 'id'), COALESCE(MAX(id), 1), false) FROM exam_app_studentresult;")
+    
+    messages.success(request, f"Waxaa guul ku tirtiray xogta ardayga: {student_name}. ID-gii dib ayaa loo xisaabiyay!")
+    return redirect(request.META.get('HTTP_REFERER', 'school_dashboard'))
+
+
+def delete_batch_students(request):
+    """Khadkaan wuxuu hal mar wada tirtirayaa dufcad dhan (Dhexe ama Sare) wuxuuna dib u habaynayaa ID-yada"""
+    school_id = request.session.get('managed_school_id')
+    if not school_id:
+        messages.error(request, "Fadlan marka hore nidaamka soo gal saaxiib!")
+        return redirect('landing_page')
+        
+    if request.method == 'POST':
+        school_level = request.POST.get('school_level') 
+        
+        if school_level in ['dhexe', 'sare']:
+            deleted_count, _ = StudentResult.objects.filter(
+                school_id=school_id, 
+                school_level=school_level
+            ).delete()
+            
+            # 🔥 TRICK-KA DIB-U-ISTICMAALKA ID-GA MARKAY DUFCADU BADAN TAHAY:
+            with connection.cursor() as cursor:
+                if connection.vendor == 'sqlite':
+                    cursor.execute("UPDATE sqlite_sequence SET seq = (SELECT COALESCE(MAX(id), 0) FROM exam_app_studentresult) WHERE name='exam_app_studentresult';")
+                elif connection.vendor == 'postgresql':
+                    cursor.execute("SELECT setval(pg_get_serial_sequence('exam_app_studentresult', 'id'), COALESCE(MAX(id), 1), false) FROM exam_app_studentresult;")
+            
+            messages.success(
+                request, 
+                f"Waxaa guul ku tirtiray {deleted_count} arday oo ka tirsanaa Dugsi {school_level.capitalize()}. ID-yadii weynaa dib ayaa loo habeeyay saaxiib!"
+            )
+        else:
+            messages.error(request, "Fadlan dooro heerka dugsiga aad rabto in aad tirtirto (dhexe ama sare)!")
+            
+    return redirect(request.META.get('HTTP_REFERER', 'school_dashboard'))
