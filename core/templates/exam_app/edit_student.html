@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="so">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wax ka beddel Natiijada Ardayga</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-warning text-dark fw-bold d-flex justify-content-between align-items-center">
+                    <span>✏️ Wax ka beddel Natiijada: {{ student.full_name }}</span>
+                    <span class="badge bg-dark">{{ student.get_school_level_display }}</span>
+                </div>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Magaca Ardayga (Saddexan)</label>
+                            <input type="text" name="full_name" value="{{ student.full_name }}" class="form-control" required>
+                        </div>
+
+                        <h5 class="text-primary border-bottom pb-2 mb-3">Darajooyinka Imtixaanka</h5>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold">Tarbiyo</label>
+                                <input type="text" name="tarbiyo" value="{{ student.tarbiyo }}" class="form-control form-control-sm text-uppercase">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold">Carabi</label>
+                                <input type="text" name="carabi" value="{{ student.carabi }}" class="form-control form-control-sm text-uppercase">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold">Af-Soomaali</label>
+                                <input type="text" name="af_soomaali" value="{{ student.af_soomaali }}" class="form-control form-control-sm text-uppercase">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold">Xisaab</label>
+                                <input type="text" name="xisaab" value="{{ student.xisaab }}" class="form-control form-control-sm text-uppercase">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold">Ingiriisi</label>
+                                <input type="text" name="ingiriisi" value="{{ student.ingiriisi }}" class="form-control form-control-sm text-uppercase">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-bold">Teknooloji</label>
+                                <input type="text" name="teknooloji" value="{{ student.teknooloji }}" class="form-control form-control-sm text-uppercase">
+                            </div>
+
+                            {% if student.school_level == 'dhexe' %}
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Cilmi Bulsho</label>
+                                    <input type="text" name="cilmi_bulsho" value="{{ student.cilmi_bulsho }}" class="form-control form-control-sm text-uppercase">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Saynis</label>
+                                    <input type="text" name="saynis" value="{{ student.saynis }}" class="form-control form-control-sm text-uppercase">
+                                </div>
+                            {% else %}
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Biology</label>
+                                    <input type="text" name="biology" value="{{ student.biology }}" class="form-control form-control-sm text-uppercase">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Chemistry</label>
+                                    <input type="text" name="chemistry" value="{{ student.chemistry }}" class="form-control form-control-sm text-uppercase">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Physics</label>
+                                    <input type="text" name="physics" value="{{ student.physics }}" class="form-control form-control-sm text-uppercase">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Juqraafi</label>
+                                    <input type="text" name="juqraafi" value="{{ student.juqraafi }}" class="form-control form-control-sm text-uppercase">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Taariikh</label>
+                                    <input type="text" name="taariikh" value="{{ student.taariikh }}" class="form-control form-control-sm text-uppercase">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Business</label>
+                                    <input type="text" name="business" value="{{ student.business }}" class="form-control form-control-sm text-uppercase">
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between bg-light">
+                        <a href="{% url 'school_dashboard' %}" class="btn btn-secondary btn-sm">❌ Ka Noqo</a>
+                        <button type="submit" class="btn btn-success btn-sm fw-bold">💾 Keydi Isbeddelka</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
