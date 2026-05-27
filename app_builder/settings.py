@@ -30,7 +30,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core.apps.CoreConfig',
     'import_export', 
-    'exam_app',  # <-- Halkan ku dar saaxiib si Django u aqoonsato App-kan cusub
 ]
 
 # Middleware

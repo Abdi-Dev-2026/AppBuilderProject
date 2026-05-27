@@ -9,7 +9,6 @@ urlpatterns = [
 
     # 2. Dhammaan dariiqyada App-ka Core
     path('', include('core.urls')), 
-    path('', include('exam_app.urls')), # <-- Khadkan ku dar saaxiib
 ]
 
 # Faylasha Media iyo Static waxay shaqaynayaan marka DEBUG=True la joogo (Local Development)
