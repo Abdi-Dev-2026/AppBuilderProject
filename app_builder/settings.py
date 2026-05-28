@@ -1,6 +1,6 @@
-from pathlib import Path
 import os
-from dotenv import load_dotenv  # Kaliya kani baa ku filan
+from pathlib import Path
+from dotenv import load_dotenv
 
 # Jidka (Path) asaasiga ah ee mashruuca
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -12,7 +12,7 @@ load_dotenv(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-# ALLOWED_HOSTS - Waxaan ka saarnay '*' si loogu xiro kaliya meelaha rasmiga ah
+# ALLOWED_HOSTS
 ALLOWED_HOSTS = [
     'maxamed.serveo.net', 
     'maxamed.serveousercontent.com', 
@@ -20,21 +20,48 @@ ALLOWED_HOSTS = [
     'localhost'
 ]
 
-# Apps-ka rakiban
+# ---------------------------------------------------
+# 🔥 APPS-KA RAKIBAN (INSTALLED APPS)
+# ---------------------------------------------------
 INSTALLED_APPS = [
+    # Apps-ka rasmiga ah ee Django la yimaado
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core.apps.CoreConfig',
+    
+    # Packages-ka dibadda ka yimid (Third-party apps)
     'import_export', 
+    
+    # 20-ka Apps ee cusub ee go'doonka ah ee aad sameysay
+    'about',
+    'app_detail',
+    'banaadir',
+    'chat_window',
+    'chats',
+    'contact',
+    'content',
+    'create_app',
+    'dashboard',
+    'editor',
+    'homepage',
+    'login',
+    'maintenance',  # App-ka maintenance halkan ayuu si toos ah u joogaa
+    'my_messages',
+    'poll',
+    'profile_html',  # App-kii profile-ka ee badbaadada ahaa
+    'quiz',
+    'register',
+    'result',
+    'tts_interface',
 ]
 
-# Middleware
+# ---------------------------------------------------
+# 🔥 MIDDLEWARE (Halkan waxaa la geliyay jidka saxda ah)
+# ---------------------------------------------------
 MIDDLEWARE = [
-    'core.middleware.MaintenanceMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware', 
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -43,6 +70,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+    # Jidka cusub ee rasmiga ah ee Middleware-kaaga Maintenance-ka:
+    'maintenance.middleware.MaintenanceMiddleware',
 ]
 
 ROOT_URLCONF = 'app_builder.urls'
@@ -64,7 +94,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'app_builder.wsgi.application'
 
-# Database (PostgreSQL) - Password-ka waa la qariyay hadda!
+# Database (PostgreSQL)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -109,7 +139,7 @@ CSRF_TRUSTED_ORIGINS = [
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# --- HABAYNTA IMPORT-EXPORT (CILAD-BIXINTA UNICODE) ---
+# --- HABAYNTA IMPORT-EXPORT ---
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 IMPORT_EXPORT_SKIP_ADMIN_LOG = True
 IMPORT_EXPORT_ENCODING = 'utf-8-sig'
