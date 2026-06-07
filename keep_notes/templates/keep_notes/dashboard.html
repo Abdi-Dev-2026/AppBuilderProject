@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="so">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keep Notes Pro | Sync</title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    
+    <style>
+        :root { --primary: #f59e0b; --bg: #111827; --card: #1f2937; --text: #f3f4f6; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); padding-bottom: 15px; margin-bottom: 25px; }
+        .user-id { background: var(--card); padding: 8px 16px; border-radius: 20px; color: var(--primary); font-weight: bold; }
+        .note-form { background: var(--card); padding: 20px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        input, textarea { width: 100%; padding: 12px; margin-bottom: 10px; background: #374151; border: 1px solid #4b5563; color: white; border-radius: 8px; box-sizing: border-box; }
+        button { background: var(--primary); color: black; border: none; padding: 12px; font-weight: bold; cursor: pointer; border-radius: 8px; width: 100%; transition: 0.3s; }
+        
+        .notes-list { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        .note-card { background: var(--card); border-left: 5px solid var(--primary); padding: 20px; border-radius: 8px; overflow: hidden; }
+        
+        .note-text { white-space: pre-wrap; word-break: break-all; font-size: 14px; line-height: 1.6; }
+        .note-code { margin-top: 10px; border-radius: 5px; overflow-x: auto; width: 100%; }
+        
+        pre { width: 100%; overflow-x: auto; box-sizing: border-box; }
+        code { display: block; width: 100%; box-sizing: border-box; }
+
+        .note-actions { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-sm { padding: 8px 16px; font-size: 14px; cursor: pointer; border: none; border-radius: 4px; }
+        .copy-btn { background: #6b7280; color: white; }
+        .edit-btn { background: #2563eb; color: white; }
+        .del-btn { background: #dc2626; color: white; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+            <a href="/" style="position: absolute; top: 10px; right: 10px; z-index: 100; color: white; text-decoration: none; background: #3b82f6; padding: 5px 15px; border-radius: 10px; font-weight: bold;">🏠</a>
+        <h2>Keep Notes Pro 🚀</h2>
+        <div class="user-id">ID: {{ user_profile.user_id_code }}</div>
+    </div>
+
+    <div class="note-form">
+        <input type="text" id="noteTitle" placeholder="Cinwaanka...">
+        <textarea id="noteContent" rows="4" placeholder="Halkan ku qor xogtaada ama koodkaaga..."></textarea>
+        <input type="file" id="fileInput" style="background:transparent; border:none; padding:5px 0;">
+        <button onclick="sendNote()">Save & Sync 🚀</button>
+    </div>
+
+    <div class="notes-list" id="notesContainer"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+
+<script>
+    const API_URL = "{% url 'sync_notes_api' %}";
+
+    async function sendNote() {
+        const title = document.getElementById('noteTitle').value;
+        const content = document.getElementById('noteContent').value;
+        const file = document.getElementById('fileInput').files[0];
+        if (!title && !content && !file) return alert("Fadlan wax geli!");
+
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('content', content);
+        formData.append('device_info', "Desktop");
+        if(file) formData.append('file_attachment', file);
+
+        await fetch(API_URL, { method: "POST", headers: { "X-CSRFToken": "{{ csrf_token }}" }, body: formData });
+        document.getElementById('noteTitle').value = '';
+        document.getElementById('noteContent').value = '';
+        fetchNotes();
+    }
+
+    async function fetchNotes() {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+        const container = document.getElementById('notesContainer');
+        container.innerHTML = '';
+        
+        data.notes.forEach(note => {
+            const card = document.createElement('div');
+            card.className = 'note-card';
+            
+            const isCode = note.content.includes("```");
+            let language = 'language-markup'; 
+            if (note.content.includes("def ") || note.content.includes("import ")) language = 'language-python';
+            else if (note.content.includes("function ") || note.content.includes("const ")) language = 'language-javascript';
+            else if (note.content.includes("{") && note.content.includes(":")) language = 'language-css';
+
+            card.innerHTML = `
+                <h3>${note.title || 'Untitled'}</h3>
+                <div class="${isCode ? 'note-code' : 'note-text'}">
+                    <pre><code class="${isCode ? language : ''}" id="content-${note.id}"></code></pre>
+                </div>
+                ${note.file_attachment ? `<a href="/media/${note.file_attachment}" target="_blank" style="color:#f59e0b">📂 View File</a>` : ''}
+                <div class="note-actions">
+                    <button class="btn-sm copy-btn" data-id="${note.id}">Copy</button>
+                    <button class="btn-sm edit-btn" data-id="${note.id}" data-title="${note.title || ''}">Edit</button>
+                    <button class="btn-sm del-btn" onclick="deleteNote(${note.id})">Delete</button>
+                </div>
+            `;
+            
+            card.querySelector(`#content-${note.id}`).textContent = note.content.replace(/```/g, '');
+            card.querySelector('.edit-btn').dataset.content = note.content;
+            container.appendChild(card);
+        });
+
+        Prism.highlightAll();
+
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const text = document.getElementById(`content-${e.target.dataset.id}`).textContent;
+                navigator.clipboard.writeText(text).then(() => alert("Waa la koobiyeeyay!"));
+            });
+        });
+
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                editNote(e.target.dataset.id, e.target.dataset.title, e.target.dataset.content);
+            });
+        });
+    }
+
+    async function editNote(id, oldTitle, oldContent) {
+        const newTitle = prompt("Beddel cinwaanka:", oldTitle);
+        const newContent = prompt("Beddel qoraalka:", oldContent);
+        if (newTitle === null) return;
+        await fetch(API_URL, { method: "PUT", headers: { "Content-Type": "application/json", "X-CSRFToken": "{{ csrf_token }}" }, body: JSON.stringify({ note_id: id, title: newTitle, content: newContent }) });
+        fetchNotes();
+    }
+
+    async function deleteNote(id) {
+        if (!confirm("Ma hubtaa inaad tirtirto?")) return;
+        await fetch(API_URL, { method: "DELETE", headers: { "Content-Type": "application/json", "X-CSRFToken": "{{ csrf_token }}" }, body: JSON.stringify({ note_id: id }) });
+        fetchNotes();
+    }
+
+    setInterval(fetchNotes, 5000);
+    window.onload = fetchNotes;
+</script>
+</body>
+</html>

@@ -26,3 +26,7 @@ def home(request):
         'quiz': quiz,
         'poll': poll
     })
+def logout_view(request):
+    auth_logout(request)
+    django_messages.info(request, "Waad ka baxday koontadaadii.")
+    return redirect('login')

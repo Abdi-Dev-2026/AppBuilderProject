@@ -1,0 +1,585 @@
+ <!doctype html>  
+  
+<html lang="so">  
+<head>  
+  <meta charset="utf-8" />  
+  <meta name="viewport" content="width=device-width,initial-scale=1" />  
+  <title>Quiz Soomaali - Game Fudud</title>  
+  <style>  
+    :root{--bg:#f5f7fa;--card:#fff;--accent:#0b84ff;--muted:#6b7280;--success:#10b981;}  
+    body{font-family:sans-serif;margin:0;padding:0;background:var(--bg);color:#111}  
+    .container{max-width:760px;margin:auto;padding:16px}  
+    header{display:flex;align-items:center;gap:12px}  
+    .back{cursor:pointer;padding:8px;border-radius:8px;border:1px solid #eee;background:#fff}  
+    h1{margin:0;color:var(--accent);flex:1;text-align:center}.card{background:var(--card);padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.06);margin:12px 0}  
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}  
+button{padding:10px 12px;border:none;border-radius:8px;cursor:pointer}  
+.btn-primary{background:var(--accent);color:#fff}  
+.btn-ghost{background:#fff;border:1px solid #eee}  
+.muted{color:var(--muted)}  
+  
+.question{font-size:18px;font-weight:600;margin:12px 0}  
+.choices{display:flex;flex-direction:column;gap:8px}  
+.choice{padding:12px;border:1px solid #ddd;border-radius:8px;cursor:pointer;background:#fafafa}  
+.choice.correct{background:#d9fdd3;border-color:green}  
+.choice.wrong{background:#ffd6d6;border-color:red}  
+.controls{margin-top:12px;display:flex;justify-content:space-between;align-items:center}  
+  
+.small{font-size:13px;color:var(--muted)}  
+.list{display:flex;flex-direction:column;gap:8px}  
+.row{display:flex;justify-content:space-between;align-items:center}  
+.tag{font-size:12px;padding:6px;border-radius:8px;border:1px solid #eee}  
+input[type="text"],textarea{width:100%;padding:8px;border-radius:8px;border:1px solid #ddd}  
+  
+/* responsive */  
+@media(max-width:420px){.container{padding:10px}.grid{grid-template-columns:repeat(2,1fr)}}  
+  
+  </style>  
+</head>  
+<body>  
+<div class="container">  
+  <header>  
+    <div id="backBtn" class="back" style="display:none">🔙</div>  
+    <h1>Su-aallo imtixaan ah</h1>  
+    <div style="width:44px"></div>  
+  </header>  <!-- Start -->  <div id="startScreen" class="card">  
+    <h3>Diyaar ma u tahay? Door maaddo:</h3>  
+    <div class="grid">  
+      <button class="btn-primary" onclick="showMode('soomaali')">Af Soomaali</button>  
+      <button class="btn-primary" onclick="showMode('english')">English</button>  
+      <button class="btn-primary" onclick="showMode('arabic')">Arabic</button>  
+      <button class="btn-primary" onclick="showMode('tarbiya')">Tarbiya</button>  
+      <button class="btn-primary" onclick="showMode('xisaab')">Xisaab</button>  
+      <button class="btn-primary" onclick="showMode('tech')">Technology</button>  
+      <button class="btn-primary" onclick="showMode('saynis')">Saynis</button>  
+      <button class="btn-primary" onclick="showMode('cilmi')">Cilmiga Bulshada</button>  
+    </div><hr style="margin:12px 0">  
+<div class="row">  
+  <div>  
+    <strong>Taariikh & Dib-u-eegis</strong>  
+    <div class="small">Fiiri natiijooyinka, khaladaadka iyo dib u saxida.</div>  
+  </div>  
+  <div>  
+    <button class="btn-ghost" onclick="openHistory()">Taariikh</button>  
+  </div>  
+</div>  
+  
+<hr style="margin:12px 0">  
+<div class="row">  
+  <div>  
+    <strong>Warbixin & La xiriir</strong>  
+    <div class="small">Halkan waxaad igu soo sheegi kartaa khaladaad ama fikrad.</div>  
+  </div>  
+  <div>  
+    <button class="btn-ghost" onclick="openContact()">La xiriir</button>  
+  </div>  
+</div>  
+  
+  </div>  <!-- Mode selection (Study or Play) -->  <div id="modeScreen" class="card" style="display:none">  
+    <h3 id="modeTitle">Af Soomaali</h3>  
+    <p class="small">Door: Akhrin/Xifdin (eeg casharrada) ama Ciyaar (imtixaan).</p>  
+    <div class="grid">  
+      <button class="btn-primary" onclick="startGame(selectedSubject,'study')">Akhrin / Xifdin</button>  
+      <button class="btn-primary" onclick="startGame(selectedSubject,'play')">Ciyaar</button>  
+    </div>  
+  </div>  <!-- Study screen -->  <div id="studyScreen" class="card" style="display:none">  
+    <h3 id="studyHeader">Casharro</h3>  
+    <div id="studyList" class="list"></div>  
+  </div>  <!-- Game screen -->  <div id="gameBox" class="card" style="display:none">  
+    <div id="qnum" class="small muted"></div>  
+    <div class="question" id="question"></div>  
+    <div class="choices" id="choices"></div>  
+    <div class="controls">  
+      <button class="btn-ghost" id="skipBtn" onclick="nextQuestion()">Ka bood</button>  
+      <div>  
+        <button class="btn-ghost" id="markBtn" style="display:none" onclick="markLearned()">Calaamadee sida la baran</button>  
+        <button class="btn-primary" id="nextBtn" style="display:none" onclick="nextQuestion()">Su'aal xigta</button>  
+      </div>  
+    </div>  
+    <div style="margin-top:10px" class="row">  
+      <div id="score">Dhibco: 0</div>  
+      <div class="small muted">Wadarta: <span id="totalPossible">0</span></div>  
+    </div>  
+  </div>  <!-- History screen -->  <div id="historyScreen" class="card" style="display:none">  
+    <h3>Taariikhda Imtixaannada</h3>  
+    <div id="historyList" class="list"></div>  
+  </div>  <!-- Mistakes review -->  <div id="mistakesScreen" class="card" style="display:none">  
+    <h3>Khaladaad & Dib-u-saxid</h3>  
+    <div id="mistakesList" class="list"></div>  
+  </div>  <!-- Contact / Report -->  <div id="contactScreen" class="card" style="display:none">  
+    <h3>La xiriir</h3>  
+    <p class="small">Haddii aad rabto inaad i soo wacdo ama WhatsApp igu qorto:</p>  
+    <div class="row"><strong>+252 61 6 89 81 82</strong><button class="btn-ghost" onclick="copyNumber()">Nuqul</button></div>  
+    <hr>  
+    <p class="small">Fariin u qor (wax khalad ah, talo ama su'aal):</p>  
+    <textarea id="reportMsg" rows="4" placeholder="Halkan qoraalka gali..."></textarea><br>  
+    <button class="btn-primary" onclick="submitReport()">Dir Fariin</button>  
+  </div></div>  
+  <script>  
+    // --- Qalabka su'aalaha ---  
+const QUESTIONS_SOOMAALI = [  
+  {q:"Tirada tiirarka Islaamka waa?",choices:["7","5","3","4"],answer:1},  
+  {q:"Caasimada Soomaaliya waa?",choices:["Hargeysa","Muqdisho","Baydhabo","Kismaayo"],answer:1}  
+];  
+  
+const QUESTIONS_ENGLISH = [  
+  {q:"Apple micnaheedu waa?",choices:["Tufaax","Eey","Bisad","Kubad"],answer:0},  
+  {q:"Lion micnaheedu waa?",choices:["Libaax","Maroodi","Shimbir","Faras"],answer:0}  
+];  
+  
+const QUESTIONS_ARABIC = [  
+  {q:"كلمة (كتاب) معناها?",choices:["Book","Pen","House","School"],answer:0},  
+  {q:"كلمة (قلم) معناها?",choices:["Table","Pen","Chair","Dog"],answer:1}  
+];  
+  
+const QUESTIONS_TARBIYO = [  
+  {q:"Imisa tiir ayuu leeyahay Islaamka?",choices:["4","5","6","7"],answer:1},  
+  {q:"Soonka waxa uu kamid yahay?",choices:["Cibaadada","Ciidaha","Dhaqaalaha","Dhulka"],answer:0}  
+];  
+  
+const QUESTIONS_XISAAB = [  
+  {q:"10 + 5 = ?",choices:["14","15","16","17"],answer:1},  
+  {q:"20 - 7 = ?",choices:["12","13","14","15"],answer:1}  
+];  
+  
+const QUESTIONS_TECH = [  
+  {q:"CPU micnaheedu waa?",choices:["Computer Processing Unit","Central Processing Unit","Control Power Unit","Central Power Use"],answer:1},  
+  {q:"Internet waxa uu ka kooban yahay?",choices:["Shabakado","Buugaag","Filimaan","Muraayado"],answer:0}  
+];  
+  
+const QUESTIONS_SAYNIS = [  
+  {q:"Biyaha waxa ay karkaraan heerkulkee?",choices:["50°C","80°C","100°C","120°C"],answer:2},  
+  {q:"Cimilada waxaa daraasa?",choices:["Physics","Chemistry","Biology","Meteorology"],answer:3}  
+];  
+  
+const QUESTIONS_CILMI_BULSHO = [  
+  {q:"Maxay tahay caasimadda Itoobiya?",choices:["Addis Ababa","Nairobi","Asmara","Kampala"],answer:0},  
+  {q:"Dadka bulshada waxaa mideeya?",choices:["Af","Qabiil","Diin","Midnimo"],answer:3}  
+];  
+  
+const POOLS = {  
+  soomaali:QUESTIONS_SOOMAALI,  
+  english:QUESTIONS_ENGLISH,  
+  arabic:QUESTIONS_ARABIC,  
+  tarbiya:QUESTIONS_TARBIYO,  
+  xisaab:QUESTIONS_XISAAB,  
+  tech:QUESTIONS_TECH,  
+  saynis:QUESTIONS_SAYNIS,  
+  cilmi:QUESTIONS_CILMI_BULSHO  
+};  
+  
+// State  
+let selectedSubject='';  
+let QUESTIONS=[];  
+let current=0,score=0,accepting=true,mode='play';  
+  
+// DOM  
+const backBtn=document.getElementById('backBtn');  
+const startScreen=document.getElementById('startScreen');  
+const modeScreen=document.getElementById('modeScreen');  
+const studyScreen=document.getElementById('studyScreen');  
+const studyList=document.getElementById('studyList');  
+const gameBox=document.getElementById('gameBox');  
+const qnum=document.getElementById('qnum');  
+const questionEl=document.getElementById('question');  
+const choicesEl=document.getElementById('choices');  
+const scoreEl=document.getElementById('score');  
+const nextBtn=document.getElementById('nextBtn');  
+const totalPossibleEl=document.getElementById('totalPossible');  
+const historyScreen=document.getElementById('historyScreen');  
+const historyList=document.getElementById('historyList');  
+const mistakesScreen=document.getElementById('mistakesScreen');  
+const mistakesList=document.getElementById('mistakesList');  
+const contactScreen=document.getElementById('contactScreen');  
+  
+backBtn.onclick=()=>{navigateBack();};  
+  
+function showMode(subject){  
+selectedSubject=subject;  
+document.getElementById('modeTitle').textContent=subjectToName(subject);  
+startScreen.style.display='none';  
+modeScreen.style.display='block';  
+backBtn.style.display='inline-block';  
+}  
+  
+function subjectToName(s){  
+const map={  
+soomaali:'Af Soomaali',  
+english:'English',  
+arabic:'Arabic',  
+tarbiya:'Tarbiya',  
+xisaab:'Xisaab',  
+tech:'Technology',  
+saynis:'Saynis',  
+cilmi:'Cilmiga Bulshada'  
+};  
+return map[s]||s;  
+}  
+  
+function startGame(subject,m){  
+mode=m;  
+QUESTIONS=JSON.parse(JSON.stringify(POOLS[subject]||[]));  
+current=0;  
+score=0;  
+accepting=true;  
+  
+modeScreen.style.display='none';  
+studyScreen.style.display=(mode==='study')?'block':'none';  
+gameBox.style.display=(mode==='play')?'block':'none';  
+  
+document.getElementById('studyHeader').textContent=subjectToName(subject)+' — Casharrada';  
+totalPossibleEl.textContent=(QUESTIONS.length*10);  
+  
+if(mode==='study') renderStudy();  
+else renderQuestion();  
+}  
+  
+function renderStudy(){  
+studyList.innerHTML='';  
+QUESTIONS.forEach((q,i)=>{  
+const div=document.createElement('div');  
+div.className='card';  
+  
+div.innerHTML=  
+`<div class=question>${i+1}. ${escapeHtml(q.q)}</div>  
+<div class=small>Jawaab: <strong>${escapeHtml(q.choices[q.answer])}</strong></div>  
+<div style="margin-top:8px">  
+<button class='btn-ghost' onclick='markLearnedItem(${i})'>Mark as baran</button>  
+</div>`;  
+  
+studyList.appendChild(div);  
+});  
+}  
+  
+function markLearnedItem(i){  
+const key=`learned_${selectedSubject}`;  
+const arr=JSON.parse(localStorage.getItem(key)||'[]');  
+  
+if(!arr.includes(i)) arr.push(i);  
+  
+localStorage.setItem(key,JSON.stringify(arr));  
+alert('Waxaa lagu calaamadeeyey barasho.');  
+}  
+  
+function renderQuestion(){  
+if(current>=QUESTIONS.length){  
+finishGame();  
+return;  
+}  
+  
+const Q=QUESTIONS[current];  
+  
+qnum.textContent=`Su'aal ${current+1} / ${QUESTIONS.length}`;  
+questionEl.textContent=Q.q;  
+choicesEl.innerHTML='';  
+accepting=true;  
+nextBtn.style.display='none';  
+  
+Q.choices.forEach((c,i)=>{  
+const div=document.createElement('div');  
+div.className='choice';  
+div.textContent=c;  
+  
+div.onclick=()=>selectChoice(div,i);  
+  
+choicesEl.appendChild(div);  
+});  
+  
+scoreEl.textContent='Dhibco: '+score;  
+}  
+  
+function selectChoice(el,i){  
+if(!accepting) return;  
+  
+accepting=false;  
+  
+const Q=QUESTIONS[current];  
+  
+Array.from(choicesEl.children).forEach((ch,idx)=>{  
+if(idx===Q.answer) ch.classList.add('correct');  
+if(idx===i && idx!==Q.answer) ch.classList.add('wrong');  
+ch.style.pointerEvents='none';  
+});  
+  
+const mistakes=loadMistakes();  
+  
+if(i===Q.answer){  
+score+=10;  
+}  
+else{  
+mistakes.push({  
+subject:selectedSubject,  
+q:Q.q,  
+choices:Q.choices,  
+answer:Q.answer,  
+userAnswer:i,  
+date:new Date().toISOString(),  
+reviewed:false  
+});  
+  
+localStorage.setItem('quizMistakes',JSON.stringify(mistakes));  
+}  
+  
+scoreEl.textContent='Dhibco: '+score;  
+nextBtn.style.display='inline-block';  
+}  
+  
+function nextQuestion(){  
+current++;  
+  
+if(current>=QUESTIONS.length) finishGame();  
+else renderQuestion();  
+}  
+  
+function finishGame(){  
+gameBox.style.display='none';  
+  
+const total=QUESTIONS.length*10;  
+const attempts=loadHistory();  
+  
+attempts.push({  
+subject:selectedSubject,  
+mode,  
+score,  
+possible:total,  
+date:new Date().toISOString()  
+});  
+  
+localStorage.setItem('quizHistory',JSON.stringify(attempts));  
+  
+alert(`Dhamaaday! Waxaad heshay ${score} / ${total}`);  
+  
+navigateHome();  
+}  
+  
+function openHistory(){  
+startScreen.style.display='none';  
+historyScreen.style.display='block';  
+backBtn.style.display='inline-block';  
+renderHistory();  
+}  
+  
+function renderHistory(){  
+historyList.innerHTML='';  
+  
+const attempts=loadHistory();  
+  
+if(!attempts.length){  
+historyList.innerHTML='<div class=small>Ma jiraan imtixaano la diiwaangaliyay.</div>';  
+return;  
+}  
+  
+const bySub={};  
+  
+attempts.forEach(a=>{  
+bySub[a.subject]=bySub[a.subject]||[];  
+bySub[a.subject].push(a);  
+});  
+  
+for(const s in bySub){  
+  
+const div=document.createElement('div');  
+div.className='card';  
+  
+const list=bySub[s];  
+  
+const avg=Math.round(list.reduce((m,x)=>m+x.score,0)/list.length);  
+  
+div.innerHTML=  
+`<div class=row>  
+<div>  
+<strong>${subjectToName(s)}</strong>  
+<div class=small>${list.length} jeer la tijaabiyey — Celcelis dhibco: ${avg}</div>  
+</div>  
+<div>  
+<button class='btn-ghost' onclick="viewAttempts('${s}')">Fiiri</button>  
+<button class='btn-ghost' onclick="viewMistakes('${s}')">Khaladaad</button>  
+</div>  
+</div>`;  
+  
+historyList.appendChild(div);  
+}  
+  
+}  
+  
+function viewAttempts(subject){  
+const attempts=loadHistory().filter(a=>a.subject===subject);  
+  
+const win=window.open('','_blank');  
+  
+let html=`<h3>${subjectToName(subject)} - Taariikh</h3><ul>`;  
+  
+attempts.forEach(a=>{  
+html+=`<li>${new Date(a.date).toLocaleString()} — ${a.score}/${a.possible} (${a.mode})</li>`;  
+});  
+  
+html+='</ul>';  
+  
+win.document.write(html);  
+}  
+  
+function loadHistory(){  
+return JSON.parse(localStorage.getItem('quizHistory')||'[]');  
+}  
+  
+function loadMistakes(){  
+return JSON.parse(localStorage.getItem('quizMistakes')||'[]');  
+}  
+  
+function viewMistakes(subject){  
+  
+startScreen.style.display='none';  
+historyScreen.style.display='none';  
+mistakesScreen.style.display='block';  
+  
+const mistakes=loadMistakes().filter(m=>m.subject===subject);  
+  
+mistakesList.innerHTML='';  
+  
+if(!mistakes.length){  
+mistakesList.innerHTML='<div class=small>Ma jiro wax khalad ah oo la diiwaan geliyey.</div>';  
+return;  
+}  
+  
+mistakes.forEach((m,idx)=>{  
+  
+const d=document.createElement('div');  
+d.className='card';  
+  
+d.innerHTML=  
+`<div class=question>${escapeHtml(m.q)}</div>  
+<div class=small>  
+Jawaabta saxda ah:  
+<strong>${escapeHtml(m.choices[m.answer])}</strong>  
+|  
+Jawaabta isticmaale:  
+<strong>${escapeHtml(m.choices[m.userAnswer]||'—')}</strong>  
+</div>  
+<div style="margin-top:8px">  
+<button class='btn-ghost' onclick='editMistake(${idx},"${subject}")'>Dib u sax</button>  
+<button class='btn-ghost' onclick='markReviewed(${idx})'>Calamadi sida la saxay</button>  
+</div>`;  
+  
+mistakesList.appendChild(d);  
+});  
+  
+}  
+  
+function markReviewed(idx){  
+const list=loadMistakes();  
+  
+if(list[idx]){  
+list[idx].reviewed=true;  
+localStorage.setItem('quizMistakes',JSON.stringify(list));  
+alert('Khaladka ayaa la calaamadeeyey.');  
+}  
+  
+}  
+  
+function editMistake(idx,subject){  
+  
+const list=loadMistakes();  
+  
+const m=list.find((it,i)=>i===idx && it.subject===subject);  
+  
+if(!m){  
+alert('Khalad xog la waayey');  
+return;  
+}  
+  
+const newQ=prompt("Su'aasha cusub:",m.q);  
+  
+if(newQ!==null){  
+  
+m.q=newQ;  
+  
+const newAns=prompt("Numberka jawaabta saxda ah (0.."+(m.choices.length-1)+")",m.answer);  
+  
+if(newAns!==null){  
+  
+const na=parseInt(newAns);  
+  
+if(!isNaN(na) && na>=0 && na<m.choices.length){  
+  
+m.answer=na;  
+  
+localStorage.setItem('quizMistakes',JSON.stringify(list));  
+  
+alert('La cusbooneysiiyey');  
+  
+}  
+else alert('Jawaabta lama aqbalin');  
+  
+}  
+  
+}  
+  
+}  
+  
+function openContact(){  
+startScreen.style.display='none';  
+contactScreen.style.display='block';  
+backBtn.style.display='inline-block';  
+}  
+  
+function submitReport(){  
+  
+const txt=document.getElementById('reportMsg').value.trim();  
+  
+if(!txt) return alert('Fadlan fariin geli');  
+  
+const reports=JSON.parse(localStorage.getItem('reports')||'[]');  
+  
+reports.push({  
+msg:txt,  
+date:new Date().toISOString(),  
+phone:'+252616898182'  
+});  
+  
+localStorage.setItem('reports',JSON.stringify(reports));  
+  
+document.getElementById('reportMsg').value='';  
+  
+alert('Fariinta waa la diiwaan geliyey, mahadsanid');  
+  
+}  
+  
+function copyNumber(){  
+navigator.clipboard && navigator.clipboard.writeText('+252616898182');  
+alert('Number la nuqulay: +252616898182');  
+}  
+  
+function navigateBack(){  
+  
+if(modeScreen.style.display==='block'){  
+modeScreen.style.display='none';  
+startScreen.style.display='block';  
+backBtn.style.display='none';  
+}  
+else navigateHome();  
+  
+}  
+  
+function navigateHome(){  
+  
+startScreen.style.display='block';  
+modeScreen.style.display='none';  
+studyScreen.style.display='none';  
+gameBox.style.display='none';  
+historyScreen.style.display='none';  
+mistakesScreen.style.display='none';  
+contactScreen.style.display='none';  
+backBtn.style.display='none';  
+  
+}  
+  
+function escapeHtml(s){  
+return s.replace(/[&<>"']/g,c=>(  
+{"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]  
+));  
+}  
+  
+navigateHome();  
+  </script>  
+</body>  
+</html>

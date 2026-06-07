@@ -5,58 +5,61 @@
     <meta charset="UTF-8">
     <title>Maxamed Samee App | Create Apps & Websites Online Free</title>
     
-    <!-- Khadkan ayaa PWABuilder u sheegaya halka uu manifest-kaaga yaallo -->
+    <!-- PWABuilder Manifest -->
     <link rel="manifest" href="{% static 'manifest.json' %}">
     
-    <!-- Sidoo kale ku dar theme color-ka si uu ugu muuqdo app dhab ah -->
-    <meta name="theme-color" content="#0f172a">
+    <!-- Meta Tags & Fonts -->
+    <meta name="theme-color" content="#030712">
     <meta name="description" content="Samee app iyo website online si fudud adigoon kood qorayn.">
     <meta name="keywords" content="samee app, app builder somalia">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
         /* 
-           MASTER MUCJISO CSS V3 - "THE MAGIC EDITION"
-           Dhisay: Gemini AI for Maxamed Samee App
-           Hagaajinta: Full Responsive & Ultra Modern UI
+            MASTER MUCJISO CSS V4.5 - "LOCAL & LIGHTWEIGHT PERFORMANCE EDITION"
+            Dhisay: Gemini AI for Maxamed Samee App
+            Hagaajinta: No External Dependencies, Offline-Ready, Low RAM Friendly
         */
 
         :root {
             --bg: #030712;
-            --nav: rgba(3, 7, 18, 0.7);
-            --card: rgba(30, 41, 59, 0.5);
+            --nav: rgba(3, 7, 18, 0.85);
+            --card: rgba(15, 23, 42, 0.55);
+            --card-hover: rgba(30, 41, 59, 0.7);
             --primary: #3b82f6;
-            --secondary: #8b5cf6;
+            --secondary: #6366f1;
             --accent: #06b6d4;
             --text: #f8fafc;
             --muted: #94a3b8;
-            --glow: rgba(59, 130, 246, 0.5);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --glow: rgba(59, 130, 246, 0.3);
+            --glass-border: rgba(255, 255, 255, 0.08);
         }
 
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            margin: 0;
-            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            /* Waxaa loo beddelay System Fonts si uu Offline u shaqeeyo, RAM-kana u badbaadiyo */
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: var(--bg);
             background-image: 
-                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.15) 0px, transparent 50%);
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.1) 0px, transparent 50%);
             color: var(--text);
             overflow-x: hidden;
-            line-height: 1.6;
+            line-height: 1.5;
         }
 
-        /* --- NAV (Glassmorphism & Responsive) --- */
+        /* --- PREMIUM NAVIGATION WITH HAMBURGER --- */
         .nav {
             background: var(--nav);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 12px 5%;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 14px 6%;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -66,234 +69,179 @@
             border-bottom: 1px solid var(--glass-border);
         }
 
+        .nav-logo {
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff 40%, var(--muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-center-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
         .nav-links {
             display: flex;
-            gap: 8px;
+            align-items: center;
+            gap: 4px;
         }
 
         .nav a {
             color: var(--text);
             text-decoration: none;
-            padding: 8px 14px;
-            border-radius: 12px;
-            font-size: 0.85rem;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.82rem;
             font-weight: 600;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s ease;
             border: 1px solid transparent;
         }
 
         .nav a:hover, .nav a.active {
-            background: rgba(59, 130, 246, 0.1);
-            border-color: var(--primary);
-            color: var(--primary);
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--glass-border);
+            color: #fff;
         }
 
-        /* --- HERO SECTION (Animated Background) --- */
-        .hero {
-            text-align: center;
-            padding: clamp(60px, 15vh, 120px) 20px;
-            position: relative;
-        }
-
-        .hero h1 {
-            font-size: clamp(2.5rem, 8vw, 4.5rem);
-            margin-bottom: 15px;
-            background: linear-gradient(135deg, #fff 30%, var(--muted) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 800;
-            letter-spacing: -2px;
-            animation: fadeInUp 0.8s ease-out;
-        }
-
-        .hero p {
-            color: var(--muted);
-            max-width: 650px;
-            margin: 0 auto;
-            font-size: clamp(1rem, 3vw, 1.2rem);
-            animation: fadeInUp 1s ease-out;
-        }
-
-        /* --- BUTTONS (Magic Glow) --- */
-        .btn {
+        /* --- MENUS & UTILITIES --- */
+        .btn-chat-nav {
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            margin-top: 25px;
-            padding: 14px 32px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            border-radius: 14px;
+            gap: 6px;
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            padding: 8px 14px;
+            border-radius: 50px;
+            color: #fff;
             text-decoration: none;
-            border: none;
-            font-weight: 700;
-            font-size: 1rem;
-            box-shadow: 0 10px 25px -5px var(--glow);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
-        }
-
-        .btn:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 20px 35px -10px var(--glow);
-        }
-
-        /* --- GRID & CARDS (Premium Look) --- */
-        .container {
-            max-width: 1240px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-
-        .section-title {
-            font-size: 2rem;
-            font-weight: 800;
-            text-align: center;
-            margin-bottom: 50px;
-            color: var(--text);
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-        }
-
-        .card {
-            background: var(--card);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 32px;
-            border-radius: 24px;
-            border: 1px solid var(--glass-border);
-            transition: all 0.4s ease;
-            display: flex;
-            flex-direction: column;
+            font-weight: 600;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
             position: relative;
-            overflow: hidden;
         }
 
-        .card::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, transparent, rgba(255,255,255,0.03));
-            pointer-events: none;
-        }
-
-        .card:hover {
-            transform: translateY(-12px);
-            border-color: rgba(59, 130, 246, 0.5);
-            background: rgba(30, 41, 59, 0.8);
-            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.5);
-        }
-
-        /* --- QUIZ & POLL STYLING --- */
-        .quiz-option {
-            display: flex;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.03);
-            padding: 14px;
-            margin-bottom: 10px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: 0.3s;
-            border: 1px solid var(--glass-border);
-        }
-
-        .quiz-option:hover {
-            background: rgba(59, 130, 246, 0.1);
+        .btn-chat-nav:hover {
+            background: var(--primary);
             border-color: var(--primary);
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
         }
 
-        .quiz-option input[type="radio"] {
-            accent-color: var(--primary);
-            width: 18px;
-            height: 18px;
-            margin-right: 12px;
+        .badge-online {
+            width: 6px;
+            height: 6px;
+            background-color: #10b981;
+            border-radius: 50%;
+            position: absolute;
+            top: 6px;
+            right: 10px;
+            animation: pulse-green 2s infinite;
         }
 
-        /* --- MOBILE OPTIMIZATION --- */
-        @media (max-width: 768px) {
-            .nav {
-                padding: 10px 15px;
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .nav-links {
-                width: 100%;
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-
-            .nav a {
-                padding: 6px 12px;
-                font-size: 0.75rem;
-            }
-
-            .hero {
-                padding: 40px 15px;
-            }
-
-            .grid {
-                grid-template-columns: 1fr; /* Hal tiir ah mobile-ka */
-                gap: 20px;
-            }
-
-            .card {
-                padding: 24px;
-            }
+        @keyframes pulse-green {
+            0% { transform: scale(0.95); opacity: 0.5; }
+            70% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.5; }
         }
 
-        /* --- ANIMATIONS --- */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .tts-magic-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #ffffff !important;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-decoration: none !important;
+            border-radius: 50px;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .footer {
-            text-align: center;
-            padding: 60px 20px;
-            margin-top: 40px;
-            background: linear-gradient(to top, rgba(15, 23, 42, 0.5), transparent);
-            color: var(--muted);
-            border-top: 1px solid var(--glass-border);
+        .tts-magic-btn:hover {
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
         }
 
-        /* 1. MASTER HERO SECTION */
+        .btn-banaadir {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 14px;
+            background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.8rem;
+            border-radius: 50px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-banaadir:hover {
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+        }
+
+        /* LOCAL BACK ICON CSS (Ka fariisashada FontAwesome) */
+        .icon-back {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-left: 2px solid currentColor;
+            border-bottom: 2px solid currentColor;
+            transform: rotate(45deg);
+            margin-right: 4px;
+        }
+
+        /* HAMBURGER TRIGGER BUTTON */
+        .hamburger-btn {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            z-index: 1100;
+        }
+
+        .hamburger-btn span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background-color: var(--text);
+            border-radius: 2px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .hamburger-btn.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .hamburger-btn.active span:nth-child(2) { opacity: 0; }
+        .hamburger-btn.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+        /* --- HERO MASTER SECTION --- */
         .hero-master {
             position: relative;
-            min-height: 85vh;
-            background: #020617;
+            min-height: 75vh;
             display: grid;
             grid-template-columns: 1fr 1fr;
             align-items: center;
-            gap: 50px;
-            padding: 60px 8%;
+            gap: 40px;
+            padding: 40px 8%;
             overflow: hidden;
         }
 
-        .hero-text-side {
-            z-index: 20;
-        }
-
+        .hero-text-side { z-index: 20; position: relative; }
         .hero-text-side h1 {
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 900;
-            line-height: 1.1;
+            font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -1px;
             color: white;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
-        /* 2. DYNAMIC MEDIA WRAPPER (FOR 100/100 VIEW) */
         .hero-media-wrapper {
             position: relative;
             z-index: 20;
@@ -306,293 +254,209 @@
         .hero-media-side {
             position: relative;
             width: 100%;
-            max-width: 2000px; /* Cabbirka ugu badan */
-            border-radius: 24px;
+            max-width: 1000px;
+            border-radius: 16px;
             overflow: hidden;
-            background: rgba(255, 255, 255, 0.03);
-            box-shadow: 0 30px 100px rgba(0,0,0,0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            /* Tani waxay xaqiijinaysaa in sanduuqu la jaanqaado muuqaalka */
-            transition: all 0.5s ease;
+            background: rgba(255, 255, 255, 0.02);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            border: 1px solid var(--glass-border);
         }
 
-        /* 3. THE MAGIC FIX: 100/100 VISIBILITY */
-        .hero-media-side video, 
-        .hero-media-side img {
+        .hero-media-side video, .hero-media-side img {
             width: 100%;
-            height: auto; /* Height-ku wuxuu raacayaa sawirka/muuqaalka */
-            max-height: 75vh; /* Si uusan bogga uga bixin hadduu aad u dheer yahay */
+            height: auto;
+            max-height: 60vh;
             display: block;
-            object-fit: contain; /* Tani waxay xaqiijinaysaa inaan waxba la qarin */
-            background: black; /* Meelaha bannaan ee ka soo haraya muuqaalada qaar */
+            object-fit: contain;
         }
 
-        /* VIDEO CONTROLS */
-        .custom-controls {
-            position: absolute;
-            bottom: 15px;
-            right: 15px;
-            display: flex;
-            gap: 8px;
-            z-index: 30;
+        /* --- CARDS & GRID --- */
+        .container { max-width: 1200px; margin: 0 auto; padding: 60px 20px; }
+        .section-title {
+            font-size: 2rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 40px;
+            letter-spacing: -0.5px;
         }
 
-        .v-btn {
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(10px);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.2);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.3s;
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
         }
 
-        .v-btn:hover { background: #3b82f6; }
-
-        /* BACKGROUND CANVAS */
-        #hero-canvas {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1;
-            background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+        .card {
+            background: var(--card);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            transition: transform 0.2s ease, background 0.2s ease;
         }
 
-        @media (max-width: 992px) {
-            .hero-master { grid-template-columns: 1fr; text-align: center; padding-top: 100px; }
-            .hero-text-side { order: 2; }
-            .hero-media-wrapper { order: 1; }
+        .card:hover {
+            transform: translateY(-4px);
+            background: var(--card-hover);
+            border-color: rgba(59, 130, 246, 0.25);
         }
 
-        .btn-chat-nav {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(59, 130, 246, 0.1); /* Buluug khafiif ah */
-            border: 1px solid rgba(59, 130, 246, 0.4);
-            padding: 8px 18px;
-            border-radius: 50px;
-            color: #fff;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.85rem;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-chat-nav:hover {
-            background: #3b82f6;
-            border-color: #3b82f6;
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
-            transform: translateY(-2px);
-        }
-
-        .btn-chat-nav .icon {
-            font-size: 1.1rem;
-        }
-
-        /* Nal yar oo bilig-leynaya oo Online-ka ah */
-        .badge-online {
-            width: 8px;
-            height: 8px;
-            background-color: #10b981; /* Cagaar */
-            border-radius: 50%;
-            position: absolute;
-            top: 8px;
-            right: 12px;
-            box-shadow: 0 0 8px #10b981;
-            animation: pulse-green 2s infinite;
-        }
-
-        @keyframes pulse-green {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(16, 185, 129, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-        }
-
-        /* Mobile-ka si uusan boos badan uga qaadan */
-        @media (max-width: 768px) {
-            .btn-chat-nav .text {
-                display: none; /* Mobile-ka kaliya icon-ka ha u muuqdo */
-            }
-            .btn-chat-nav {
-                padding: 8px 12px;
-            }
-        }
-
-        .btn-banaadir {
+        .btn {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            padding: 12px 24px;
-            background: linear-gradient(135deg, #007aff 0%, #5856d6 100%);
+            justify-content: center;
+            padding: 10px 24px;
+            background: var(--primary);
             color: white;
+            border-radius: 10px;
             text-decoration: none;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-weight: 700;
-            font-size: 15px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
-            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background 0.2s ease;
             border: none;
             cursor: pointer;
         }
 
-        .btn-banaadir:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 8px 25px rgba(88, 86, 214, 0.4);
-            background: linear-gradient(135deg, #0056b3 0%, #4442b3 100%);
+        .btn:hover {
+            background: #2563eb;
         }
 
-        .btn-banaadir:active {
-            transform: translateY(0);
-        }
-
-        .btn-banaadir i {
-            font-size: 18px;
-        }
-
-        /* Haddii aad rabto inuu dhexda tago */
-        .nav-action {
+        .quiz-option {
             display: flex;
             align-items: center;
-        }
-
-        /* --- NAQSHADDA BATOONKA CASRIGA AH ee TTS --- */
-        .tts-magic-btn {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            padding: 14px 28px;
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            color: #ffffff !important;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 16px;
-            font-weight: 700;
-            text-decoration: none !important;
-            border-radius: 16px;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25), 
-                        inset 0 1px 1px rgba(255, 255, 255, 0.3);
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.02);
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            border-radius: 8px;
             cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            transition: background 0.2s ease;
         }
 
-        /* Astaanta Yar (Icon-ka) */
-        .tts-magic-btn .btn-icon {
-            font-size: 20px;
-            transition: transform 0.3s ease;
+        .quiz-option:hover {
+            background: rgba(59, 130, 246, 0.06);
+            border-color: var(--primary);
         }
 
-        /* Qoraalka Batoonka */
-        .tts-magic-btn .btn-text {
-            letter-spacing: 0.5px;
+        /* --- VIDEO CONTROLS --- */
+        .custom-controls { position: absolute; bottom: 12px; right: 12px; display: flex; gap: 6px; z-index: 30; }
+        .v-btn {
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.15);
+            width: 32px; height: 32px; border-radius: 50%;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem;
         }
 
-        /* Saamaynta iftiinka dusha mara (Shine Effect) */
-        .tts-magic-btn .btn-glow {
-            position: absolute;
-            top: 0;
-            left: -150%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(
-                to right,
-                rgba(255, 255, 255, 0) 0%,
-                rgba(255, 255, 255, 0.4) 50%,
-                rgba(255, 255, 255, 0) 100%
-            );
-            transform: skewX(-25deg);
-            transition: none;
+        #hero-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+        .footer {
+            text-align: center; padding: 40px 20px;
+            background: rgba(15, 23, 42, 0.3);
+            border-top: 1px solid var(--glass-border);
+            color: var(--muted); font-size: 0.85rem;
         }
 
-        /* --- DAAREYNTA MARKA LA DUL ISTAAGO (HOVER EFFECTS) --- */
-        .tts-magic-btn:hover {
-            background: linear-gradient(135deg, #1d4ed8, #1e40af);
-            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4), 
-                        0 0 0 4px rgba(37, 99, 235, 0.15);
-            transform: translateY(-2px);
-        }
+        /* --- RESPONSIVE DRAWER SYSTEM --- */
+        @media (max-width: 1100px) {
+            .hamburger-btn { display: flex; }
+            
+            .nav-center-wrapper {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 260px;
+                height: 100vh;
+                background: #060913;
+                border-left: 1px solid var(--glass-border);
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 70px 20px;
+                gap: 16px;
+                transition: right 0.3s ease;
+                z-index: 1000;
+                overflow-y: auto;
+            }
 
-        /* Icon-ku ha ruxmo marka la dul istaago */
-        .tts-magic-btn:hover .btn-icon {
-            transform: scale(1.2) rotate(-10deg);
-        }
+            .nav-center-wrapper.active {
+                right: 0;
+            }
 
-        /* Iftiinku ha sifeeyo batoonka marka la dul istaago */
-        .tts-magic-btn:hover .btn-glow {
-            left: 150%;
-            transition: all 0.6s ease;
-        }
+            .nav-links {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+                gap: 10px;
+            }
 
-        /* --- MARKA LA GUJIYO (ACTIVE EFFECT) --- */
-        .tts-magic-btn:active {
-            transform: translateY(1px);
-            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
-        }
-
-        /* La jaanqaadka Mobile-ka */
-        @media (max-width: 480px) {
-            .tts-magic-btn {
-                width: 100%; /* Wuxuu noqonayaa full-width talefannada yar yar */
-                padding: 12px 20px;
-                font-size: 15px;
+            .nav a, .btn-chat-nav, .tts-magic-btn, .btn-banaadir {
+                width: 100%;
+                justify-content: flex-start;
             }
         }
+
+        @media (max-width: 992px) {
+            .hero-master { grid-template-columns: 1fr; text-align: center; padding-top: 40px; gap: 30px; }
+            .hero-text-side { order: 2; }
+            .hero-media-wrapper { order: 1; }
+            .hero-media-side { max-width: 100%; }
+        }
     </style>
-    <link rel="manifest" href="/static/manifest.json">
-    <meta name="theme-color" content="#0f172a">
 </head>
 
 <body>
 
     <div class="nav">
-        <div class="nav-links">
-            <a href="/" class="active">GURIGA</a>
-            <a href="/about/">FAAH FAHIN</a>
-            <a href="/contact/">LAXIRIIR</a>
-        </div>
+        <a href="/" class="nav-logo">MAXAMED SAMEE</a>
         
-        <li class="nav-item" style="list-style: none;">
+        <!-- Hamburger Menu Button -->
+        <button class="hamburger-btn" id="menuToggle" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <div class="nav-center-wrapper" id="navMenu">
+            <div class="nav-links">
+                <a href="/" class="active">GURIGA</a>
+                <a href="/about/">FAAH FAHIN</a>
+                <a href="/contact/">LAXIRIIR</a>
+                <a href="{% url 'games_dashboard' %}"><span class="icon-back"></span> Dashboard</a>
+            </div>
+            
             <a href="{% url 'chats_page' %}" class="btn-chat-nav">
-                <span class="icon">💬</span>
-                <span class="text">WADAHADLKA</span>
-                <span class="badge-online"></span>
+                <span>💬</span> <span>WADAHADLKA</span> <span class="badge-online"></span>
             </a>
-        </li>
-        
-        <a href="{% url 'tts_interface' %}" class="tts-magic-btn">
-            <span class="btn-icon">🎙️</span>
-            <span class="btn-text">Qoraalka u Beddel Cod (TTS)</span>
-            <span class="btn-glow"></span>
-        </a>
-        
-        <div class="nav-action">
+            <button id="installPWA" style="display: none; padding: 12px 24px; background-color: #0f172a; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
+             Kala Soo Deg App-ka Caadiga Ah
+            </button>
+            <a href="{% url 'notes_dashboard' %}" class="btn-chat-nav">
+                <span>📄</span> <span>keep-notes</span> <span class="badge-online"></span>
+            </a>
+            
+            <a href="{% url 'tts_interface' %}" class="tts-magic-btn">
+                <span>🎙️</span> <span>TTS Beddel Cod</span>
+            </a>
+            
             <a href="{% url 'banaadir' %}" class="btn-banaadir">
                 <span>🧩 Imtixaanaadka Banaadir</span>
             </a>
-        </div>
-        
-        <div class="nav-links">
-            {% if user.is_authenticated %}
-                <a href="/logout/">Logout</a>
-            {% else %}
-                <a href="/login/">Login</a>
-                <a href="/register/">Sign Up</a>
-            {% endif %}
+
+            <div class="nav-links">
+                {% if user.is_authenticated %}
+                    <a href="/logout/">Logout</a>
+                {% else %}
+                    <a href="/login/">Login</a>
+                    <a href="/register/">Sign Up</a>
+                {% endif %}
+            </div>
         </div>
     </div>
 
     {% if messages %}
-        <ul class="messages">
+        <ul class="messages" style="list-style: none; padding: 15px 6%; background: rgba(59,130,246,0.1); color:#fff; font-size:0.9rem;">
             {% for message in messages %}
                 <li class="{{ message.tags }}">{{ message }}</li>
             {% endfor %}
@@ -606,17 +470,17 @@
             {% with main_content=homepage_contents.first %}
                 <div class="hero-text-side">
                     <h1>{{ main_content.title }}</h1>
-                    <p style="font-size: 1.2rem; color: #94a3b8; margin-bottom: 35px; line-height: 1.6;">
+                    <p style="font-size: 1.1rem; color: #94a3b8; margin-bottom: 30px; line-height: 1.5;">
                         {{ main_content.description }}
                     </p>
                     <div class="hero-actions">
-                        <a href="/dashboard/" class="btn" style="padding: 16px 45px; border-radius: 50px; background: #3b82f6; color: white; font-weight: bold; display: inline-block;">Gali Dashboard</a>
+                        <a href="/dashboard/" class="btn" style="padding: 12px 36px; border-radius: 50px; font-weight: bold;">Gali Dashboard</a>
                     </div>
                 </div>
 
                 <div class="hero-media-wrapper">
                     <div class="hero-media-side">
-                        <!-- QAYBTA VIDEO-GA -->
+                        <!-- VIDEO SECTION -->
                         {% if main_content.video_file or main_content.video_url %}
                             <video id="proVideo" autoplay loop playsinline muted>
                                 <source src="{% if main_content.video_file %}{{ main_content.video_file.url }}{% else %}{{ main_content.video_url }}{% endif %}" type="video/mp4">
@@ -625,30 +489,29 @@
                                 <button class="v-btn" onclick="vTogglePlay()" id="pIcon">⏸</button>
                                 <button class="v-btn" onclick="vToggleMute()" id="mIcon">🔇</button>
                             </div>
+                        {% endif %}
 
-                        <!-- QAYBTA SAWIRKA (Hadii uusan Video jirin) -->
-                        {% elif main_content.image_file or main_content.image_url %}
+                        <!-- IMAGE SECTION -->
+                        {% if main_content.image_file or main_content.image_url %}
                             <img src="{% if main_content.image_file %}{{ main_content.image_file.url }}{% else %}{{ main_content.image_url }}{% endif %}" alt="{{ main_content.title }}">
                         {% endif %}
                     </div>
                 </div>
             {% endwith %}
         {% else %}
-            <!-- Tani waa haddii Admin-ka xog lagu darin (Default) -->
+            <!-- Default Content if Empty -->
             <div class="hero-text-side">
                 <h1>Abuur Mashruuc Dhijitaal Ah 🚀</h1>
-                <p>Samee app & website adigoo kood qoraya.</p>
-                
-                <!-- COOFKA MA LOGIN YAHAY? -->
+                <p style="color: var(--muted); margin-bottom: 25px;">Samee app & website adigoo kood qoraya.</p>
                 {% if request.user.is_authenticated %}
-                    <a href="/dashboard/" class="btn" style="padding: 16px 45px; border-radius: 50px; background: #3b82f6; color: white;">Aad Dashboard-ka</a>
+                    <a href="/dashboard/" class="btn" style="padding: 12px 36px; border-radius: 50px;">Aad Dashboard-ka</a>
                 {% else %}
-                    <a href="/register/" class="btn" style="padding: 16px 45px; border-radius: 50px; background: #3b82f6; color: white;">Bilow Hadda</a>
+                    <a href="/register/" class="btn" style="padding: 12px 36px; border-radius: 50px;">Bilow Hadda</a>
                 {% endif %}
             </div>
             <div class="hero-media-wrapper">
-                 <div class="hero-media-side" style="height: 400px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.02);">
-                    <span style="font-size: 4rem; opacity: 0.3;">✨</span>
+                 <div class="hero-media-side" style="height: 300px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.01);">
+                    <span style="font-size: 3rem; opacity: 0.2;">✨</span>
                  </div>
             </div>
         {% endif %}
@@ -659,73 +522,90 @@
 
         <div class="grid">
             <div class="card">
-                <h3 style="color: var(--secondary);">🧠 Su`aalo jijaabo ah</h3>
+                <h3 style="color: var(--secondary); margin-bottom: 15px;">🧠 Su`aalo jijaabo ah</h3>
                 {% if quiz %}
-                    <p style="font-weight: bold; margin-bottom: 20px;">{{ quiz.question }}</p>
+                    <p style="font-weight: bold; margin-bottom: 20px; font-size: 0.95rem;">{{ quiz.question }}</p>
                     <form action="{% url 'submit_quiz' %}" method="POST">
                         {% csrf_token %}
                         <input type="hidden" name="correct" value="{{ quiz.correct_answer }}">
                         
                         <label class="quiz-option">
-                            <input type="radio" name="answer" value="{{ quiz.option1 }}" required> {{ quiz.option1 }}
+                            <input type="radio" name="answer" value="{{ quiz.option1 }}" required style="margin-right:10px; accent-color:var(--primary);"> {{ quiz.option1 }}
                         </label>
                         <label class="quiz-option">
-                            <input type="radio" name="answer" value="{{ quiz.option2 }}"> {{ quiz.option2 }}
+                            <input type="radio" name="answer" value="{{ quiz.option2 }}" style="margin-right:10px; accent-color:var(--primary);"> {{ quiz.option2 }}
                         </label>
                         <label class="quiz-option">
-                            <input type="radio" name="answer" value="{{ quiz.option3 }}"> {{ quiz.option3 }}
+                            <input type="radio" name="answer" value="{{ quiz.option3 }}" style="margin-right:10px; accent-color:var(--primary);"> {{ quiz.option3 }}
                         </label>
                         <label class="quiz-option">
-                            <input type="radio" name="answer" value="{{ quiz.option4 }}"> {{ quiz.option4 }}
+                            <input type="radio" name="answer" value="{{ quiz.option4 }}" style="margin-right:10px; accent-color:var(--primary);"> {{ quiz.option4 }}
                         </label>
 
                         <button type="submit" class="btn" style="margin-top:15px; width:100%;">Gudbi Jawaabta</button>
                     </form>
                 {% else %}
-                    <p>Hadda ma jiro Quiz firfircoon.</p>
-                    <a href="/quiz/" class="btn" style="width:100%; text-align:center;">Eeg Dhammaan</a>
+                    <p style="color: var(--muted); margin-bottom: 20px;">Hadda ma jiro Quiz firfircoon.</p>
+                    <a href="/quiz/" class="btn" style="width:100%;">Eeg Dhammaan</a>
                 {% endif %}
             </div>
 
             <div class="card">
-                <h3 style="color: #06b6d4;">🤖 Cod bixinta maanta </h3>
+                <h3 style="color: #06b6d4; margin-bottom: 15px;">🤖 Cod bixinta maanta</h3>
                 {% if poll %}
-                    <p style="font-weight: bold;">{{ poll.question }}</p>
-                    <div style="margin: 15px 0; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px;">
-                        <div style="margin-bottom: 5px; font-size: 0.9rem;">
+                    <p style="font-weight: bold; margin-bottom: 15px;">{{ poll.question }}</p>
+                    <div style="margin: 15px 0; background: rgba(0,0,0,0.15); padding: 12px; border-radius: 10px; border: 1px solid var(--glass-border);">
+                        <div style="margin-bottom: 8px; font-size: 0.9rem;">
                             A: <b>{{ poll.votes1 }}</b> cod
                         </div>
                         <div style="font-size: 0.9rem;">
                             B: <b>{{ poll.votes2 }}</b> cod
                         </div>
                     </div>
-                    <a href="/poll/" class="btn" style="width:100%; text-align:center; background: #06b6d4;">Codee Hadda</a>
+                    <a href="/poll/" class="btn" style="width:100%; background: #06b6d4;">Codee Hadda</a>
                 {% else %}
-                    <p>Hadda ma jirto codbixin firfircoon.</p>
-                    <a href="/poll/" class="btn" style="width:100%; text-align:center;">Tag Polls</a>
+                    <p style="color: var(--muted); margin-bottom: 20px;">Hadda ma jirto codbixin firfircoon.</p>
+                    <a href="/poll/" class="btn" style="width:100%;">Tag Polls</a>
                 {% endif %}
             </div>
 
             <div class="card">
-                <h3 style="color: #f59e0b;">🔥 Warbaahinta </h3>
-                <p>Daawo videos & sawiro ku xiiso geliya oo shirkadda soo gelisay.</p>
-                <a href="/content/" class="btn" style="width:100%; text-align:center; background: #f59e0b;">Daawo Warbixinada</a>
+                <h3 style="color: #f59e0b; margin-bottom: 15px;">🔥 Warbaahinta</h3>
+                <p style="color: var(--muted); margin-bottom: 25px; font-size: 0.92rem;">Daawo videos & sawiro ku xiiso geliya oo shirkadda soo gelisay.</p>
+                <a href="/content/" class="btn" style="width:100%; background: #f59e0b;">Daawo Warbixinada</a>
             </div>
 
             <div class="card">
-                <h3 style="color: #10b981;">📞 Caawimaad</h3>
-                <p>Nala soo xiriir si toos ah haddii aad u baahato caawimaad farsamo.</p>
-                <a href="/contact/" class="btn" style="width:100%; text-align:center; background: #10b981;">Nala Xiriir</a>
+                <h3 style="color: #10b981; margin-bottom: 15px;">📞 Caawimaad</h3>
+                <p style="color: var(--muted); margin-bottom: 25px; font-size: 0.92rem;">Nala soo xiriir si toos ah haddii aad u baahato caawimaad farsamo.</p>
+                <a href="/contact/" class="btn" style="width:100%; background: #10b981;">Nala Xiriir</a>
             </div>
         </div>
     </div>
 
     <div class="footer">
         © 2026 Maxamed Samee App | Version 2.0 <br>
-        <small style="color: var(--muted);">Dhisay maxamed cabdullahi cabduqaadir ibrahim</small>
+        <small style="color: var(--muted); margin-top: 8px; display: inline-block;">Dhisay Maxamed Cabdullahi Cabduqaadir Ibrahim</small>
     </div>
 
     <script>
+        // HAMBURGER MENU INTERACTION
+        const menuToggle = document.getElementById('menuToggle');
+        const navMenu = document.getElementById('navMenu');
+
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!menuToggle.contains(e.target) && !navMenu.contains(e.target)) {
+                menuToggle.classList.remove('active');
+                navMenu.classList.remove('active');
+            }
+        });
+
+        // SERVICE WORKER
         if ('serviceWorker' in navigator) {
             window.addEventListener("load", function() {
                 navigator.serviceWorker.register('/static/sw.js')
@@ -748,13 +628,14 @@
         function vToggleMute() {
             if (!v) return;
             if (v.muted) { v.muted = false; mIcon.innerText = "🔊"; mIcon.style.background = "#3b82f6"; }
-            else { v.muted = true; mIcon.innerText = "🔇"; mIcon.style.background = "rgba(0, 0, 0, 0.6)"; }
+            else { v.muted = true; mIcon.innerText = "🔇"; mIcon.style.background = "rgba(0, 0, 0, 0.5)"; }
         }
 
-        // PARTICLE ENGINE (Mucjisada CSS/JS)
+        // LOW RAM OPTIMIZED PARTICLE ENGINE (Way is damisaa haddii shaashadu yar tahay)
         const canvas = document.getElementById('hero-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
+        let animationFrameId;
 
         function initCanvas() {
             canvas.width = window.innerWidth;
@@ -765,10 +646,10 @@
             constructor() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 1.5 + 0.1;
-                this.speedX = Math.random() * 0.4 - 0.2;
-                this.speedY = Math.random() * 0.4 - 0.2;
-                this.opacity = Math.random() * 0.5;
+                this.size = Math.random() * 1.0 + 0.2;
+                this.speedX = Math.random() * 0.2 - 0.1;
+                this.speedY = Math.random() * 0.2 - 0.1;
+                this.opacity = Math.random() * 0.3;
             }
             update() {
                 this.x += this.speedX;
@@ -788,7 +669,9 @@
 
         function createParticles() {
             particles = [];
-            for (let i = 0; i < 120; i++) {
+            // Haddii uu mobile yahay 30 xiddigood kaliya abuur, haddii kale 80 (RAM-ka si loo badbaadiyo)
+            let count = window.innerWidth < 768 ? 30 : 80;
+            for (let i = 0; i < count; i++) {
                 particles.push(new Particle());
             }
         }
@@ -796,13 +679,66 @@
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particles.forEach(p => { p.update(); p.draw(); });
-            requestAnimationFrame(animate);
+            animationFrameId = requestAnimationFrame(animate);
         }
 
-        window.addEventListener('resize', () => { initCanvas(); createParticles(); });
+        window.addEventListener('resize', () => { 
+            initCanvas(); 
+            createParticles(); 
+        });
+
         initCanvas();
         createParticles();
         animate();
+        // 1. Is-diiwaangelinta Service Worker-ka
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(reg => console.log('Service Worker waxaa loo diwaangeliyay si guul leh!'))
+        .catch(err => console.log('Agaasinka Service Worker wuxuu ku guuldareystay: ', err));
+    });
+  }
+
+  // 2. Maareynta Badhanka Rakibaadda (Install Prompt)
+  let deferredPrompt;
+  const installBtn = document.getElementById('installPWA');
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // Ka hor istaag browser-ka inuu si toos ah u tuso fariinta caadiga ah
+    e.preventDefault();
+    // Kaydi dhacdada (event-ka) si hadhow loo isticmaalo
+    deferredPrompt = e;
+    
+    # Hubi haddii uusan qofku horey u soo degsan, u muujis badhanka
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+        installBtn.style.display = 'none'; // Haddii uu ku jiro app-ka dhexdiisa haku tusin
+    } else {
+        installBtn.style.display = 'block'; // Tus badhanka haddii uu browser joogo
+    }
+  });
+
+  // Marka badhanka la gujiyo
+  installBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      // Tus qofka fariinta soo degsashada rasmiga ah
+      deferredPrompt.prompt();
+      // Sug jawaabta qofka (Haa ama Maya)
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(`Jawaabta adeegsadaha: ${outcome}`);
+      
+      // Haddii uu aqbalay, qari badhanka
+      if (outcome === 'accepted') {
+        installBtn.style.style.display = 'none';
+      }
+      deferredPrompt = null;
+    }
+  });
+
+  // Haddii qofku horey u soo degsaday oo uu hadda app-ka gudihiisa ku jiro
+  window.addEventListener('appinstalled', (evt) => {
+    console.log('App Builder waa la rakibay si guul leh!');
+    installBtn.style.display = 'none'; // Qari badhanka maadaama la rakibay
+  });
     </script>
 </body>
 </html>
